@@ -1,0 +1,101 @@
+# -------------------------
+# Python Cache & Bytecode
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -------------------------
+# Environment / Virtualenv
+# -------------------------
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# -------------------------
+# Config & Secrets
+# -------------------------
+*.env
+*.ini
+*.toml
+*.cfg
+*.secret
+*.key
+*.pem
+
+# -------------------------
+# Logs & Reports
+# -------------------------
+*.log
+*.out
+*.err
+*.pid
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+
+# -------------------------
+# Build & Distribution
+# -------------------------
+build/
+dist/
+develop-eggs/
+.eggs/
+*.egg
+*.egg-info/
+MANIFEST
+
+# -------------------------
+# Jupyter Notebook
+# -------------------------
+.ipynb_checkpoints
+
+# -------------------------
+# Database / Data Dumps
+# -------------------------
+*.sqlite3
+*.db
+*.sql
+*.bak
+*.dump
+
+# -------------------------
+# IDE / Editor Files
+# -------------------------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.iml
+
+# -------------------------
+# Docker / Container Files
+# -------------------------
+Dockerfile
+docker-compose.yml
+*.dockerignore
+
+# -------------------------
+# Frontend (Nếu có React/Vue)
+# -------------------------
+node_modules/
+dist/
+*.local
+
+# -------------------------
+# Others
+# -------------------------
+*.DS_Store
+*.pkl
+*.h5
+*.ckpt

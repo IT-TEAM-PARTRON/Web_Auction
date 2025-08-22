@@ -1,0 +1,185 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-06-01 00:00+0000\n"
+"PO-Revision-Date: 2024-06-01 00:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Hello, World!"
+msgstr "Hello, World!"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "User not found"
+msgstr "User not found"
+
+msgid "Invalid status value"
+msgstr "Invalid status value"
+
+msgid "You don't have permison create auction!"
+msgstr "You don't have permison create auction!"
+
+msgid "Auction title already exists"
+msgstr "Auction title already exists"
+
+msgid "No files provided"
+msgstr "No files provided"
+
+msgid "Invalid file name."
+msgstr "Invalid file name."
+
+msgid "Invalid image file type: {file.filename}"
+msgstr "Invalid image file type: {file.filename}"
+
+msgid "Image file too large (max 5MB): {file.filename}"
+msgstr "Image file too large (max 5MB): {file.filename}"
+
+msgid "Total image URLs length too long (max 500 chars): {image_urls}"
+msgstr "Total image URLs length too long (max 500 chars): {image_urls}"
+
+msgid "Internal server error: {str(e)}"
+msgstr "Internal server error: {str(e)}"
+
+msgid "No filename provided"
+msgstr "No filename provided"
+
+msgid "Invalid excel file type"
+msgstr "Invalid excel file type"
+
+msgid "Excel file too large (max 10MB)"
+msgstr "Excel file too large (max 10MB)"
+
+msgid "Auction or file not found"
+msgstr "Auction or file not found"
+
+msgid "File not found on server"
+msgstr "File not found on server"
+
+msgid "Auction not found"
+msgstr "Auction not found"
+
+msgid "Auction is not active"
+msgstr "Auction is not active"
+
+msgid "User not allowed to bid"
+msgstr "User not allowed to bid"
+
+msgid "Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid_msg}"
+msgstr "Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid_msg}"
+
+msgid "User has already placed a bid for this auction"
+msgstr "User has already placed a bid for this auction"
+
+msgid "You have successfully placed a bid of  {bid_in.bid_amount:,.0f}$ on auction {auction.title}."
+msgstr "You have successfully placed a bid of  {bid_in.bid_amount:,.0f}$ on auction {auction.title}."
+
+msgid "0: ongoing, 1: upcoming, 2: ended"
+msgstr "0: ongoing, 1: upcoming, 2: ended"
+
+msgid "Tìm kiếm theo title auction"
+msgstr "Search by auction title"
+
+msgid "Sắp xếp theo: title, created_at, start_time, end_time"
+msgstr "Sort by: title, created_at, start_time, end_time"
+
+msgid "Thứ tự sắp xếp: asc (A-Z), desc (Z-A)"
+msgstr "Sort order: asc (A-Z), desc (Z-A)"
+
+msgid "Số trang"
+msgstr "Page number"
+
+msgid "Số item trên mỗi trang"
+msgstr "Items per page"
+
+msgid "Từ ngày"
+msgstr "From date"
+
+msgid "Đến ngày"
+msgstr "To date"
+
+msgid "Incorrect email or password"
+msgstr "Incorrect email or password"
+
+msgid "User is inactive or banned"
+msgstr "User is inactive or banned"
+
+msgid "Account already registered"
+msgstr "Account already registered"
+
+msgid "Invalid refresh token"
+msgstr "Invalid refresh token"
+
+msgid "User not found"
+msgstr "User not found"
+
+msgid "You don't have permison watch users!"
+msgstr "You don't have permison watch users!"
+
+msgid "Permission denied"
+msgstr "Permission denied"
+
+msgid "Status must be 0 (disactive) or 1 (active)"
+msgstr "Status must be 0 (disactive) or 1 (active)"
+
+msgid "User status updated to {data.status}."
+msgstr "User status updated to {data.status}."
+
+msgid "User updated successfully."
+msgstr "User updated successfully."
+
+msgid "User deleted successfully."
+msgstr "User deleted successfully."
+
+msgid "You are not allowed to edit this auction"
+msgstr "You are not allowed to edit this auction"
+
+msgid "You are not allowed to edit auctions"
+msgstr "You are not allowed to edit auctions"
+
+msgid "Your new price must be at least one price step away from your old price."
+msgstr "Your new price must be at least one price step away from your old price."
+
+msgid "Admin cannot modify Super Admin information"
+msgstr "Admin cannot modify Super Admin and Admin information"
+
+msgid "Admin cannot delete Super Admin information"
+msgstr "Admin cannot delete account Super Admin, Admin"
+
+msgid "Super Admin cannot delete Super Admin information"
+msgstr "Super Admin cannot delete Super Admin"
+
+msgid "Admin cannot modify Super Admin, Admin information"
+msgstr "Admin cannot modify Super Admin, Admin information"
+
+msgid "Phone number must be 10 digits"
+msgstr "Phone number must be 10 digits"
+
+msgid "Admin or Super Admin not allowed to bid"
+msgstr "Admin or Super Admin not allowed to bid"
+
+msgid "Super Admin cannot modify Super Admin information"
+msgstr "Super Admin cannot modify Super Admin information"
+
+msgid "You don't have permission to create category!"
+msgstr "You don't have permission to create category!"
+
+msgid "Category name already exists"
+msgstr "Category name already exists"

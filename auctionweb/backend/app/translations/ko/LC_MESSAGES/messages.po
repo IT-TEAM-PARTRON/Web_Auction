@@ -1,0 +1,182 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-06-01 00:00+0000\n"
+"PO-Revision-Date: 2024-06-01 00:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Korean\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Hello, World!"
+msgstr "안녕하세요, 세상!"
+
+msgid "Login"
+msgstr "로그인"
+
+msgid "Logout"
+msgstr "로그아웃"
+
+msgid "Username"
+msgstr "사용자 이름"
+
+msgid "Password"
+msgstr "비밀번호"
+
+msgid "Submit"
+msgstr "제출"
+
+msgid "User not found"
+msgstr "사용자를 찾을 수 없습니다"
+
+msgid "Invalid status value"
+msgstr "유효하지 않은 상태 값입니다"
+
+msgid "You don't have permison create auction!"
+msgstr "경매를 생성할 권한이 없습니다!"
+
+msgid "Auction title already exists"
+msgstr "동일한 경매 제목이 이미 존재합니다"
+
+msgid "No files provided"
+msgstr "파일이 제공되지 않았습니다"
+
+msgid "Invalid file name."
+msgstr "유효하지 않은 파일 이름입니다."
+
+msgid "Invalid image file type: {file.filename}"
+msgstr "유효하지 않은 이미지 파일 형식입니다: {file.filename}"
+
+msgid "Image file too large (max 5MB): {file.filename}"
+msgstr "이미지 파일이 너무 큽니다 (최대 5MB): {file.filename}"
+
+msgid "Total image URLs length too long (max 500 chars): {image_urls}"
+msgstr "이미지 URL의 전체 길이가 너무 깁니다 (최대 500자): {image_urls}"
+
+msgid "Internal server error: {str(e)}"
+msgstr "내부 서버 오류: {str(e)}"
+
+msgid "No filename provided"
+msgstr "파일 이름이 제공되지 않았습니다"
+
+msgid "Invalid excel file type"
+msgstr "유효하지 않은 엑셀 파일 형식입니다"
+
+msgid "Excel file too large (max 10MB)"
+msgstr "엑셀 파일이 너무 큽니다 (최대 10MB)"
+
+msgid "Auction or file not found"
+msgstr "경매 또는 파일을 찾을 수 없습니다"
+
+msgid "File not found on server"
+msgstr "서버에서 파일을 찾을 수 없습니다"
+
+msgid "Auction not found"
+msgstr "경매를 찾을 수 없습니다"
+
+msgid "0: ongoing, 1: upcoming, 2: ended"
+msgstr "0: 진행 중, 1: 예정, 2: 종료됨"
+
+msgid "Tìm kiếm theo title auction"
+msgstr "경매 제목으로 검색"
+
+msgid "Sắp xếp theo: title, created_at, start_time, end_time"
+msgstr "정렬 기준: 제목, 생성일, 시작 시간, 종료 시간"
+
+msgid "Thứ tự sắp xếp: asc (A-Z), desc (Z-A)"
+msgstr "정렬 순서: asc (오름차순 A‑Z), desc (내림차순 Z‑A)"
+
+msgid "Số trang"
+msgstr "페이지 번호"
+
+msgid "Số item trên mỗi trang"
+msgstr "페이지당 항목 수"
+
+msgid "Từ ngày"
+msgstr "시작일"
+
+msgid "Đến ngày"
+msgstr "종료일"
+
+msgid "Auction is not active"
+msgstr "경매가 활성 상태가 아닙니다"
+
+msgid "User not allowed to bid"
+msgstr "입찰할 권한이 없습니다"
+
+msgid "Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid_msg}"
+msgstr "잘못된 입찰 금액입니다. 입찰 금액은 최소 {min_bid:,.0f}$이어야 합니다 {min_bid_msg}"
+
+msgid "User has already placed a bid for this auction"
+msgstr "사용자가 이 경매에 이미 입찰했습니다"
+
+msgid "You have successfully placed a bid of  {bid_in.bid_amount:,.0f}$ on auction {auction.title}."
+msgstr "경매 {auction.title}에 {bid_in.bid_amount:,.0f}$ 입찰이 성공적으로 완료되었습니다."
+
+msgid "Incorrect email or password"
+msgstr "이메일 또는 비밀번호가 올바르지 않습니다"
+
+msgid "User is inactive or banned"
+msgstr "사용자가 비활성 상태이거나 정지되었습니다"
+
+msgid "Account already registered"
+msgstr "이미 등록된 계정입니다"
+
+msgid "Invalid refresh token"
+msgstr "유효하지 않은 리프레시 토큰입니다"
+
+msgid "You don't have permison watch users!"
+msgstr "사용자 목록을 볼 권한이 없습니다!"
+
+msgid "Permission denied"
+msgstr "권한이 거부되었습니다"
+
+msgid "Status must be 0 (disactive) or 1 (active)"
+msgstr "상태는 0(비활성) 또는 1(활성)이어야 합니다"
+
+msgid "User status updated to {data.status}."
+msgstr "사용자 상태가 {data.status}(으)로 업데이트되었습니다."
+
+msgid "User updated successfully."
+msgstr "사용자가 성공적으로 업데이트되었습니다."
+
+msgid "User deleted successfully."
+msgstr "사용자가 성공적으로 삭제되었습니다."
+
+msgid "You are not allowed to edit this auction"
+msgstr "이 경매를 수정할 권한이 없습니다"
+
+msgid "You are not allowed to edit auctions"
+msgstr "경매를 수정할 권한이 없습니다"
+
+msgid "Your new price must be at least one price step away from your old price."
+msgstr "새 가격은 이전 가격과 최소 한 단계 이상 차이가 있어야 합니다."
+
+msgid "Admin cannot modify Super Admin information"
+msgstr "관리자는 슈퍼 관리자 정보를 수정할 수 없습니다"
+
+msgid "Admin cannot delete Super Admin information"
+msgstr "관리자는 슈퍼 관리자 정보를 삭제할 수 없습니다."
+
+msgid "Super Admin cannot delete Super Admin information"
+msgstr "슈퍼 관리자는 슈퍼 관리자를 삭제할 수 없습니다."
+
+msgid "Admin cannot modify Super Admin, Admin information"
+msgstr "관리자는 슈퍼 관리자, 관리자 정보를 수정할 수 없습니다."
+
+msgid "Phone number must be 10 digits"
+msgstr "전화번호는 10자리여야 합니다."
+
+msgid "Admin or Super Admin not allowed to bid"
+msgstr "관리자 또는 슈퍼 관리자는 입찰할 수 없습니다"
+
+msgid "Super Admin cannot modify Super Admin information"
+msgstr "슈퍼 관리자는 슈퍼 관리자 정보를 수정할 수 없습니다"
+
+msgid "You don't have permission to create category!"
+msgstr "You don't have permission to create category!"
+
+msgid "Category name already exists"
+msgstr "Category name already exists"

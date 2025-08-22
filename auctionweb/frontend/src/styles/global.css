@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* css đóng mở modal */
+.fade-slide-up {
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center bottom;
+}
+
+.fade-slide-up-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.95);
+}
+
+.fade-slide-up-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+
+/* css loader */
+.loader {
+  width: 60px;
+  aspect-ratio: 2;
+  --_g: no-repeat radial-gradient(circle closest-side,#2c8feb 90%,#0000);
+  background: 
+    var(--_g) 0%   50%,
+    var(--_g) 50%  50%,
+    var(--_g) 100% 50%;
+  background-size: calc(100%/3) 50%;
+  animation: l3 1s infinite linear;
+  margin: auto;
+}
+@keyframes l3 {
+    20%{background-position:0%   0%, 50%  50%,100%  50%}
+    40%{background-position:0% 100%, 50%   0%,100%  50%}
+    60%{background-position:0%  50%, 50% 100%,100%   0%}
+    80%{background-position:0%  50%, 50%  50%,100% 100%}
+}
+
+/* Google Translate Styles */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+.goog-te-gadget {
+  font-family: inherit !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.goog-te-gadget .goog-te-combo:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.goog-te-gadget .goog-te-combo:hover {
+  border-color: #9ca3af;
+}
+
+.goog-te-menu-value {
+  color: #374151 !important;
+}
+
+.goog-te-menu-value span:first-child {
+  color: #6b7280 !important;
+}
+
+/* Hide Google Translate banner */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+.goog-te-banner-frame {
+  visibility: hidden !important;
+}
+
+/* Ensure body doesn't get pushed down */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+
+/* counter number css */
+.animated-counter {
+  display: flex;
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  font-size: 1.7rem;
+  overflow: hidden;
+  line-height: 1;
+  color: #1f2937;
+}
+
+.digit-container {
+  width: 1ch;
+  overflow: hidden;
+  position: relative;
+}
+
+.digit-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.5s ease-in-out;
+}
+
+.digit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

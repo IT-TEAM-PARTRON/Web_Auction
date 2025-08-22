@@ -1,0 +1,182 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\\n"
+"POT-Creation-Date: 2024-06-01 00:00+0000\\n"
+"PO-Revision-Date: 2024-06-01 00:00+0000\\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n"
+"Language-Team: Vietnamese\\n"
+"Language: vi\\n"
+"MIME-Version: 1.0\\n"
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+msgid "Hello, World!"
+msgstr "Xin chào, Thế giới!"
+
+msgid "Login"
+msgstr "Đăng nhập"
+
+msgid "Logout"
+msgstr "Đăng xuất"
+
+msgid "Username"
+msgstr "Tên đăng nhập"
+
+msgid "Password"
+msgstr "Mật khẩu"
+
+msgid "Submit"
+msgstr "Gửi"
+
+msgid "User not found"
+msgstr "Không tìm thấy người dùng"
+
+msgid "Invalid status value"
+msgstr "Giá trị trạng thái không hợp lệ"
+
+msgid "You don't have permison create auction!"
+msgstr "Bạn không có quyền tạo phiên đấu giá!"
+
+msgid "Auction title already exists"
+msgstr "Tiêu đề phiên đấu giá đã tồn tại"
+
+msgid "No files provided"
+msgstr "Không có tệp nào được cung cấp"
+
+msgid "Invalid file name."
+msgstr "Tên tệp không hợp lệ."
+
+msgid "Invalid image file type: {file.filename}"
+msgstr "Loại tệp hình ảnh không hợp lệ: {file.filename}"
+
+msgid "Image file too large (max 5MB): {file.filename}"
+msgstr "Tệp hình ảnh quá lớn (tối đa 5MB): {file.filename}"
+
+msgid "Total image URLs length too long (max 500 chars): {image_urls}"
+msgstr "Tổng độ dài URL hình ảnh quá lớn (tối đa 500 ký tự): {image_urls}"
+
+msgid "Internal server error: {str(e)}"
+msgstr "Lỗi máy chủ nội bộ: {str(e)}"
+
+msgid "No filename provided"
+msgstr "Không có tên tệp được cung cấp"
+
+msgid "Invalid excel file type"
+msgstr "Loại tệp excel không hợp lệ"
+
+msgid "Excel file too large (max 10MB)"
+msgstr "Tệp excel quá lớn (tối đa 10MB)"
+
+msgid "Auction or file not found"
+msgstr "Không tìm thấy phiên đấu giá hoặc tệp"
+
+msgid "File not found on server"
+msgstr "Không tìm thấy tệp trên máy chủ"
+
+msgid "Auction not found"
+msgstr "Không tìm thấy phiên đấu giá"
+
+msgid "0: ongoing, 1: upcoming, 2: ended"
+msgstr "0: đang diễn ra, 1: sắp diễn ra, 2: đã kết thúc"
+
+msgid "Tìm kiếm theo title auction"
+msgstr "Tìm kiếm theo tiêu đề phiên đấu giá"
+
+msgid "Sắp xếp theo: title, created_at, start_time, end_time"
+msgstr "Sắp xếp theo: tiêu đề, ngày tạo, thời gian bắt đầu, thời gian kết thúc"
+
+msgid "Thứ tự sắp xếp: asc (A-Z), desc (Z-A)"
+msgstr "Thứ tự sắp xếp: tăng dần (A-Z), giảm dần (Z-A)"
+
+msgid "Số trang"
+msgstr "Số trang"
+
+msgid "Số item trên mỗi trang"
+msgstr "Số mục trên mỗi trang"
+
+msgid "Từ ngày"
+msgstr "Từ ngày"
+
+msgid "Đến ngày"
+msgstr "Đến ngày"
+
+msgid "Auction is not active"
+msgstr "Phiên đấu giá không hoạt động"
+
+msgid "User not allowed to bid"
+msgstr "Bạn không được phép đặt giá"
+
+msgid "Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid_msg}"
+msgstr "Số tiền đặt giá không hợp lệ. Giá của bạn phải ít nhất là {min_bid:,.0f}$ {min_bid_msg}"
+
+msgid "User has already placed a bid for this auction"
+msgstr "Bạn đã đặt giá cho phiên đấu giá này rồi"
+
+msgid "You have successfully placed a bid of  {bid_in.bid_amount:,.0f}$ on auction {auction.title}."
+msgstr "Bạn đã đặt giá thành công {bid_in.bid_amount:,.0f}$ cho phiên đấu giá {auction.title}."
+
+msgid "Incorrect email or password"
+msgstr "Email hoặc mật khẩu không đúng"
+
+msgid "User is inactive or banned"
+msgstr "Tài khoản bị khóa hoặc chưa kích hoạt"
+
+msgid "Account already registered"
+msgstr "Tài khoản đã được đăng ký"
+
+msgid "Invalid refresh token"
+msgstr "Refresh token không hợp lệ"
+
+msgid "You don't have permison watch users!"
+msgstr "Bạn không có quyền xem danh sách người dùng!"
+
+msgid "Permission denied"
+msgstr "Không có quyền truy cập"
+
+msgid "Status must be 0 (disactive) or 1 (active)"
+msgstr "Trạng thái phải là 0 (không hoạt động) hoặc 1 (hoạt động)"
+
+msgid "User status updated to {data.status}."
+msgstr "Trạng thái người dùng đã được cập nhật thành {data.status}."
+
+msgid "User updated successfully."
+msgstr "Cập nhật người dùng thành công."
+
+msgid "User deleted successfully."
+msgstr "Xóa người dùng thành công."
+
+msgid "You are not allowed to edit this auction"
+msgstr "Bạn không có quyền chỉnh sửa phiên đấu giá này"
+
+msgid "You are not allowed to edit auctions"
+msgstr "Bạn không có quyền chỉnh sửa các phiên đấu giá"
+
+msgid "Your new price must be at least one price step away from your old price."
+msgstr "Giá mới của bạn phải cách giá cũ ít nhất một bước giá."
+
+msgid "Admin cannot modify Super Admin information"
+msgstr "Admin không có quyền chỉnh sửa thông tin của supper Admin và Admin"
+
+msgid "Admin cannot delete Super Admin information"
+msgstr "Admin không có quyền xóa tài khoản Supper Admin và Admin"
+
+msgid "Super Admin cannot delete Super Admin information"
+msgstr "Super Admin không thể xóa được tài khoản Super Admin"
+
+msgid "Admin cannot modify Super Admin, Admin information"
+msgstr "Admin không có quyền thay đổi thông tin của tài khoản Super Admin và Admin"
+
+msgid "Phone number must be 10 digits"
+msgstr "Số điện thoại phải 10 kí tự"
+
+msgid "Admin or Super Admin not allowed to bid"
+msgstr "Admin và Super admin không được phép tham gia đấu giá"
+
+msgid "Super Admin cannot modify Super Admin information"
+msgstr "Super admin không thể chỉnh sửa thông tin của Supper admin"
+
+msgid "You don't have permission to create category!"
+msgstr "Bạn không có quyền tạo danh mục!"
+
+msgid "Category name already exists"
+msgstr "Danh mục đã tồn tại"
