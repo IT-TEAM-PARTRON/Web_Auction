@@ -2,7 +2,6 @@
 - Cài các thư viện BE fastapi: pip install -r requirements.txt
 - Cài thư viện FE reactjs: npm i
 # Config file .env BE:
-# Database Configuration
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=123
