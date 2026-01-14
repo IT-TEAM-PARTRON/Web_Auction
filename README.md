@@ -1,7 +1,7 @@
 #install
 - Cài các thư viện BE fastapi: pip install -r requirements.txt
 - Cài thư viện FE reactjs: npm i
-#config file .env BE:
+# Config file .env BE:
 # Database Configuration
 DB_HOST=localhost
 DB_USER=root
@@ -30,7 +30,7 @@ APP_DOMAIN=http://localhost:3000
 # CORS Settings
 ALLOWED_ORIGINS=["http://your-domain.com", "http://localhost:8080"]
 
-#config file .env BE:
+#Config file .env BE:
 VITE_BASE_URL_LAN=http://192.168.211.217:8000
 VITE_BASE_URL_PUBLIC=http://14.252.196.12:8000
 VITE_PAGE_SIZE=8
