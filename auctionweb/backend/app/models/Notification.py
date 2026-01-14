@@ -18,4 +18,4 @@ class Notification(Base):
     created_at = Column(DateTime, default=datetime.now)
 
     user = relationship("User", back_populates="notifications")
-    auction = relationship("Auction", back_populates="notifications")
+    auction = relationship("Auction", back_populates="notifications", cascade="all, delete")

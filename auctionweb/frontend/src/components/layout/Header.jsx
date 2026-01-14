@@ -3,6 +3,7 @@ import "./Header.css";
 import RealTime from "../ui/realtime";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 function Header() {
   const { t, i18n } = useTranslation();
 
@@ -17,7 +18,9 @@ function Header() {
   return (
     <div className="header-container">
       <div className="header-left">
-        <img src={logo} alt="Logo" className="header-logo" />
+        <Link to="/">
+          <img src={logo} alt="Logo" className="header-logo" />
+        </Link>
       </div>
       <div className="header-center">
         <span className="header-title">{t("auction_online")}</span>

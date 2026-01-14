@@ -64,8 +64,8 @@ msgstr "No filename provided"
 msgid "Invalid excel file type"
 msgstr "Invalid excel file type"
 
-msgid "Excel file too large (max 10MB)"
-msgstr "Excel file too large (max 10MB)"
+msgid "Excel file too large (max 100MB)"
+msgstr "Excel file too large (max 100MB)"
 
 msgid "Auction or file not found"
 msgstr "Auction or file not found"
@@ -183,3 +183,9 @@ msgstr "You don't have permission to create category!"
 
 msgid "Category name already exists"
 msgstr "Category name already exists"
+
+msgid "User not invited to bid"
+msgstr "User not invited to bid"
+
+msgid "Email already exists"
+msgstr "Email already exists"

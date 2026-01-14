@@ -57,7 +57,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   return (
     <div
       className={
-        "fixed inset-0 flex items-center justify-center z-50 max-sm:pt-[60px] bg-black bg-opacity-50 " +
+        "fixed inset-0 flex items-center justify-center z-[2000] max-sm:pt-[60px] bg-black bg-opacity-50 " +
         (isOpen ? "visible" : "invisible")
       }
       style={{ pointerEvents: isOpen ? "auto" : "none" }}
@@ -65,7 +65,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
     >
       <div
         className={
-          "mt-[220px] sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
+          "sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}
@@ -142,7 +142,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
                             <DollarSign
-                              className="text-green-500 mt-1"
+                              className="text-blue-500 mt-1"
                               size={18}
                             />
                             <div>
@@ -171,7 +171,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                           </div>
 
                           <div className="flex items-start gap-3">
-                            <DollarSign className="text-purple-500 mt-1" size={18} />
+                            <DollarSign className="text-blue-500 mt-1" size={18} />
                             <div>
                               <p className="text-sm text-gray-500">{t("starting_price")}</p>
                               <p className="text-lg font-bold text-gray-700">
@@ -185,7 +185,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
                             <MapPin
-                              className="text-red-500 mt-1"
+                              className="text-blue-500 mt-1"
                               size={18}
                             />
                             <div>
@@ -199,7 +199,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                           {bid.note && (
                             <div className="flex items-start gap-3">
                               <FileText
-                                className="text-amber-500 mt-1"
+                                className="text-blue-500 mt-1"
                                 size={18}
                               />
                               <div>

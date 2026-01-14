@@ -4,18 +4,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const AnimatedContent = ({
+const AnimatedText = ({
   children,
-  distance = 20,
-  direction = "vertical",
+  distance = 60,         
   reverse = false,
-  duration = 1.5,
-  ease = "power3.out",
+  duration = 2.5,    // Thời gian animation
+  ease = "power4.out",     
   initialOpacity = 0,
   animateOpacity = true,
-  scale = 1,
-  threshold = 0.1,
+  threshold = 0.5,
   delay = 0,
+  stagger = 0.1,           
   onComplete,
 }) => {
   const ref = useRef(null);
@@ -24,23 +23,23 @@ const AnimatedContent = ({
     const el = ref.current;
     if (!el) return;
 
-    const axis = direction === "horizontal" ? "x" : "y";
-    const offset = reverse ? -distance : distance;
+    const offset = reverse ? distance : -distance; // Text rơi từ trên xuống
     const startPct = (1 - threshold) * 100;
 
-    gsap.set(el, {
-      [axis]: offset,
-      scale,
+    const targets = el.children.length > 0 ? el.children : [el];
+
+    gsap.set(targets, {
+      y: offset,
       opacity: animateOpacity ? initialOpacity : 1,
     });
 
-    gsap.to(el, {
-      [axis]: 0,
-      scale: 1,
+    gsap.to(targets, {
+      y: 0,
       opacity: 1,
       duration,
       ease,
       delay,
+      stagger,
       onComplete,
       scrollTrigger: {
         trigger: el,
@@ -52,23 +51,22 @@ const AnimatedContent = ({
 
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
-      gsap.killTweensOf(el);
+      gsap.killTweensOf(targets);
     };
   }, [
     distance,
-    direction,
     reverse,
     duration,
     ease,
     initialOpacity,
     animateOpacity,
-    scale,
     threshold,
     delay,
+    stagger,
     onComplete,
   ]);
 
   return <div ref={ref}>{children}</div>;
 };
 
-export default AnimatedContent;
+export default AnimatedText;

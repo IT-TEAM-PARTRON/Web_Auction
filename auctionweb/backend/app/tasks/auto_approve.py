@@ -9,12 +9,13 @@ from app.i18n import _
 import os
 import time
 import dotenv
+from app.enums import TypeAuction
+
 dotenv.load_dotenv()
 
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 50))  # Số lượng auction xử lý mỗi lần
 
 logger = logging.getLogger(__name__)
-
 
 async def auto_set_winner_task():
     """
@@ -36,32 +37,23 @@ async def auto_set_winner_task():
                 .limit(BATCH_SIZE)
                 .all()
             )
+            # quét qua từng auction và set người thắng
             for auction in ended_auctions:
-                highest_bid = (
-                    db.query(Bid)
-                    .filter(Bid.auction_id == auction.id)
-                    .order_by(Bid.bid_amount.desc())
-                    .first()
-                )
-                if highest_bid:
-                    db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False})
-                    highest_bid.is_winner = True
-                    messages = get_auction_message("win", None, auction.title)
-                    notification = Notification(
-                        user_id=highest_bid.user_id,
-                        auction_id=auction.id,
-                        message=messages["en"],
-                        message_vi=messages["vi"],
-                        message_ko=messages["ko"],
-                        created_at=datetime.now(),
-                        is_read=False
+                # nếu gói đấu giá là "đăng bán" thì người thắng sẽ là người trả giá cao nhất
+                if auction.auction_type == TypeAuction.SELL:
+                    highest_bid = (
+                        db.query(Bid)
+                        .filter(Bid.auction_id == auction.id)
+                        .order_by(Bid.bid_amount.desc())
+                        .first()
                     )
-                    db.add(notification)
-                    losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != highest_bid.id).all()
-                    for losing_bid in losing_bids:
-                        messages = get_auction_message("lose", None, auction.title)
-                        losing_notification = Notification(
-                            user_id=losing_bid.user_id,
+
+                    if highest_bid:
+                        db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False}, synchronize_session=False)
+                        highest_bid.is_winner = True
+                        messages = get_auction_message("win", None, auction.title)
+                        notification = Notification(
+                            user_id=highest_bid.user_id,
                             auction_id=auction.id,
                             message=messages["en"],
                             message_vi=messages["vi"],
@@ -69,8 +61,58 @@ async def auto_set_winner_task():
                             created_at=datetime.now(),
                             is_read=False
                         )
-                        db.add(losing_notification)
-                    logger.info(f"Auto-set winner for auction {auction.id}: bid {highest_bid.id} with amount {highest_bid.bid_amount}")
+                        db.add(notification)
+                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != highest_bid.id).all()
+                        for losing_bid in losing_bids:
+                            messages = get_auction_message("lose", None, auction.title)
+                            losing_notification = Notification(
+                                user_id=losing_bid.user_id,
+                                auction_id=auction.id,
+                                message=messages["en"],
+                                message_vi=messages["vi"],
+                                message_ko=messages["ko"],
+                                created_at=datetime.now(),
+                                is_read=False
+                            )
+                            db.add(losing_notification)
+                        logger.info(f"Auto-set winner for auction {auction.id}: bid {highest_bid.id} with amount {highest_bid.bid_amount}")
+                # nếu gói đấu giá là "đăng mua" thì người thắng sẽ là người trả giá thấp nhất
+                else:
+                    lowest_bid = (
+                        db.query(Bid)
+                        .filter(Bid.auction_id == auction.id)
+                        .order_by(Bid.bid_amount.asc())
+                        .first()
+                    )
+                    if lowest_bid:
+                        db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False}, synchronize_session=False)
+                        lowest_bid.is_winner = True
+                        messages = get_auction_message("win", None, auction.title)
+                        notification = Notification(
+                            user_id=lowest_bid.user_id,
+                            auction_id=auction.id,
+                            message=messages["en"],
+                            message_vi=messages["vi"],
+                            message_ko=messages["ko"],
+                            created_at=datetime.now(),
+                            is_read=False
+                        )
+                        db.add(notification)
+                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != lowest_bid.id).all()
+                        for losing_bid in losing_bids:
+                            messages = get_auction_message("lose", None, auction.title)
+                            losing_notification = Notification(
+                                user_id=losing_bid.user_id,
+                                auction_id=auction.id,
+                                message=messages["en"],
+                                message_vi=messages["vi"],
+                                message_ko=messages["ko"],
+                                created_at=datetime.now(),
+                                is_read=False
+                            )
+                            db.add(losing_notification)
+                        logger.info(f"Auto-set winner for auction {auction.id}: bid {lowest_bid.id} with amount {lowest_bid.bid_amount}")
+
             db.commit()
             db.close()
         except Exception as e:

@@ -13,7 +13,6 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to right, rgba(36, 198, 220, 0.4), rgba(81, 74, 157, 0.4));
-
   /* backdrop-filter: blur(2px); */
   z-index: 1;
 }
@@ -32,13 +31,13 @@ body.login-no-scroll {
 .login-form-container {
   position: relative;
   z-index: 2;
-  background: rgba(255,255,255,0.7);
-  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.12);
   padding: 48px 36px 36px 36px;
   min-width: 350px;
   max-width: 400px;
-  margin: 40px 0;
+  margin: 32px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,17 +50,119 @@ body.login-no-scroll {
 }
 .login-title {
   text-align: center;
-  margin-bottom: 28px;
   font-size: 2.2rem;
   font-weight: 700;
   color: #2d2d2d;
   letter-spacing: 1px;
-  background-color: #6a82fb;
+  background-color: #2081f8;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* From Uiverse.io by Galahhad */ 
+/* checkbox settings 👇 */
 
+.ui-checkbox {
+  --primary-color: #1677ff;
+  --secondary-color: #fff;
+  --primary-hover-color: #4096ff;
+  /* checkbox */
+  --checkbox-diameter: 20px;
+  --checkbox-border-radius: 5px;
+  --checkbox-border-color: #d9d9d9;
+  --checkbox-border-width: 1px;
+  --checkbox-border-style: solid;
+  /* checkmark */
+  --checkmark-size: 1.2;
+}
+
+.ui-checkbox, 
+.ui-checkbox *, 
+.ui-checkbox *::before, 
+.ui-checkbox *::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ui-checkbox {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: var(--checkbox-diameter);
+  height: var(--checkbox-diameter);
+  border-radius: var(--checkbox-border-radius);
+  background: var(--secondary-color);
+  border: var(--checkbox-border-width) var(--checkbox-border-style) var(--checkbox-border-color);
+  -webkit-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.ui-checkbox::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-box-shadow: 0 0 0 calc(var(--checkbox-diameter) / 2.5) var(--primary-color);
+  box-shadow: 0 0 0 calc(var(--checkbox-diameter) / 2.5) var(--primary-color);
+  border-radius: inherit;
+  opacity: 0;
+  -webkit-transition: all 0.5s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+  -o-transition: all 0.5s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+  transition: all 0.5s cubic-bezier(0.12, 0.4, 0.29, 1.46);
+}
+
+.ui-checkbox::before {
+  top: 40%;
+  left: 50%;
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 7px;
+  border-right: 2px solid var(--secondary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  -webkit-transform: translate(-50%, -50%) rotate(45deg) scale(0);
+  -ms-transform: translate(-50%, -50%) rotate(45deg) scale(0);
+  transform: translate(-50%, -50%) rotate(45deg) scale(0);
+  opacity: 0;
+  -webkit-transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),opacity 0.1s;
+  -o-transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),opacity 0.1s;
+  transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),opacity 0.1s;
+}
+
+/* actions */
+
+.ui-checkbox:hover {
+  border-color: var(--primary-color);
+}
+
+.ui-checkbox:checked {
+  background: var(--primary-color);
+  border-color: transparent;
+}
+
+.ui-checkbox:checked::before {
+  opacity: 1;
+  -webkit-transform: translate(-50%, -50%) rotate(45deg) scale(var(--checkmark-size));
+  -ms-transform: translate(-50%, -50%) rotate(45deg) scale(var(--checkmark-size));
+  transform: translate(-50%, -50%) rotate(45deg) scale(var(--checkmark-size));
+  -webkit-transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+  -o-transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+  transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+}
+
+.ui-checkbox:active:not(:checked)::after {
+  -webkit-transition: none;
+  -o-transition: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  transition: none;
+  opacity: 1;
+}
 .input-group {
   position: relative;
   margin-bottom: 22px;
@@ -71,12 +172,17 @@ body.login-no-scroll {
 .input-group input {
   width: 100%;
   padding: 14px 44px 14px 50px;
-  border-radius: 12px;
+  border-radius: 8px;
   border: none;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   font-size: 0.8rem;
+  transition: 300ms ease-in-out;
   outline: none;
+}
+.input-group input:focus {
+  border-color: #2e79e9d2;
+  box-shadow: 0 0 20px rgba(28, 129, 245, 0.665);
 }
 
 .input-icon {
@@ -84,7 +190,7 @@ body.login-no-scroll {
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #5571fc;
+  color: #1570f8d2;
   font-size: 0.9rem;
   opacity: 0.8;
 }

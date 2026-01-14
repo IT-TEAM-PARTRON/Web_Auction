@@ -1,5 +1,6 @@
 import "./Login.css";
 import logo from "../../assets/images/logo.png";
+import flagVn from "../../assets/images/flag_vietnam.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
@@ -112,6 +113,7 @@ function Login() {
         }`}
       >
         <h1 className="login-title">{t("login", "Login")}</h1>
+        <p className="text-center mb-4 text-[14px] text-gray-600">{t("login_des")}</p>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <span className="input-icon">
@@ -164,6 +166,7 @@ function Login() {
                 borderRadius: 6,
                 border: "1px solid #ddd",
                 fontSize: 12,
+                outline: "none"
               }}
             >
               <option value="vi">Tiếng Việt</option>
@@ -172,8 +175,9 @@ function Login() {
             </select>
           </div>
           <div className="login-options">
-            <label>
+            <label  className="flex items-center gap-2 cursor-pointer">
               <input
+                className="ui-checkbox"
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}

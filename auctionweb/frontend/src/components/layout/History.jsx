@@ -17,14 +17,14 @@ function History() {
   });
   return (
     <AnimatedContent>
-      <main className="history-content ">
+      <main className="history-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
             background: "#fff",
             borderRadius: "12px",
             padding: "40px",
             maxWidth: "1200px",
-            margin: "40px auto",
+            margin: "0px auto",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >
@@ -38,7 +38,7 @@ function History() {
               textAlign: "center",
             }}
           >
-            {t("history_title")}
+            {t("history_title").toUpperCase()}
           </h2>
           <div style={{ fontSize: "18px", color: "#222", lineHeight: "2" }}>
             <div

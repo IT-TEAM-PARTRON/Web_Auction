@@ -20,3 +20,5 @@ class User(Base):
     bids = relationship("Bid", back_populates="user", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="user", cascade="all, delete-orphan")
+    participated_auctions = relationship("AuctionParticipant", back_populates="user", cascade="all, delete")
+

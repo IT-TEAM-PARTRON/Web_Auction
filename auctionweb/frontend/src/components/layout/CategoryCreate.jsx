@@ -71,7 +71,7 @@ const CreateCategoryForm = ({
     >
       <div
         className={clsx(
-          "bg-gray-200 w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
+          "bg-white w-full max-w-2xl max-sm:w-[90%] max-h-[95%] p-8 rounded-2xl relative overflow-hidden fade-slide-up",
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden"
         )}
         onClick={(e) => e.stopPropagation()}
@@ -106,26 +106,17 @@ const CreateCategoryForm = ({
         >
           <div className="relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
-                />
+              <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 13.5H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
               </svg>
+
               {t("category_name")}
               <span className="text-red-500">*</span>
             </label>
             <input
               {...register("category_name")}
               type="text"
-              className="w-full p-2 rounded shadow"
+              className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
             />
             {errors.category_name && (
               <p className="text-red-500 absolute right-1 text-xs">
@@ -136,18 +127,8 @@ const CreateCategoryForm = ({
 
           <div className="relative">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700 mb-1">
-              <svg
-                className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"
-                />
+              <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
               </svg>
               {t("description")}
               <span className="text-red-500">*</span>
@@ -155,7 +136,7 @@ const CreateCategoryForm = ({
             <input
               {...register("description")}
               type="text"
-              className="w-full p-2 rounded shadow"
+              className="w-full p-2 rounded-lg border border-gray-300 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
             />
             {errors.description && (
               <p className="text-red-500 absolute right-1 text-xs">
@@ -165,12 +146,12 @@ const CreateCategoryForm = ({
           </div>
 
           {/* Submit button */}
-          <div className="flex justify-center pt-4">
+          <div className="flex justify-center pt-4 ">
             <button
               type="submit"
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded hover:bg-blue-600 transform transition-transform duration-300 hover:scale-105"
             >
-                {t("submit")}
+                {t("create_category")}
             </button>
           </div>
         </form>

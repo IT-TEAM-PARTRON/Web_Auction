@@ -64,8 +64,8 @@ msgstr "Không có tên tệp được cung cấp"
 msgid "Invalid excel file type"
 msgstr "Loại tệp excel không hợp lệ"
 
-msgid "Excel file too large (max 10MB)"
-msgstr "Tệp excel quá lớn (tối đa 10MB)"
+msgid "Excel file too large (max 100MB)"
+msgstr "Tệp excel quá lớn (tối đa 100MB)"
 
 msgid "Auction or file not found"
 msgstr "Không tìm thấy phiên đấu giá hoặc tệp"
@@ -180,3 +180,9 @@ msgstr "Bạn không có quyền tạo danh mục!"
 
 msgid "Category name already exists"
 msgstr "Danh mục đã tồn tại"
+
+msgid "User not invited to bid"
+msgstr "Bạn không được mời tham gia đấu giá"
+
+msgid "Email already exists"
+msgstr "Email đã tồn tại."

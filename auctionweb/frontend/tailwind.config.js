@@ -7,10 +7,14 @@ module.exports = {
   theme: {
     extend: {
     fontFamily: {
-      sans: ['Maven Pro', 'Helvetica', 'sans-serif'],
+      sans: ['Open Sans', 'Helvetica', 'sans-serif'],
+      rele: ['DM Sans', 'sans-serif'],
+      playfair: ["Playfair Display", "sans-serif"],
     },
   },
   },
+  
   plugins: [require('tailwind-scrollbar-hide')],
+  plugins: [require("@tailwindcss/typography")],
 }
 

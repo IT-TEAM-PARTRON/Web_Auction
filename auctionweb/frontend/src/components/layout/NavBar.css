@@ -3,13 +3,17 @@
   justify-content: space-between;
   padding: 10px 20px;
   border-bottom: 1px solid #ccc;
-  background-color: white; 
-  padding-top: 70px; 
+  background-color: white;
+  position: fixed;
+  width: 100%;
+  z-index: 1111;
+  white-space: nowrap;
+  margin-top: 60px;
 }
 @media (max-width: 1100px) {
   .nav-wrapper {
     padding: 6px 2vw;
-    padding-top: 120px;
+    padding-top: 60px;
   }
   .nav-link {
     font-size: 1rem;
@@ -53,7 +57,7 @@
     flex-direction: column;
     align-items: stretch;
     padding: 10px 8px;
-    padding-top:130px ;
+    padding-top:50px ;
   }
   .notification-dropdown{
     left: 0;
@@ -69,7 +73,7 @@
   }
 
   .nav-left {
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
   .nav-link {
@@ -80,12 +84,13 @@
 
 @media (max-width: 480px) {
   .nav-wrapper {
-    padding: 6px 2vw;
-    padding-top: 200px;
+    padding-top: 20px;
   }
   .nav-link {
     font-size: 1rem;
+    padding: 5px 0px;
   }
+
   .notification-dropdown{
     left: 0;
   }
@@ -104,9 +109,6 @@
   font: inherit;
   color: inherit;
 }
-/* .user-greeting{
-  color: #2e2bf5 !important;
-} */
 .nav-link {
   text-decoration: none;
   color: #555;
@@ -115,8 +117,7 @@
   transition: color 0.4s cubic-bezier(.4,2,.6,1);
 }
 .nav-link:hover {
-  color: #4B48DA;
-  
+  color: #4B48DA;  
 }
 .nav-link::after {
   content: "";
@@ -142,12 +143,12 @@
 
 /* ==== Bell Icon ==== */
 .bell-icon {
-  color: #2b4af9;
+  color: #1482f7;
   font-size: 20px;
   transition: color 0.2s, transform 0.2s;
 }
 .bell-icon:hover {
-  color: #007bff;
+  color: #2b4af9;
   transform: scale(1.15);
 }
 
@@ -250,13 +251,13 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(to right, #c3e0ff, #4c7ff5);
+  background: linear-gradient(to right, #aeaeae8e, #aeaeae9a);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 16px;
-  color: #333;
+  color: #262df1db;
   flex-shrink: 0;
 }
 

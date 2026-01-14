@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 
 const AuctionSearch = () => {
   const [searchText, setSearchText] = useState("");
+  const [auction_type, setAuction_type] = useState(null);
   const [category_id, setCategory_id] = useState(null);
   const [categories, setCategories] = useState([]);
   const [status, setStatus] = useState(null);
@@ -61,6 +62,7 @@ const AuctionSearch = () => {
   const setDataForParam = () => {
     setSearchParam({
       title: searchText.trim(),
+      auction_type: auction_type || "",
       category_id: category_id || "",
       type: "", 
       status: status,
@@ -83,7 +85,7 @@ const AuctionSearch = () => {
     if (statusFromUrl !== null) {
       setStatus(statusFromUrl);
       setSearchParam({
-        status: statusFromUrl,
+        status: statusFromUrl,        
         category_id: "",
         type: "",
         sort_by: "",
@@ -118,8 +120,8 @@ const AuctionSearch = () => {
 
   return (
     <AnimatedContent>
-      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.10)] p-4 text-xs rounded-xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-4 items-end">
+      <div className="shadow-[0_4px_24px_rgba(0,0,0,0.30)] mt-[250px] sm:mt-[160px] md:mt-[190px] lg:mt-[150px] xl:mt-[100px] p-4 text-xs rounded-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 mb-4 items-end">
           {/* Search input */}
           <div className="relative col-span-1">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
@@ -154,6 +156,22 @@ const AuctionSearch = () => {
             </select>
           </div>
 
+          {/* Auction type select */}
+          <div className="col-span-1">
+            <label className="text-sm text-gray-600 mb-1 mr-2 block">
+              {t("auction_type")}
+            </label>
+            <select onChange={(e) =>
+                setAuction_type(e.target.value === "" ? null : e.target.value)
+              }
+              className="border border-gray-400 rounded-lg px-3 py-2 w-full"
+              value={auction_type || ""}>
+              <option value="">{t("select_group")}</option>
+              <option value="SELL">{t("sell")}</option>
+              <option value="BUY">{t("buy")}</option>
+            </select>
+          </div>
+          
           {/* Status select */}
           <div className="col-span-1">
             <label className="text-sm text-gray-600 mb-1 mr-2 block">
@@ -242,7 +260,7 @@ const AuctionSearch = () => {
           <span className="font-bold text-red-500">{total}</span>
         </div>
         {isLoading ? (
-          <div className="loader my-10" />
+          <div className="loader my-5" />
         ) : (
           <RenderCardAuction
             arrAuction={arrAuction}

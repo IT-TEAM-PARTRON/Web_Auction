@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const axiosWithToken = axios.create({
   baseURL: '/api/v1',
-  timeout: 5000,
+  timeout: 60000,
 });
 
 axiosWithToken.interceptors.request.use(

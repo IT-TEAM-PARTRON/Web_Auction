@@ -2,7 +2,7 @@ import AnimatedContent from "../ui/animatedContent";
 import imagefac from "../../assets/images/factory.jpg";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-
+import MapEmbed from "./MapEmbed";
 function Contact() {
   const { t, i18n } = useTranslation();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
@@ -12,16 +12,17 @@ function Contact() {
       i18n.changeLanguage(savedLang);
     }
   }, [i18n]);
+  
   return (
     <AnimatedContent>
-      <main className="rule-content">
+      <main className="rule-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
             background: "#fff",
             borderRadius: "6px",
             padding: "32px",
             maxWidth: "1200px",
-            margin: "40px auto",
+            margin: "0px auto",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
@@ -33,9 +34,9 @@ function Contact() {
               fontSize: "2rem",
             }}
           >
-            {t("contact_title")}
+            {t("contact_title").toUpperCase()}
           </h3>
-          <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
             <div style={{ flex: 1 }}>
               <h2
                 style={{
@@ -119,7 +120,7 @@ function Contact() {
               </div>
             </div>
 
-            <img
+            {/* <img
               src={imagefac}
               alt="Liên hệ"
               style={{
@@ -131,7 +132,8 @@ function Contact() {
                 boxShadow:
                   "0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08)",
               }}
-            />
+            /> */}            
+            <MapEmbed />
           </div>
         </div>
       </main>

@@ -25,8 +25,6 @@ function NavBar() {
     logout();
     navigate("/login");
   };
-
-  // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
     i18n.changeLanguage(savedLang);
@@ -109,20 +107,22 @@ function NavBar() {
                 {t("account_info")}
               </span>
 
-              <span
-                className="nav-link"
-                onClick={() => setShowAuctionHistory(true)}
-                style={{ cursor: "pointer" }}
-                // tabIndex={0}
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") &&
-                  setShowAuctionHistory(true)
-                }
-                aria-label={t("auction_history")}
-                role="button"
-              >
-                {t("auction_history")}
-              </span>
+              {user?.role === "user" && (
+                <span
+                  className="nav-link"
+                  onClick={() => setShowAuctionHistory(true)}
+                  style={{ cursor: "pointer" }}
+                  // tabIndex={0}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") &&
+                    setShowAuctionHistory(true)
+                  }
+                  aria-label={t("auction_history")}
+                  role="button"
+                >
+                  {t("auction_history")}
+                </span>
+              )}
 
               <button className="nav-link button-link" onClick={handleLogout}>
                 {t("logout", "Logout")}

@@ -39,7 +39,7 @@ function Register() {
       .string()
       .min(2, t("company_min"))
       .max(100, t("company_max"))
-      .regex(/^[\p{L}\s]+$/u, t("company_regex")),
+      .regex(/^[\p{L}\s\0-9]+$/u, t("company_regex")),
     phone_number: z
       .string()
       .min(10, t("phone_require"))
@@ -53,7 +53,7 @@ function Register() {
       .min(8, t("password_min"))
       .max(30, t("password_max"))
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@#$!%*?&]+$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@#$!%*?&]+$/,
         t("password_regex")
       ),
     passwordConfirm: z.string().min(8, t("password_min")),
@@ -118,7 +118,9 @@ function Register() {
         }`}
       >
         <h1 className="login-title">{t("register", "Register")}</h1>
+        <p className="text-center text-[14px] mb-2 text-gray-600">{t("register_des")}</p>
         <form onSubmit={handleSubmit(submitForm)}>
+          {/* Email Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faEnvelope} />
@@ -130,11 +132,12 @@ function Register() {
               autoComplete="email"
             />
             {errors.email && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.email.message}
               </p>
             )}
           </div>
+          {/* Username Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faUser} />
@@ -143,14 +146,15 @@ function Register() {
               {...register("username")}
               type="text"
               placeholder={t("username", "Username*")}
-              autoComplete="username"
+              autoComplete="off"
             />
             {errors.username && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.username.message}
               </p>
             )}
           </div>
+          {/* Company Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faBuilding} />
@@ -162,11 +166,12 @@ function Register() {
               autoComplete="organization"
             />
             {errors.company && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.company.message}
               </p>
             )}
           </div>
+          {/* Phone Number Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faPhone} />
@@ -178,11 +183,12 @@ function Register() {
               autoComplete="tel"
             />
             {errors.phone_number && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.phone_number.message}
               </p>
             )}
           </div>
+          {/* Password Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faLock} />
@@ -194,7 +200,7 @@ function Register() {
               autoComplete="new-password"
             />
             {errors.password && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.password.message}
               </p>
             )}
@@ -206,6 +212,7 @@ function Register() {
               <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
             </span>
           </div>
+          {/* Confirm Password Input */}
           <div className="input-group">
             <span className="input-icon">
               <FontAwesomeIcon icon={faLock} />
@@ -219,7 +226,7 @@ function Register() {
               onChange={(e) => setConfirm(e.target.value)}
             />
             {errors.password && (
-              <p className="text-red-500 text-[8px] absolute left-0 ml-1">
+              <p className="text-red-500 text-[10px] absolute left-0 ml-1">
                 {errors.password.message}
               </p>
             )}
@@ -231,6 +238,7 @@ function Register() {
               <FontAwesomeIcon icon={showConfirm ? faEyeSlash : faEye} />
             </span> */}
           </div>
+
           <button type="submit" className="login-btn">
             {t("register", "Register")}
           </button>

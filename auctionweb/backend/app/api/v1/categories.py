@@ -2,6 +2,7 @@ import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from typing import Optional
+
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.functions import user, func
@@ -17,6 +18,8 @@ router = APIRouter()
 class CategoryOut(BaseModel):
     category_id: str
     category_name: str
+    # category_name_vi: str
+    # category_name_ko: str
     description: str
     class Config:
         # orm_mode = True
@@ -44,15 +47,16 @@ def get_current_user(
 
 @router.get("/categories", response_model=CategoryListOut)
 def get_categories(
-    db: Session = Depends(get_db),
+    request: Request,
+    db: Session = Depends(get_db),    
     search_text: Optional[str] = Query(None, description="Tìm kiếm theo tên danh mục"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc hoặc desc"),
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số danh mục mỗi trang")
 ):
     # Base query
-    query = db.query(Category)
-
+    query = db.query(Category).order_by(Category.created_at.desc())
+    lang = request.state.locale
     # Tìm kiếm theo tên danh mục
     if search_text:
         query = query.filter(Category.category_name.ilike(f"%{search_text}%"))
@@ -64,7 +68,7 @@ def get_categories(
 
     # Đếm tổng số danh mục
     total_categories = query.count()
-
+    
     # Phân trang
     offset = (page - 1) * page_size
     categories = query.offset(offset).limit(page_size).all()
@@ -72,9 +76,16 @@ def get_categories(
     # Định dạng dữ liệu trả về
     category_list = []
     for category in categories:
+        if lang == "vi":
+            category_name = category.category_name_vi or category.category_name
+        elif lang == "ko":
+            category_name = category.category_name_ko or category.category_name
+        else:  # mặc định là tiếng Anh
+            category_name = category.category_name
+            
         category_list.append({
             "category_id": category.category_id,
-            "category_name": category.category_name,
+            "category_name": category_name,
             "description": category.description
         })
 

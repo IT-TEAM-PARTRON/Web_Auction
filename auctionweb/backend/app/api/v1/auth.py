@@ -59,7 +59,7 @@ class ResetPasswordResponse(BaseModel):
 # def verify_password(plain_password, hashed_password):
 #     return pwd_context.verify(plain_password, hashed_password)
 
-def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=300)):
+def create_access_token(data: dict, expires_delta: timedelta = timedelta(days=7)):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
@@ -81,7 +81,6 @@ def create_reset_token(data: dict, expires_delta: timedelta = timedelta(hours=1)
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-            
 @router.post("/login", response_model=Token)
 def login(request: Request, login_data: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == login_data.email).first()
@@ -239,8 +238,6 @@ def reset_password(request: Request, reset_data: ResetPasswordRequest, db: Sessi
     except Exception as e:
         raise HTTPException(status_code=500, detail=_("An error occurred while resetting password", request))
 
-
-
 #verify reset token (optional)
 @router.post("/verify-reset-token")
 def verify_reset_token(request: Request, token_data: VerifyResetTokenRequest):
@@ -258,4 +255,3 @@ def verify_reset_token(request: Request, token_data: VerifyResetTokenRequest):
     except JWTError:
         raise HTTPException(status_code=400, detail=_("Invalid or expired reset token", request))
 
-    

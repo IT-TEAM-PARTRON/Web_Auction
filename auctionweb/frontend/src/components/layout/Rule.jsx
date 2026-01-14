@@ -17,14 +17,14 @@ function Rule() {
 
   return (
     <AnimatedContent>
-      <main className="rule-content" translate="yes">
+      <main className="rule-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]" translate="yes">
         <div
           style={{
             background: "#fff",
             borderRadius: "6px",
             padding: "32px",
             maxWidth: "1200px",
-            margin: "40px auto",
+            margin: "0px auto",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
           }}
         >
@@ -36,7 +36,7 @@ function Rule() {
               fontSize: "2rem",
             }}
           >
-            {ruleTitle}
+            {ruleTitle.toUpperCase()}
           </h3>
           <ol
             className="google-translate-section"

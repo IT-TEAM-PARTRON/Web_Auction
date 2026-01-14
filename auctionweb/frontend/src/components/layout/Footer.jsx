@@ -6,11 +6,12 @@ import {
   faEnvelope,
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export const Footer = () => {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
   const addresses = t("addresses", { returnObjects: true });
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
@@ -26,7 +27,10 @@ export const Footer = () => {
       "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam",
     ],
   };
-
+  // Scroll lên đầu khi chuyển trang
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
   const helpLinks = [
     { label: t("register_account_pricing"), to: "/guide" },
     { label: t("policy_security"), to: "/policy" },

@@ -12,6 +12,7 @@ const NotificationDropdown = ({ triggerRef }) => {
   const [notifications, setNotifications] = useState([]);
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const { t, i18n } = useTranslation();
   const closeDropdown = () => {
     setClosing(true);
@@ -51,6 +52,7 @@ const NotificationDropdown = ({ triggerRef }) => {
 
     if (visible) {
       document.addEventListener("mousedown", handleClickOutside);
+      setShowAll(false); 
       axiosClient
         .get("/notifications")
         .then((res) => setNotifications(res.data || []))
@@ -117,7 +119,7 @@ const NotificationDropdown = ({ triggerRef }) => {
             {notifications.length === 0 ? (
               <li className="notification-item">{t('no_announcements')}</li>
             ) : (
-              notifications.map((item) => (
+              (showAll ? notifications : notifications.slice(0, 8)).map((item) => (
                 <li
                   className={`notification-item${item.is_read ? "" : " unread"}`}
                   key={item.id}
@@ -144,6 +146,26 @@ const NotificationDropdown = ({ triggerRef }) => {
               ))
             )}
           </ul>
+          {notifications.length > 10 && !showAll && (
+            <div className="notification-more">
+              <button 
+                className="more-button"
+                onClick={() => setShowAll(true)}
+                style={{
+                  width: "100%",
+                  padding: "8px 12px",
+                  border: "none",
+                  backgroundColor: "#f0f0f0",
+                  color: "#666",
+                  cursor: "pointer",
+                  borderTop: "1px solid #e0e0e0",
+                  fontSize: "14px"
+                }}
+              >
+                {t('load_more')} ({notifications.length - 8})
+              </button>
+            </div>
+          )}
         </div>
       )}
     </span>

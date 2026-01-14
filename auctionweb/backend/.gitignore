@@ -2,8 +2,8 @@
 # Python Cache & Bytecode
 # -------------------------
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
+*.pyo
 
 # -------------------------
 # Environment / Virtualenv
@@ -86,16 +86,20 @@ docker-compose.yml
 *.dockerignore
 
 # -------------------------
-# Frontend (Nếu có React/Vue)
+# Excel Files
 # -------------------------
-node_modules/
-dist/
-*.local
-
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.xltx
+*.xltm
 # -------------------------
-# Others
+# Image Files
 # -------------------------
-*.DS_Store
-*.pkl
-*.h5
-*.ckpt
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff

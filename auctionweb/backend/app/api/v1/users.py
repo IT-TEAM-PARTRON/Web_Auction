@@ -46,6 +46,14 @@ class UserOutInfo(BaseModel):
 
 class UserStatusUpdate(BaseModel):
     status: int
+class UserCreate(BaseModel):
+    email: str
+    username: str
+    company: str = None
+    password: str
+    phone_number: str =None
+    role: UserRole = UserRole.USER  # Mặc định là user
+    status: int = 1 #mặc định là active
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
@@ -66,7 +74,7 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail=_("User not found", request))
     return user
-    
+
 @router.get("/users", response_model=UsersListOut)
 def get_users(
     request: Request,
@@ -75,6 +83,7 @@ def get_users(
     search_text: Optional[str] = Query(None, description="Tìm kiếm theo username hoặc email"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at, bid_count"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc, desc"),
+    role: Optional[str] = Query(None, description="Lọc theo role: USER, ADMIN, SUPER_ADMIN"),
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số user mỗi trang")
 ):
@@ -89,11 +98,13 @@ def get_users(
         User,
         func.count(Bid.id).label('bid_count')
     ).outerjoin(Bid, User.id == Bid.user_id).group_by(User.id)
-    
+
     if search_text:
         query = query.filter(
             (User.username.ilike(f"%{search_text}%")) | (User.email.ilike(f"%{search_text}%"))
         )
+    if role:
+        query = query.filter(User.role == role)
     # Sắp xếp
     if sort_by == "username":
         order_col = User.username
@@ -156,6 +167,47 @@ def get_user(
         "created_at": user.created_at,
         "status": user.status,
         "bid_count": bid_count
+    }
+
+@router.put("/users/create", response_model=UserOut)
+def create_user(
+    request: Request,
+    data: UserCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        raise HTTPException(status_code=403, detail=_("Permission denied", request))
+    
+    # Check email already exists
+    existing_user = db.query(User).filter(
+        (User.email == data.email)
+    ).first()
+    if existing_user:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=_("Email already exists", request))
+
+    new_user = User(
+        username=data.username.strip(),
+        phone_number=data.phone_number.strip() if data.phone_number else None,
+        password=data.password.strip(),
+        created_at=datetime.now(),
+        company=data.company.strip() if data.company else None,
+        email=data.email.strip()
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    return {
+        "id": new_user.id,
+        "username": new_user.username,
+        "email": new_user.email,
+        "phone_number": new_user.phone_number,
+        "company": new_user.company,
+        "role": new_user.role.value,
+        "created_at": new_user.created_at,
+        "status": new_user.status,
+        "bid_count": 0
     }
 
 @router.patch("/users/{user_id}/status")
@@ -221,7 +273,6 @@ def update_user(
     db.refresh(user)
 
     return {"message": _("User updated successfully.", request)}
-
 
 @router.delete("/users/{user_id}")
 def delete_user(
