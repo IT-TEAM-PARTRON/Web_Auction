@@ -1,0 +1,94 @@
+.falling-flowers-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999; /* Đảm bảo nằm trên cùng nhưng không chặn click */
+  overflow: hidden;
+  /* Perspective tạo chiều sâu 3D cho hiệu ứng lật */
+  perspective: 1000px; 
+}
+
+/* Layer 1: Rơi từ trên xuống */
+.flower-wrapper {
+  position: absolute;
+  top: -10%; /* Bắt đầu cao hơn màn hình */
+  will-change: transform;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Layer 2: Lắc lư (X axis translation) */
+.flower-sway {
+  will-change: transform;
+  animation-name: sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Layer 3: Xoay và Lật (3D Rotation) */
+.flower-rotate {
+  will-change: transform;
+  animation-name: rotate3d;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-style: preserve-3d;
+}
+
+.flower-visual {
+  width: 100%;
+  height: 100%;
+  /* Giúp SVG sắc nét hơn khi xoay */
+  backface-visibility: visible; 
+}
+
+/* --- KEYFRAMES --- */
+
+/* Rơi mượt mà */
+@keyframes fall {
+  0% {
+    transform: translate3d(0, -10vh, 0);
+  }
+  100% {
+    transform: translate3d(0, 110vh, 0);
+  }
+}
+
+/* Lắc lư tự nhiên (Dùng cubic-bezier để không bị đều quá) */
+@keyframes sway {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(var(--sway-amount), 0, 0);
+  }
+}
+
+/* Xoay 3D hỗn hợp: vừa xoay tròn vừa lật mặt */
+@keyframes rotate3d {
+  0% {
+    transform: rotate3d(1, 1, 1, 0deg);
+  }
+  50% {
+    transform: rotate3d(1, 1, 1, 180deg);
+  }
+  100% {
+    transform: rotate3d(1, 1, 1, 360deg);
+  }
+}
+
+/* --- OPTIMIZATION & ACCESSIBILITY --- */
+
+/* Tắt hiệu ứng nếu người dùng cài đặt giảm chuyển động */
+@media (prefers-reduced-motion: reduce) {
+  .falling-flowers-container {
+    display: none;
+  }
+}
+
+/* Mobile optimization: Giảm số lượng hoa hoặc ẩn bớt hiệu ứng phức tạp nếu cần */
+@media (max-width: 768px) {
+  .flower-wrapper:nth-child(odd) {
+    display: none; /* Giảm 50% số lượng hoa trên mobile để đỡ lag */
+  }
+}

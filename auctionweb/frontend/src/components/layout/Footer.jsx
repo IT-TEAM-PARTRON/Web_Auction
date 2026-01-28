@@ -8,10 +8,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useTetMode } from "../../contexts/TetModeContext";
 
 export const Footer = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
+  const { tetMode } = useTetMode();
   const addresses = t("addresses", { returnObjects: true });
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
@@ -20,8 +22,8 @@ export const Footer = () => {
   }, [i18n]);
   const companyInfo = {
     name: "Partron Vina Co., Ltd.",
-    phone: "+84 123 456 789",
-    email: "contact@partronvina.com",
+    phone: "0904-839-973",
+    email: "dong.pv@partron.co.kr",
     addresses: [
       "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
       "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam",
@@ -45,11 +47,14 @@ export const Footer = () => {
   }, [i18n]);
 
   return (
-    <footer className="footer">
+    <footer 
+      className={`footer transition-colors duration-500 ${tetMode ? 'tet-footer' : ''}`}
+      style={tetMode ? { backgroundColor: '#18191a', color: '#ffffff' } : {}}
+    >
       <div className="footer__container">
         <div className="footer__section footer__company">
-          <h2 className="footer__title">{companyInfo.name}</h2>
-          <ul className="footer__list">
+          <h2 className={`footer__title ${tetMode ? '!text-white' : ''}`}>{companyInfo.name}</h2>
+          <ul className={`footer__list ${tetMode ? 'text-gray-200' : ''}`}>
             <li>
               <FontAwesomeIcon icon={faPhone} style={{ marginRight: 8 }} />
               <span className="footer__label">{t("phone")}:</span>{" "}
@@ -78,11 +83,11 @@ export const Footer = () => {
         </div>
 
         <div className="footer__section footer__help">
-          <h2 className="footer__title">{t("auctioneer_assistance")}</h2>
+          <h2 className={`footer__title ${tetMode ? '!text-white' : ''}`}>{t("auctioneer_assistance")}</h2>
           <ul className="footer__list footer__list--inline">
             {helpLinks.map((link, idx) => (
               <li key={idx} className="footer__item">
-                <Link to={link.to} className="footer__link">
+                <Link to={link.to} className={`footer__link ${tetMode ? '!text-gray-200 hover:!text-yellow-300' : ''}`}>
                   {link.label}
                 </Link>
               </li>

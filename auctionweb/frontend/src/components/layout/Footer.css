@@ -62,3 +62,9 @@
     margin-top: 16px;
   }
 }
+
+/* Tet Mode */
+.footer.tet-footer {
+  background: #18191a !important;
+  color: #ffffff !important;
+}

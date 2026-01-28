@@ -7,12 +7,17 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { useTetMode } from "../../contexts/TetModeContext";
+
 export default function UpdateAccountModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { t, i18n } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const { user } = useAuth();
+  const { tetMode } = useTetMode();
   const schema = z.object({
       username: z
         .string()
@@ -76,6 +81,10 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
       })
       .catch((err) => {
         toast.error(err.response?.data?.detail || err.message || "Error load account info");
+        if (err.response?.status === 401) {
+          navigate("/login");
+          return;
+        }
       })
       .finally(() => setLoading(false));
   }, [isOpen, user?.id]);
@@ -125,13 +134,13 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
     >
       <div
         className={
-          "sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-3xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
+          `sm:mt-[60px] md:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-3xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'} ` +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
+        <div className={`text-white p-3 flex items-center justify-between relative ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}>
           <div className="flex-1 text-center">
             <h2 className="text-xl font-bold uppercase">
               {t("account_info")}
@@ -164,9 +173,9 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
           <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Email */}
             <div>
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
+              <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
+                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -182,7 +191,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
                 type="email"
                 placeholder="example@email.com"
                 value={formData.email}
-                className="w-full border cursor-not-allowed border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className={`w-full border cursor-not-allowed rounded-lg px-4 py-2 text-sm outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-300 focus:border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                 readOnly 
               />
             </div>
@@ -190,9 +199,9 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
             {/* username */}
             <div >
               
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
+              <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
+                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -209,15 +218,15 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
                 type="text"
                 value={formData.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className={`w-full border rounded-lg px-4 py-2 text-sm outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white focus:border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                 disabled={loading}
               />
             </div>
 
             {/* Số điện thoại */}
             <div>
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
-                <svg  fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+              <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
                 </svg>
                 {t("phone")}
@@ -226,15 +235,15 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
                 type="text"
                 value={formData.phone_number}
                 onChange={(e) => handleInputChange('phone_number', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className={`w-full border rounded-lg px-4 py-2 text-sm outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white focus:border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                 disabled={loading}
               />
             </div>
 
             {/* Công ty */}
             <div>
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+              <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
                 </svg>
                 {t("company")}
@@ -243,7 +252,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
                 type="text"
                 value={formData.company}
                 onChange={(e) => handleInputChange('company', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className={`w-full border rounded-lg px-4 py-2 text-sm outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white focus:border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                 disabled={loading}
               />
             </div>
@@ -252,8 +261,8 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
             <div>
               
 
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
-                <svg  fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+              <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
               </svg>
               {t("role")}
@@ -261,15 +270,15 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
               <input
                 type="text"
                 value={formData.role}
-                className="w-full uppercase border cursor-not-allowed border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className={`w-full uppercase border cursor-not-allowed rounded-lg px-4 py-2 text-sm outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-300 focus:border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                 readOnly 
               />
             </div>
 
             {/* Mật khẩu */}
             <div>
-              <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
-                <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">
+              <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <svg fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                 </svg>
                 {t("password")}
@@ -280,12 +289,12 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
                   placeholder="•••••••••"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all pr-12"
+                  className={`w-full border rounded-lg px-4 py-2 text-sm outline-none transition-all pr-12 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white focus:border-red-500 focus:ring-red-200' : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                   disabled={loading}
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}
                   tabIndex={-1}
                   onClick={() => setShowPassword((v) => !v)}
                 >
@@ -295,18 +304,18 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
             </div>
 
             {/* Nút */}
-            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+            <div className={`flex justify-end gap-3 mt-6 pt-4 border-t ${tetMode ? 'border-[#3a3b3c]' : 'border-gray-200'}`}>
               <button
                 type="button"
                 onClick={handleClose}
-                className="px-5 py-2 rounded-lg will-change-transform border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all transform  duration-300 hover:scale-105"
+                className={`px-5 py-2 rounded-lg will-change-transform border transition-all transform duration-300 hover:scale-105 ${tetMode ? 'border-[#3a3b3c] text-gray-300 hover:bg-[#3a3b3c]' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
                 disabled={loading}
               >
                {t("cancel")}
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-lg will-change-transform bg-gradient-to-r from-blue-500 to-indigo-500 text-white  transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform  duration-300 hover:scale-105"
+                className={`px-5 py-2 rounded-lg will-change-transform text-white transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform duration-300 hover:scale-105 ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
                 disabled={loading}
               >
                 {loading ? "Đang cập nhật..." : t("update")}

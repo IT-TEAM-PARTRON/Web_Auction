@@ -11,6 +11,8 @@ export function AuthProvider({ children }) {
   });
 
   const login = (userInfo, remember) => {
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     setUser(userInfo);
     if (remember) {
       localStorage.setItem("user", JSON.stringify(userInfo));
@@ -24,7 +26,9 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
-    setTimeout(() => setIsLoggingOut(true), 100);
+    setTimeout(() => {
+      setIsLoggingOut(false);
+    }, 300);
   };
 
   return (

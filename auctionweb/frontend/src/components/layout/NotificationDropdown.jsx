@@ -5,15 +5,19 @@ import axiosClient from "../../services/axiosClient";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useTetMode } from "../../contexts/TetModeContext";
 dayjs.extend(relativeTime);
 
 const NotificationDropdown = ({ triggerRef }) => {
+  const navigate = useNavigate();
   const dropdownRef = useRef();
   const [notifications, setNotifications] = useState([]);
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
   const closeDropdown = () => {
     setClosing(true);
     setTimeout(() => {
@@ -27,7 +31,8 @@ const NotificationDropdown = ({ triggerRef }) => {
       axiosClient
         .get("/notifications")
         .then((res) => setNotifications(res.data || []))
-        .catch(() => setNotifications([]));
+        .catch(() =>
+           setNotifications([]));
     };
     fetchNotifications();
     const intervalId = setInterval(fetchNotifications, 120000);
@@ -108,29 +113,32 @@ const NotificationDropdown = ({ triggerRef }) => {
 
       {visible && (
         <div
-          className={`notification-dropdown ${closing ? 'fade-slide-out' : 'fade-slide-in'}`}
+          className={`notification-dropdown ${closing ? 'fade-slide-out' : 'fade-slide-in'} ${tetMode ? 'tet-mode' : ''}`}
           ref={dropdownRef}
+          style={tetMode ? { backgroundColor: '#242526', borderColor: '#3a3b3c' } : {}}
         >
-          <div className="notification-dropdown-header ">
+          <div className="notification-dropdown-header" style={tetMode ? { background: 'linear-gradient(to right, #CB0502, #ff4444)', color: 'white' } : {}}>
             <FontAwesomeIcon icon={faBell} style={{ marginRight: "8px" }} />
             {t("notification")}
           </div>
-          <ul className="notification-list">
+          <ul className="notification-list" style={tetMode ? { backgroundColor: '#242526' } : {}}>
             {notifications.length === 0 ? (
-              <li className="notification-item">{t('no_announcements')}</li>
+              <li className="notification-item" style={tetMode ? { color: '#e4e6eb' } : {}}>{t('no_announcements')}</li>
             ) : (
               (showAll ? notifications : notifications.slice(0, 8)).map((item) => (
                 <li
                   className={`notification-item${item.is_read ? "" : " unread"}`}
                   key={item.id}
-                  title={item.message}  
+                  title={item.message}
+                  style={tetMode ? { backgroundColor: item.is_read ? '#242526' : '#3a3b3c', borderBottomColor: '#3a3b3c' } : {}}
                 >
-                  <span className="notification-avatar"><FontAwesomeIcon icon={faUser} /></span>
-                  <span style={{ flex: 1, minWidth: 0, borderBottom: "1px solid" }}>
+                  <span className="notification-avatar" style={tetMode ? { backgroundColor: '#CB0502' } : {}}><FontAwesomeIcon icon={faUser} /></span>
+                  <span style={{ flex: 1, minWidth: 0, borderBottom: tetMode ? '1px solid #3a3b3c' : '1px solid' }}>
                     <span
                       className="notification-message"
                       style={{
                         fontWeight: item.is_read ? "normal" : "bold",
+                        color: tetMode ? '#e4e6eb' : undefined
                       }}
                     >
                       {item.message.length > 60
@@ -138,7 +146,7 @@ const NotificationDropdown = ({ triggerRef }) => {
                         : item.message}
                     </span>
                     <br />
-                    <span className="notification-time">
+                    <span className="notification-time" style={tetMode ? { color: '#a0a0a0' } : {}}>
                       {dayjs(item.created_at).fromNow()}
                     </span>
                   </span>
@@ -155,10 +163,10 @@ const NotificationDropdown = ({ triggerRef }) => {
                   width: "100%",
                   padding: "8px 12px",
                   border: "none",
-                  backgroundColor: "#f0f0f0",
-                  color: "#666",
+                  backgroundColor: tetMode ? "#3a3b3c" : "#f0f0f0",
+                  color: tetMode ? "#e4e6eb" : "#666",
                   cursor: "pointer",
-                  borderTop: "1px solid #e0e0e0",
+                  borderTop: tetMode ? "1px solid #4a4b4c" : "1px solid #e0e0e0",
                   fontSize: "14px"
                 }}
               >

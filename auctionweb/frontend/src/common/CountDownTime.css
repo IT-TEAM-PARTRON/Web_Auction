@@ -1,0 +1,250 @@
+/* ==== Countdown Detail Wrapper (for AuctionDetail page) ==== */
+.countdown-detail-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+}
+
+.countdown-detail-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.countdown-detail-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+}
+
+.countdown-detail-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+    min-width: 56px;
+    text-align: center;
+}
+
+.countdown-detail-number::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px 12px 0 0;
+}
+
+.countdown-detail-label {
+    font-size: 11px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+.countdown-detail-separator {
+    font-size: 28px;
+    font-weight: 700;
+    color: #667eea;
+    margin: 0 2px;
+    animation: blink 1s ease-in-out infinite;
+}
+
+/* Seconds pulse animation */
+.countdown-seconds-pulse {
+    animation: pulse-glow 1s ease-in-out infinite;
+}
+
+.countdown-seconds-flip {
+    display: inline-block;
+    animation: flip-in 0.3s ease-out;
+}
+
+/* Ring progress indicator */
+.countdown-ring-container {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.countdown-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.countdown-ring-bg {
+    stroke: #e5e7eb;
+}
+
+.countdown-ring-progress {
+    stroke: #667eea;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.3s ease;
+}
+
+/* ==== Animations ==== */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 25px rgba(102, 126, 234, 0.7), 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+}
+
+@keyframes flip-in {
+    0% {
+        transform: rotateX(90deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* ==== Ended Badge ==== */
+.countdown-ended-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.countdown-ended-text {
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ==== Card variant (original style) ==== */
+.countdown-card-wrapper {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    padding: 8px 20px;
+    gap: 10px;
+    z-index: 100;
+}
+
+.countdown-card-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.countdown-card-number {
+    font-weight: 700;
+    font-size: 18px;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.countdown-card-seconds {
+    color: #667eea;
+    animation: pulse-text 1s ease-in-out infinite;
+}
+
+.countdown-card-label {
+    font-size: 10px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.countdown-card-separator {
+    color: #9ca3af;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+@keyframes pulse-text {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 480px) {
+    .countdown-detail-number {
+        font-size: 20px;
+        padding: 8px 10px;
+        min-width: 44px;
+    }
+
+    .countdown-detail-block {
+        min-width: 40px;
+    }
+
+    .countdown-detail-separator {
+        font-size: 20px;
+    }
+
+    .countdown-detail-label {
+        font-size: 9px;
+    }
+
+    .countdown-ring-container {
+        width: 36px;
+        height: 36px;
+    }
+
+    .countdown-card-wrapper {
+        padding: 6px 14px;
+        gap: 6px;
+    }
+
+    .countdown-card-number {
+        font-size: 14px;
+    }
+
+    .countdown-card-label {
+        font-size: 8px;
+    }
+}

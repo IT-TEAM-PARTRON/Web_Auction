@@ -9,7 +9,8 @@ import imagedefault from "../../assets/images/imagedefault.png";
 import { getOne } from "../../services/api";
 import { toast } from "react-hot-toast";
 import { BASE_URL } from "../../config";
-import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01,Boxes, Group, File,Users, Trophy } from "lucide-react";
+import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01, Boxes, Group, File, Users, Trophy } from "lucide-react";
+import { useTetMode } from "../../contexts/TetModeContext";
 
 const AuctionDetail = () => {
   const { id } = useParams();
@@ -20,6 +21,48 @@ const AuctionDetail = () => {
   const [selectImg, setselectImg] = useState(1);
   const sliderRef = useRef(null);
   const intervalRef = useRef(null);
+  
+  // Countdown state
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [prevCountdown, setPrevCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isExpired, setIsExpired] = useState(false);
+  const targetTime =
+    auction?.status === 1
+      ? auction?.start_time
+      : auction?.end_time;
+
+  // Countdown logic
+  useEffect(() => {
+    if (!targetTime) return;
+    
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const distance = new Date(targetTime).getTime() - now;
+      
+      if (distance <= 0) {
+        setIsExpired(true);
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+      
+      return {
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((distance / (1000 * 60)) % 60),
+        seconds: Math.floor((distance / 1000) % 60),
+      };
+    };
+
+    setCountdown(calculateTimeLeft());
+    
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        setPrevCountdown(prev);
+        return calculateTimeLeft();
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetTime]);
 
   useEffect(() => {
     getAuction();
@@ -28,6 +71,7 @@ const AuctionDetail = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -253,12 +297,12 @@ const AuctionDetail = () => {
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
-        <h1 className="text-2xl mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] sm:w-[100%] lg:w-[50%] font-bold text-left text-black-300 drop-shadow break-words">
+        <h1 className={`text-2xl mt-[130px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] sm:w-[100%] lg:w-[50%] font-bold text-left drop-shadow break-words ${tetMode ? 'text-white' : 'text-black-300'}`}>
           {auction.title}
         </h1>
         {/* status */}
         <p className="justify-start flex items-center gap-2 mt-2 mb-2">
-          <span className="text-gray-500 text-sm">{t("status")}:{" "}</span>
+          <span className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("status")}:{" "}</span>
           <span
           className={`inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-medium
             ${auction.status === 0 
@@ -292,7 +336,7 @@ const AuctionDetail = () => {
         </p>
         <div className="flex flex-col lg:flex-row items-start gap-10">
           {/* Slider Image */}
-          <div className="flex-1 overflow-hidden relative rounded-lg shadow-lg border border-gray-300">
+          <div className={`flex-1 overflow-hidden relative rounded-lg shadow-lg border ${tetMode ? 'border-[#3a3b3c]' : 'border-gray-300'}`}>
             {/* Prev Button */}
             <button
               onClick={clickPreButton}
@@ -348,8 +392,8 @@ const AuctionDetail = () => {
                     className={clsx(
                       "w-4 h-4 rounded-full",
                       getCurrentDotIndex() === index
-                        ? "bg-blue-700"
-                        : "bg-gray-300 hover:bg-blue-500"
+                        ? (tetMode ? "bg-[#CB0502]" : "bg-blue-700")
+                        : (tetMode ? "bg-gray-500 hover:bg-[#ff4444]" : "bg-gray-300 hover:bg-blue-500")
                     )}
                   />
                 ))}
@@ -357,23 +401,156 @@ const AuctionDetail = () => {
           </div>
 
           {/* Auction Info */}
-          <div className="flex-1 text-xl w-full font-medium space-y-6 text-gray-800">
+          <div className={`flex-1 text-xl w-full font-medium space-y-6 ${tetMode ? 'text-gray-200' : 'text-gray-800'}`}>
             {/* deadline */}
-            <div className="relative p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-              <p className="text-blue-600 text-sm font-medium">{t("deadline")}</p>
-              <p className="text-red-500 text-2xl font-semibold">
-                {new Date(auction.end_time).toLocaleString("vi-VN")}
-              </p>
-              <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
-                <ClockIcon className="h-10 w-10" />
-              </div>
+            <div className={`relative rounded-2xl shadow-md overflow-hidden ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border border-[#3a3b3c]' : 'bg-gradient-to-r from-gray-50 to-white border border-gray-100'}`}>
+              <p className={`p-[16px] pb-0 text-sm font-medium ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>{t("deadline")}</p>
+              
+              {/* Inline CSS for animations */}
+              <style>{`
+                @keyframes slideInFromTop {
+                  0% {
+                    transform: translateY(-100%);
+                    opacity: 0;
+                  }
+                  100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                  }
+                }
+                @keyframes slideOutToBottom {
+                  0% {
+                    transform: translateY(0);
+                    opacity: 1;
+                  }
+                  100% {
+                    transform: translateY(100%);
+                    opacity: 0;
+                  }
+                }
+                .flip-digit-container {
+                  position: relative;
+                  display: inline-flex;
+                  overflow: hidden;
+                  width: 0.65em;
+                  height: 1.3em;
+                  justify-content: center;
+                }
+                .digit-new {
+                  position: absolute;
+                  animation: slideInFromTop 0.5s ease-out forwards;
+                }
+                .digit-old {
+                  position: absolute;
+                  animation: slideOutToBottom 0.5s ease-out forwards;
+                }
+                .countdown-box {
+                  transition: all 0.3s ease;
+                  overflow: hidden;
+                }
+              `}</style>
+              
+              {/* Custom Countdown Timer */}
+              {auction.status !== 2 && !isExpired ? (
+                <div className="flex items-center justify-center gap-3 sm:gap-4 pb-4 pt-2">
+                  {/* Days */}
+                  <div className="flex flex-col items-center">
+                    <div className={`countdown-box rounded-xl shadow-sm border px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c]' : 'bg-white border-gray-100'}`}>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {Math.floor(prevCountdown.days / 10) !== Math.floor(countdown.days / 10) && (
+                          <span key={`days-tens-old-${Math.floor(prevCountdown.days / 10)}`} className="digit-old">{Math.floor(prevCountdown.days / 10)}</span>
+                        )}
+                        <span key={`days-tens-${Math.floor(countdown.days / 10)}`} className={Math.floor(prevCountdown.days / 10) !== Math.floor(countdown.days / 10) ? "digit-new" : ""}>{Math.floor(countdown.days / 10)}</span>
+                      </span>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {prevCountdown.days % 10 !== countdown.days % 10 && (
+                          <span key={`days-ones-old-${prevCountdown.days % 10}`} className="digit-old">{prevCountdown.days % 10}</span>
+                        )}
+                        <span key={`days-ones-${countdown.days % 10}`} className={prevCountdown.days % 10 !== countdown.days % 10 ? "digit-new" : ""}>{countdown.days % 10}</span>
+                      </span>
+                    </div>
+                    <span className={`text-xs mt-2 font-medium ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("days") || "Ngày"}</span>
+                  </div>
+
+                  <span className={`text-2xl font-light self-center mb-5 ${tetMode ? 'text-gray-500' : 'text-gray-300'}`}>:</span>
+
+                  {/* Hours */}
+                  <div className="flex flex-col items-center">
+                    <div className={`countdown-box rounded-xl shadow-sm border px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c]' : 'bg-white border-gray-100'}`}>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {Math.floor(prevCountdown.hours / 10) !== Math.floor(countdown.hours / 10) && (
+                          <span key={`hours-tens-old-${Math.floor(prevCountdown.hours / 10)}`} className="digit-old">{Math.floor(prevCountdown.hours / 10)}</span>
+                        )}
+                        <span key={`hours-tens-${Math.floor(countdown.hours / 10)}`} className={Math.floor(prevCountdown.hours / 10) !== Math.floor(countdown.hours / 10) ? "digit-new" : ""}>{Math.floor(countdown.hours / 10)}</span>
+                      </span>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {prevCountdown.hours % 10 !== countdown.hours % 10 && (
+                          <span key={`hours-ones-old-${prevCountdown.hours % 10}`} className="digit-old">{prevCountdown.hours % 10}</span>
+                        )}
+                        <span key={`hours-ones-${countdown.hours % 10}`} className={prevCountdown.hours % 10 !== countdown.hours % 10 ? "digit-new" : ""}>{countdown.hours % 10}</span>
+                      </span>
+                    </div>
+                    <span className={`text-xs mt-2 font-medium ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("hours") || "Giờ"}</span>
+                  </div>
+
+                  <span className={`text-2xl font-light self-center mb-5 ${tetMode ? 'text-gray-500' : 'text-gray-300'}`}>:</span>
+
+                  {/* Minutes */}
+                  <div className="flex flex-col items-center">
+                    <div className={`countdown-box rounded-xl shadow-sm border px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c]' : 'bg-white border-gray-100'}`}>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {Math.floor(prevCountdown.minutes / 10) !== Math.floor(countdown.minutes / 10) && (
+                          <span key={`minutes-tens-old-${Math.floor(prevCountdown.minutes / 10)}`} className="digit-old">{Math.floor(prevCountdown.minutes / 10)}</span>
+                        )}
+                        <span key={`minutes-tens-${Math.floor(countdown.minutes / 10)}`} className={Math.floor(prevCountdown.minutes / 10) !== Math.floor(countdown.minutes / 10) ? "digit-new" : ""}>{Math.floor(countdown.minutes / 10)}</span>
+                      </span>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {prevCountdown.minutes % 10 !== countdown.minutes % 10 && (
+                          <span key={`minutes-ones-old-${prevCountdown.minutes % 10}`} className="digit-old">{prevCountdown.minutes % 10}</span>
+                        )}
+                        <span key={`minutes-ones-${countdown.minutes % 10}`} className={prevCountdown.minutes % 10 !== countdown.minutes % 10 ? "digit-new" : ""}>{countdown.minutes % 10}</span>
+                      </span>
+                    </div>
+                    <span className={`text-xs mt-2 font-medium ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("minutes") || "Phút"}</span>
+                  </div>
+
+                  <span className={`text-2xl font-light self-center mb-5 ${tetMode ? 'text-gray-500' : 'text-gray-300'}`}>:</span>
+
+                  {/* Seconds */}
+                  <div className="flex flex-col items-center">
+                    <div className={`countdown-box rounded-xl shadow-sm border px-3 py-3 min-w-[60px] sm:min-w-[70px] flex justify-center ${tetMode ? 'bg-[#3a3b3c] border-[#CB0502]' : 'border-blue-200'}`}>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {Math.floor(prevCountdown.seconds / 10) !== Math.floor(countdown.seconds / 10) && (
+                          <span key={`seconds-tens-old-${Math.floor(prevCountdown.seconds / 10)}`} className="digit-old">{Math.floor(prevCountdown.seconds / 10)}</span>
+                        )}
+                        <span key={`seconds-tens-${Math.floor(countdown.seconds / 10)}`} className={Math.floor(prevCountdown.seconds / 10) !== Math.floor(countdown.seconds / 10) ? "digit-new" : ""}>{Math.floor(countdown.seconds / 10)}</span>
+                      </span>
+                      <span className={`flip-digit-container text-2xl sm:text-3xl font-bold ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>
+                        {prevCountdown.seconds % 10 !== countdown.seconds % 10 && (
+                          <span key={`seconds-ones-old-${prevCountdown.seconds % 10}`} className="digit-old">{prevCountdown.seconds % 10}</span>
+                        )}
+                        <span key={`seconds-ones-${countdown.seconds % 10}`} className={prevCountdown.seconds % 10 !== countdown.seconds % 10 ? "digit-new" : ""}>{countdown.seconds % 10}</span>
+                      </span>
+                    </div>
+                    <span className={`text-xs mt-2 font-medium ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("seconds") || "Giây"}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-4">
+                  <div className={`px-6 py-3 rounded-xl ${tetMode ? 'bg-green-900/30' : 'bg-green-100'}`}>
+                    <p className={`text-xl font-bold ${tetMode ? 'text-green-400' : 'text-green-600'}`}>
+                      {t("ended") || "Đã kết thúc"}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
             {/* starting price & step price */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* starting price */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-                <p className="text-blue-600 text-sm font-medium">{t("starting_price")}</p>
-                <p className="text-blue-600 text- xl font-semibold">
+              <div className={`relative flex-1 p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border-[#3a3b3c]' : 'bg-gradient-to-r from-blue-50 to-white border-blue-100'}`}>
+                <p className={`text-sm font-medium ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>{t("starting_price")}</p>
+                <p className={`text-xl font-semibold ${tetMode ? 'text-[#fbbf24]' : 'text-blue-600'}`}>
                   {auction.starting_price && auction.starting_price !== 0
                     ? auction.starting_price.toLocaleString(
                         auction.currency === "VND" ? "vi-VN" : "en-US",
@@ -384,14 +561,14 @@ const AuctionDetail = () => {
                       )
                     : t("see_file")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
+                <div className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? 'text-[#CB0502]' : 'text-blue-500'}`}>
                   <Banknote className="h-10 w-10" />
                 </div>
               </div>
               {/* step price */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-white border border-blue-100">
-                <p className="text-blue-600 text-sm font-medium">{t("step_price")}</p>
-                <p className="text-blue-600 text-xl font-semibold">
+              <div className={`relative flex-1 p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border-[#3a3b3c]' : 'bg-gradient-to-r from-blue-50 to-white border-blue-100'}`}>
+                <p className={`text-sm font-medium ${tetMode ? 'text-[#CB0502]' : 'text-blue-600'}`}>{t("step_price")}</p>
+                <p className={`text-xl font-semibold ${tetMode ? 'text-[#fbbf24]' : 'text-blue-600'}`}>
                   {auction.step_price !== null && auction.step_price !== undefined
                     ? auction.step_price.toLocaleString(
                         auction.currency === "VND" ? "vi-VN" : "en-US",
@@ -402,7 +579,7 @@ const AuctionDetail = () => {
                       )
                     : t("see_file")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
+                <div className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? 'text-[#CB0502]' : 'text-blue-500'}`}>
                   <ArrowUp01 className="h-10 w-10" />
                 </div>
               </div>
@@ -410,22 +587,22 @@ const AuctionDetail = () => {
             {/* type category & type auction */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* type category */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
-                <p className="text-gray-600 text-sm font-medium">{t("type")}</p>
-                <p className="text-gray-600 text-lg font-semibold">
+              <div className={`relative flex-1 p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border-[#3a3b3c]' : 'bg-gradient-to-r from-gray-100 to-white border-blue-100'}`}>
+                <p className={`text-sm font-medium ${tetMode ? 'text-gray-400' : 'text-gray-600'}`}>{t("type")}</p>
+                <p className={`text-lg font-semibold ${tetMode ? 'text-gray-200' : 'text-gray-600'}`}>
                   {auction.category.category_name || t("unknown")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
+                <div className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? 'text-[#CB0502]' : 'text-blue-500'}`}>
                   <Boxes className="h-10 w-10" />
                 </div>
               </div>
               {/* type auction */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
-                <p className="text-gray-600 text-sm font-medium">{t("auction_type")}</p>
-                <p className="text-gray-600 text-lg font-semibold">
+              <div className={`relative flex-1 p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border-[#3a3b3c]' : 'bg-gradient-to-r from-gray-100 to-white border-blue-100'}`}>
+                <p className={`text-sm font-medium ${tetMode ? 'text-gray-400' : 'text-gray-600'}`}>{t("auction_type")}</p>
+                <p className={`text-lg font-semibold ${tetMode ? 'text-gray-200' : 'text-gray-600'}`}>
                   {auction.auction_type === "SELL" ? t("sell") : t("buy")}
                 </p>
-                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
+                <div className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? 'text-[#CB0502]' : 'text-blue-500'}`}>
                   <Group className="h-10 w-10" />
                 </div>
               </div>
@@ -433,13 +610,13 @@ const AuctionDetail = () => {
             {/* file excel & number of bids */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* file excel */}
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
-                <p className="text-gray-600 text-sm font-medium">{t("attached_file")}</p>
-                <div className="text-blue-600 text-lg font-semibold">
+              <div className={`relative flex-1 p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border-[#3a3b3c]' : 'bg-gradient-to-r from-gray-100 to-white border-blue-100'}`}>
+                <p className={`text-sm font-medium ${tetMode ? 'text-gray-400' : 'text-gray-600'}`}>{t("attached_file")}</p>
+                <div className={`text-lg font-semibold ${tetMode ? 'text-[#fbbf24]' : 'text-blue-600'}`}>
                   {auction.file_exel ? (
                     <button
                       onClick={() => handleDownload(auction.id)}
-                      className="text-blue-600 hover:underline font-semibold"
+                      className={`hover:underline font-semibold ${tetMode ? 'text-[#fbbf24]' : 'text-blue-600'}`}
                       title={auction.file_exel.split("/").pop()}
                     >
                       <p>
@@ -453,14 +630,14 @@ const AuctionDetail = () => {
                     <span className="text-gray-400 italic">{t("no_file")}</span>
                   )}
                 </div>
-                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
+                <div className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? 'text-[#CB0502]' : 'text-blue-500'}`}>
                   <File className="h-10 w-10" />
                 </div>
               </div>
               {/* số người tham gia đấu giá */}   
-              <div className="relative flex-1 p-4 rounded-lg shadow-md bg-gradient-to-r from-gray-100 to-white border border-blue-100">
-                <p className="text-gray-600 text-sm font-medium">{t("participants")}</p>
-                <div className="text-gray-600 text-lg font-semibold">
+              <div className={`relative flex-1 p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-[#242526] to-[#18191a] border-[#3a3b3c]' : 'bg-gradient-to-r from-gray-100 to-white border-blue-100'}`}>
+                <p className={`text-sm font-medium ${tetMode ? 'text-gray-400' : 'text-gray-600'}`}>{t("participants")}</p>
+                <div className={`text-lg font-semibold ${tetMode ? 'text-gray-200' : 'text-gray-600'}`}>
                   {(auction.status === 0 || auction.status === 2) &&
                   auction.count_users != null ? (
                     <span>
@@ -470,20 +647,20 @@ const AuctionDetail = () => {
                     <span className="text-gray-400 italic">{t("no_data")}</span>
                   )}
                 </div>
-                <div className="absolute bottom-2 right-2 text-blue-500 opacity-40">
+                <div className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? 'text-[#CB0502]' : 'text-blue-500'}`}>
                   <Users className="h-10 w-10" />
                 </div>
               </div>
             </div>
             {/* Winner info - chỉ hiển thị khi đấu giá kết thúc */}
             {auction.status === 2 && (
-              <div className="relative p-4 rounded-lg shadow-md bg-gradient-to-r from-green-50 to-white border border-green-100">
-                <p className="text-green-600 text-sm font-medium text-center">{t("winner")}</p>
-                <div className="text-green-600 text-2xl text-center font-semibold">
+              <div className={`relative p-4 rounded-lg shadow-md border ${tetMode ? 'bg-gradient-to-r from-green-900/30 to-[#18191a] border-green-800' : 'bg-gradient-to-r from-green-50 to-white border-green-100'}`}>
+                <p className={`text-sm font-medium text-center ${tetMode ? 'text-green-400' : 'text-green-600'}`}>{t("winner")}</p>
+                <div className={`text-2xl text-center font-semibold ${tetMode ? 'text-green-400' : 'text-green-600'}`}>
                   {Array.isArray(auction.bids) &&
                   auction.bids.find((bid) => bid.is_winner) ? (
                     <span>
-                      <span className="font-semibold text-green-700">
+                      <span className={`font-semibold ${tetMode ? 'text-green-300' : 'text-green-700'}`}>
                         {auction.bids.find((bid) => bid.is_winner).user_name}
                       </span>
                     </span>
@@ -493,7 +670,7 @@ const AuctionDetail = () => {
                     </span>
                   )}
                 </div>
-                <div className="absolute bottom-2 right-2 text-green-500 opacity-20">
+                <div className={`absolute bottom-2 right-2 opacity-20 ${tetMode ? 'text-green-400' : 'text-green-500'}`}>
                   <Trophy className="h-10 w-10" />
                 </div>
               </div>
@@ -501,15 +678,15 @@ const AuctionDetail = () => {
           </div>
         </div>
         {/* Mô tả */}
-        <div className="w-full p-6 rounded-lg text-base text-justify leading-relaxed text-gray-700">
-          <hr className=" border-gray-600" />
+        <div className={`w-full pt-4 rounded-lg text-base text-justify leading-relaxed ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          <hr className={tetMode ? 'border-[#3a3b3c]' : 'border-gray-600'} />
           {auction.description && auction.description.trim() !== "" ? (
             <div>
-              <span className="font-semibold text-xl text-gray-800">
+              <span className={`font-semibold text-xl ${tetMode ? 'text-gray-200' : 'text-gray-800'}`}>
                 {t("description")}:
               </span>
               <div
-                className="mt-2 prose prose-slate max-w-none ck-content"
+                className={`mt-2 prose max-w-none ck-content ${tetMode ? 'prose-invert' : 'prose-slate'}`}
                 dangerouslySetInnerHTML={{ __html: auction.description }}
               />
             </div>
@@ -524,7 +701,7 @@ const AuctionDetail = () => {
         <div className="flex justify-center">
           <button
             onClick={openAuctionForm}
-            className="uppercase px-8 py-4 will-change-transform bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:from-blue-600 hover:to-indigo-600 hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out "
+            className={`uppercase px-8 py-4 will-change-transform text-white text-xl font-semibold tracking-wide rounded-2xl shadow-md hover:scale-[1.03] hover:shadow-lg border transition duration-300 ease-in-out ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#b00400] hover:to-[#dd3333]' : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600'}`}
           >
             {t("auction")}
           </button>
@@ -532,7 +709,7 @@ const AuctionDetail = () => {
       {/* Các phiên đấu giá liên quan */}
       </AnimatedContent>      
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-1 text-gray-600 font-rele">
+        <h2 className={`text-2xl font-bold mb-1 font-rele ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <u>{t("other_auctions").toUpperCase()}</u>
         </h2>
 

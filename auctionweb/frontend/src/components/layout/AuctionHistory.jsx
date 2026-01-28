@@ -3,6 +3,7 @@ import { X, Clock, DollarSign, MapPin, Trophy, FileText } from "lucide-react";
 import axiosClient from "../../services/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useTetMode } from "../../contexts/TetModeContext";
 
 const AuctionHistory = ({ isOpen, onClose }) => {
   const [auctionHistory, setAuctionHistory] = useState([]);
@@ -11,6 +12,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
   const [displayedItems, setDisplayedItems] = useState(5);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
 
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -25,11 +27,16 @@ const AuctionHistory = ({ isOpen, onClose }) => {
     axiosClient
       .get("/bids/user")
       .then((res) => setAuctionHistory(res.data))
-      .catch((err) =>
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          navigate("/login");
+          return;
+        }
         setError(
           "Lỗi khi tải dữ liệu lịch sử đấu giá" +
             (err.response?.data?.detail || "")
-        )
+        );
+      }        
       )
       .finally(() => setLoading(false));
   }, [isOpen]);
@@ -65,13 +72,13 @@ const AuctionHistory = ({ isOpen, onClose }) => {
     >
       <div
         className={
-          "sm:mt-[60px] md:mt-[55px] bg-white rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up " +
+          `sm:mt-[60px] md:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'} ` +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 flex items-center justify-between relative">
+        <div className={`text-white p-3 flex items-center justify-between relative ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}>
           <div className="flex-1 text-center">
             <h2 className="text-xl font-bold uppercase">{t("auction_history")}</h2>
           </div>
@@ -86,7 +93,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
         </div>
         {/* Modal Content */}
         <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
-          {loading && <div>Loading data...</div>}
+          {loading && <div className={tetMode ? 'text-gray-300' : ''}>Loading data...</div>}
           {error && <div className="text-red-500">{error}</div>}
           {!loading && !error && (
             <>
@@ -96,7 +103,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                   .map((bid, index) => (
                     <div
                       key={bid.id}
-                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-500 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.30)]"
+                      className={`border rounded-lg p-6 hover:shadow-lg transition-all duration-300 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.30)] ${tetMode ? 'bg-[#18191a] border-[#3a3b3c] hover:border-red-500/50' : 'bg-white border-gray-200 hover:border-blue-500'}`}
                       onClick={() => {
                         handleClose();
                         navigate(`/auctions/${bid.auction_id}`);
@@ -117,10 +124,10 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                             )}
                           </div>
                           <div>
-                            <h3 className="font-semibold text-gray-900">
+                            <h3 className={`font-semibold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                               Bid #{index + 1}
                             </h3>
-                            <p className="text-sm text-gray-500">
+                            <p className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                               ID: {truncateId(bid.id)}
                             </p>
                           </div>
@@ -129,7 +136,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
                             bid.is_winner
                               ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-600"
+                              : tetMode ? "bg-[#3a3b3c] text-gray-300" : "bg-gray-100 text-gray-600"
                           }`}
                         >
                           {bid.is_winner ? t("winning") : t("participated")}
@@ -142,11 +149,11 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
                             <DollarSign
-                              className="text-blue-500 mt-1"
+                              className={`mt-1 ${tetMode ? 'text-red-400' : 'text-blue-500'}`}
                               size={18}
                             />
                             <div>
-                              <p className="text-sm text-gray-500">
+                              <p className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                 {t("bid_amount_usd")}
                               </p>
                               <p className="text-lg font-bold text-green-600">
@@ -157,24 +164,24 @@ const AuctionHistory = ({ isOpen, onClose }) => {
 
                           <div className="flex items-start gap-3">
                             <Clock
-                              className="text-blue-500 mt-1"
+                              className={`mt-1 ${tetMode ? 'text-red-400' : 'text-blue-500'}`}
                               size={18}
                             />
                             <div>
-                              <p className="text-sm text-gray-500">
+                              <p className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                 {t("submitted_at")}
                               </p>
-                              <p className="font-medium text-gray-900">
+                              <p className={`font-medium ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                                 {formatDateTime(bid.created_at)}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-start gap-3">
-                            <DollarSign className="text-blue-500 mt-1" size={18} />
+                            <DollarSign className={`mt-1 ${tetMode ? 'text-red-400' : 'text-blue-500'}`} size={18} />
                             <div>
-                              <p className="text-sm text-gray-500">{t("starting_price")}</p>
-                              <p className="text-lg font-bold text-gray-700">
+                              <p className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("starting_price")}</p>
+                              <p className={`text-lg font-bold ${tetMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                 {formatCurrency(bid.auction_starting_price, bid.currency)}
                               </p>
                             </div>
@@ -185,35 +192,35 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
                             <MapPin
-                              className="text-blue-500 mt-1"
+                              className={`mt-1 ${tetMode ? 'text-red-400' : 'text-blue-500'}`}
                               size={18}
                             />
                             <div>
-                              <p className="text-sm text-gray-500">
+                              <p className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                 {t("address")}
                               </p>
-                              <p className="text-gray-900">{bid.address}</p>
+                              <p className={tetMode ? 'text-white' : 'text-gray-900'}>{bid.address}</p>
                             </div>
                           </div>
 
                           {bid.note && (
                             <div className="flex items-start gap-3">
                               <FileText
-                                className="text-blue-500 mt-1"
+                                className={`mt-1 ${tetMode ? 'text-red-400' : 'text-blue-500'}`}
                                 size={18}
                               />
                               <div>
-                                <p className="text-sm text-gray-500">
+                                <p className={`text-sm ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                   {t("additional_notes")}
                                 </p>
-                                <p className="text-gray-900">{bid.note}</p>
+                                <p className={tetMode ? 'text-white' : 'text-gray-900'}>{bid.note}</p>
                               </div>
                             </div>
                           )}
 
-                          <div className="bg-gray-200 rounded-lg p-3">
-                            <p className="text-xs text-gray-500 mb-1">{t("title")}</p>
-                            <p className="font-mono text-xs text-gray-600">
+                          <div className={`rounded-lg p-3 ${tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}`}>
+                            <p className={`text-xs mb-1 ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>{t("title")}</p>
+                            <p className={`font-mono text-xs ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
                               {truncateId(bid.auction_title)}
                             </p>
                           </div>
@@ -227,7 +234,7 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                 <div className="mt-6 text-center">
                   <button
                     onClick={handleLoadMore}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    className={`px-6 py-3 text-white rounded-lg hover:opacity-90 transition-colors ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
                   >
                     {t("load_more")} ({auctionHistory.length - displayedItems})
                   </button>
@@ -237,27 +244,27 @@ const AuctionHistory = ({ isOpen, onClose }) => {
           )}
 
           <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
-              <div className="text-blue-600 text-sm font-medium">
+            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-red-900/30' : 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'}`}>
+              <div className={`text-sm font-medium ${tetMode ? 'text-red-400' : 'text-blue-600'}`}>
                 {t("total_bids")}
               </div>
-              <div className="text-2xl font-bold text-blue-700">
+              <div className={`text-2xl font-bold ${tetMode ? 'text-red-500' : 'text-blue-700'}`}>
                 {auctionHistory.length}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
-              <div className="text-green-600 text-sm font-medium">
+            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-green-900/30' : 'bg-gradient-to-br from-green-50 to-green-100 border-green-200'}`}>
+              <div className={`text-sm font-medium ${tetMode ? 'text-green-400' : 'text-green-600'}`}>
                 {t("winning_bids")}
               </div>
-              <div className="text-2xl font-bold text-green-700">
+              <div className={`text-2xl font-bold ${tetMode ? 'text-green-400' : 'text-green-700'}`}>
                 {auctionHistory.filter((bid) => bid.is_winner).length}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4">
-              <div className="text-orange-600 text-sm font-medium">
+            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-yellow-900/30' : 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'}`}>
+              <div className={`text-sm font-medium ${tetMode ? 'text-yellow-400' : 'text-orange-600'}`}>
                 {t("highest_value")}
               </div>
-              <div className="text-base font-bold text-orange-700 space-y-1">
+              <div className={`text-base font-bold space-y-1 ${tetMode ? 'text-yellow-400' : 'text-orange-700'}`}>
                 {/* Hiển thị max cho từng loại tiền */}
                 {['USD', 'VND'].map((currency) => {
                   const bidsOfCurrency = auctionHistory.filter(bid => bid.currency === currency);
@@ -271,11 +278,11 @@ const AuctionHistory = ({ isOpen, onClose }) => {
                 })}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
-              <div className="text-purple-600 text-sm font-medium">
+            <div className={`border rounded-lg p-4 ${tetMode ? 'bg-gradient-to-br from-[#18191a] to-[#242526] border-purple-900/30' : 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200'}`}>
+              <div className={`text-sm font-medium ${tetMode ? 'text-purple-400' : 'text-purple-600'}`}>
                 {t("success_rate")}
               </div>
-              <div className="text-2xl font-bold text-purple-700">
+              <div className={`text-2xl font-bold ${tetMode ? 'text-purple-400' : 'text-purple-700'}`}>
                 {auctionHistory.length > 0
                   ? Math.round(
                       (auctionHistory.filter((bid) => bid.is_winner)

@@ -12,6 +12,7 @@ import AnimatedContent from "../components/ui/animatedContent";
 import { useTranslation } from "react-i18next";
 import AnimatedCounter from "../common/AnimatedNumber";
 import { useNavigate } from "react-router-dom";
+import { useTetMode } from "../contexts/TetModeContext";
 import {
   faUsers,
   faGavel,
@@ -27,6 +28,7 @@ import clsx from "clsx";
 
 const OverViewAdmin = () => {
   const navigate = useNavigate();
+  const { tetMode } = useTetMode();
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
   const [currentIndexPageCategory, setCurrentIndexPageCategory] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
@@ -488,23 +490,23 @@ const OverViewAdmin = () => {
       <AnimatedContent>
         {/* <!-- OVERVIEW --> */}
 
-        <div className="text-white rounded-lg mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] grid sm:grid-cols-3 gap-6 mb-6">
+        <div className={`text-white rounded-lg mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px] grid sm:grid-cols-3 gap-6 mb-6`}>
           {/* Total Users */}
-          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
+          <div className={`flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'}`}>
             <div className="flex-1 pr-3 text-left">
-              <p className="text-lg text-gray-500 font-medium">
+              <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_user")}
               </p>
-              <div className="text-sm font-semibold mt-1">
+              <div className={`text-sm font-semibold mt-1 ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter value={overViewData.total_user || 0} />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+            <div className={`p-3 rounded-lg text-white min-w-[50px] text-right ${tetMode ? 'bg-gradient-to-br from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-br from-[#1e88e5] to-[#42a5f5]'}`}>
               <span className="text-lg sm:text-xl flex justify-center">
                 <FontAwesomeIcon icon={faUsers} />
               </span>
             </div>
-            <span className="w-full border-t mt-2"></span>
+            <span className={`w-full border-t mt-2 ${tetMode ? 'border-[#3a3b3c]' : ''}`}></span>
             <div className="mt-4">
               <span
                 className={`pt-2 font-semibold ${
@@ -517,26 +519,26 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_user_change}% `
                   : `${overViewData.total_user_change}% `}
               </span>
-              <span className="text-gray-500">{t("than_last_month")}</span>
+              <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("than_last_month")}</span>
             </div>
           </div>
 
           {/* Total Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
+          <div className={`flex flex-wrap items-center justify-between py-4 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'}`}>
             <div className="flex-1 pr-3 text-left">
-              <p className="text-lg text-gray-500 font-medium">
+              <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_auction")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter value={overViewData.total_auction || 0} />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+            <div className={`p-3 rounded-lg text-white min-w-[50px] text-right ${tetMode ? 'bg-gradient-to-br from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-br from-[#1e88e5] to-[#42a5f5]'}`}>
               <span className="text-lg sm:text-xl flex justify-center">
                 <FontAwesomeIcon icon={faCheck} />
               </span>
             </div>
-            <span className="w-full border-t mt-2"></span>
+            <span className={`w-full border-t mt-2 ${tetMode ? 'border-[#3a3b3c]' : ''}`}></span>
             <div className="mt-4">
               <span
                 className={`pt-2 font-semibold ${
@@ -549,28 +551,28 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_auction_change}% `
                   : `${overViewData.total_auction_change}% `}
               </span>
-              <span className="text-gray-500">{t("than_last_month")}</span>
+              <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("than_last_month")}</span>
             </div>
           </div>
 
           {/* Total Successful Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
+          <div className={`flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'}`}>
             <div className="flex-1 pr-3 text-left">
-              <p className="text-lg text-gray-500 font-medium">
+              <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_successful_auctions")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_successful_auctions || 0}
                 />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+            <div className={`p-3 rounded-lg text-white min-w-[50px] text-right ${tetMode ? 'bg-gradient-to-br from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-br from-[#1e88e5] to-[#42a5f5]'}`}>
               <span className="text-lg sm:text-xl flex justify-center">
                 <FontAwesomeIcon icon={faGavel} />
               </span>
             </div>
-            <span className="w-full border-t mt-2"></span>
+            <span className={`w-full border-t mt-2 ${tetMode ? 'border-[#3a3b3c]' : ''}`}></span>
             <div className="mt-4">
               <span
                 className={`pt-2 font-semibold ${
@@ -583,28 +585,28 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_successful_auctions_change}% `
                   : `${overViewData.total_successful_auctions_change}% `}
               </span>
-              <span className="text-gray-500">{t("than_last_month")}</span>
+              <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("than_last_month")}</span>
             </div>
           </div>
 
           {/* Total Auctions In Progress */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
+          <div className={`flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'}`}>
             <div className="flex-1 pr-3 text-left">
-              <p className="text-lg text-gray-500 font-medium">
+              <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_auction_in_progress")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_auction_in_progress || 0}
                 />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+            <div className={`p-3 rounded-lg text-white min-w-[50px] text-right ${tetMode ? 'bg-gradient-to-br from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-br from-[#1e88e5] to-[#42a5f5]'}`}>
               <span className="text-lg sm:text-xl flex justify-center">
                 <FontAwesomeIcon icon={faGear} />
               </span>
             </div>
-            <span className="w-full border-t mt-2"></span>
+            <span className={`w-full border-t mt-2 ${tetMode ? 'border-[#3a3b3c]' : ''}`}></span>
             <div className="mt-4">
               <span
                 className={`pt-2 font-semibold ${
@@ -617,28 +619,28 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_auction_in_progress_change}% `
                   : `${overViewData.total_auction_in_progress_change}% `}
               </span>
-              <span className="text-gray-500">{t("than_last_month")}</span>
+              <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("than_last_month")}</span>
             </div>
           </div>
 
           {/* Total Upcoming Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
+          <div className={`flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'}`}>
             <div className="flex-1 pr-3 text-left">
-              <p className="text-lg text-gray-500 font-medium">
+              <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_upcoming_auctions")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_upcoming_auctions || 0}
                 />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+            <div className={`p-3 rounded-lg text-white min-w-[50px] text-right ${tetMode ? 'bg-gradient-to-br from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-br from-[#1e88e5] to-[#42a5f5]'}`}>
               <span className="text-lg sm:text-xl flex justify-center">
                 <FontAwesomeIcon icon={faClock} />
               </span>
             </div>
-            <span className="w-full border-t mt-2"></span>
+            <span className={`w-full border-t mt-2 ${tetMode ? 'border-[#3a3b3c]' : ''}`}></span>
             <div className="mt-4">
               <span
                 className={`pt-2 font-semibold ${
@@ -651,28 +653,28 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_upcoming_auctions_change}% `
                   : `${overViewData.total_upcoming_auctions_change}% `}
               </span>
-              <span className="text-gray-500">{t("than_last_month")}</span>
+              <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("than_last_month")}</span>
             </div>
           </div>
 
           {/* Total Unsuccessful Auctions */}
-          <div className="flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] bg-white">
+          <div className={`flex flex-wrap items-center justify-between py-5 px-4 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'}`}>
             <div className="flex-1 pr-3 text-left">
-              <p className="text-lg text-gray-500 font-medium">
+              <p className={`text-lg font-medium ${tetMode ? 'text-gray-300' : 'text-gray-500'}`}>
                 {t("total_unsuccessful_auctions")}
               </p>
-              <div className="text-xl sm:text-2xl font-bold">
+              <div className={`text-xl sm:text-2xl font-bold ${tetMode ? 'text-white' : 'text-gray-900'}`}>
                 <AnimatedCounter
                   value={overViewData.total_unsuccessful_auctions || 0}
                 />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-[#1e88e5] to-[#42a5f5] p-3 rounded-lg text-white min-w-[50px] text-right">
+            <div className={`p-3 rounded-lg text-white min-w-[50px] text-right ${tetMode ? 'bg-gradient-to-br from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-br from-[#1e88e5] to-[#42a5f5]'}`}>
               <span className="text-lg sm:text-xl flex justify-center">
                 <FontAwesomeIcon icon={faXmark} />
               </span>
             </div>
-            <span className="w-full border-t mt-2"></span>
+            <span className={`w-full border-t mt-2 ${tetMode ? 'border-[#3a3b3c]' : ''}`}></span>
             <div className="mt-4">
               <span
                 className={`pt-2 font-semibold ${
@@ -685,16 +687,16 @@ const OverViewAdmin = () => {
                   ? `+${overViewData.total_unsuccessful_auctions_change}% `
                   : `${overViewData.total_unsuccessful_auctions_change}% `}
               </span>
-              <span className="text-gray-500">{t("than_last_month")}</span>
+              <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("than_last_month")}</span>
             </div>
           </div>
         </div>
 
         {/* <!-- MANAGER USERS --> */}
 
-        <div className=" shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded-lg mb-6">
+        <div className={`shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded-lg mb-6 ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : ''}`}>
           <div className="flex justify-between mb-3 items-center max-sm:flex-col max-sm:gap-3">
-            <p className="text-lg font-bold">{t("manager_user")}</p>
+            <p className={`text-lg font-bold ${tetMode ? 'text-white' : ''}`}>{t("manager_user")}</p>
             <div className="flex-1 flex flex-col md:flex-row items-center md:space-y-0 md:space-x-4 w-full justify-end max-sm:gap-3">
               {/* <!-- Search Input --> */}
               <div className="w-[60%] max-sm:w-full">
@@ -702,7 +704,7 @@ const OverViewAdmin = () => {
                   <input
                     type="text"
                     placeholder={t("email_or_username")}
-                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full pl-8 pr-4 py-2 rounded-lg border outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:border-[#CB0502] focus:ring-2 focus:ring-red-900/30' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
                     onChange={(e) =>
                       setUserFilterInput((prev) => ({
                         ...prev,
@@ -710,14 +712,14 @@ const OverViewAdmin = () => {
                       }))
                     }
                   />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <span className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${tetMode ? 'text-gray-500' : 'text-gray-400'}`}>
                     <FontAwesomeIcon icon={faSearch} />
                   </span>
                 </div>
               </div>
               {/* <!-- Category Select --> */}
               <div className="w-[25%] pb-6 max-sm:w-full">
-                <label className="text-sm font-semibold block mb-1">
+                <label className={`text-sm font-semibold block mb-1 ${tetMode ? 'text-gray-300' : ''}`}>
                   {t("sort_by")}
                 </label>
                 {/* Sort select */}
@@ -731,7 +733,7 @@ const OverViewAdmin = () => {
                         sort_order: selectedOption.dataset.order,
                       }));
                     }}
-                    className="border border-gray-400 rounded-lg px-3 py-2 w-full"
+                    className={`rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
                   >
                     <option value="username" data-order="asc">
                       {t("sort_username_asc")}
@@ -764,10 +766,10 @@ const OverViewAdmin = () => {
               {/* <!-- Search Button --> */}
               <button
                 onClick={searchUser}
-                className="inline-flex items-center gap-2 px-4 py-3 pr-5 will-change-transform rounded-lg font-bold text-white text-base
+                className={`inline-flex items-center gap-2 px-4 py-3 pr-5 will-change-transform rounded-lg font-bold text-white text-base
                   border border-transparent
                   transform transition-transform duration-300 hover:scale-105
-                  bg-gradient-to-r from-blue-500 to-indigo-500"
+                  ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
                 >
                 <FontAwesomeIcon icon={faSearch} />
                 <span>{t("search_btn")}</span>
@@ -775,59 +777,59 @@ const OverViewAdmin = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto border border-gray-300 rounded">
+          <div className={`overflow-x-auto border rounded ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-300'}`}>
             <div className="text-center ">
               {isLoadingSearch && <div className="loader" />}
             </div>
             <table className="min-w-full border-collapse">
-              <thead className="bg-gray-200">
+              <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
                 <tr>
-                  <th className="border px-2 py-1">#</th>
-                  <th className="border px-2 py-1">{t("name")}</th>
-                  <th className="border px-2 py-1">{t("email")}</th>
-                  <th className="border px-2 py-1">
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("name")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("email")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>
                     {t("contact_phone_label").split(":")}
                   </th>
                   {/* <th className="border px-2 py-1">{t("created_at")}</th> */}
-                  <th className="border px-2 py-1">{t("role")}</th>
-                  <th className="border px-2 py-1">{t("bid_count")}</th>
-                  <th className="border px-2 py-1">{t("company")}</th>
-                  <th className="border px-2 py-1">{t("status")}</th>
-                  <th className="border px-2 py-1">{t("action")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("role")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("bid_count")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("company")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
                 {userData?.map((user, idx) => (
                   <tr
                     key={user.id || idx}
-                    className=" hover:bg-blue-400 hover:text-white transition"
+                    className={`transition ${tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white'}`}
                   >
-                    <td className="border px-2 py-1 text-center">{idx + 1}</td>
+                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{idx + 1}</td>
                     {/* Name */}
-                    <td className="border px-2 py-1">
+                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                       {currentEditing === idx ? (
                         <input
                           type="text"
                           name="name"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
-                          className="border px-2 py-1 w-full rounded text-black"
+                          className={`border px-2 py-1 w-full rounded ${tetMode ? 'bg-[#242526] border-[#4a4b4c] text-white' : 'text-black'}`}
                         />
                       ) : (
                         user.username
                       )}
                     </td>
                     {/* Email */}
-                    <td className="border px-2 py-1">{user.email}</td>
+                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{user.email}</td>
                     {/* Phone Number */}
-                    <td className="border px-2 py-1 text-center">
+                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                       {currentEditing === idx ? (
                         <input
                           type="text"
                           name="name"
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="border px-2 py-1 w-full rounded text-black"
+                          className={`border px-2 py-1 w-full rounded ${tetMode ? 'bg-[#242526] border-[#4a4b4c] text-white' : 'text-black'}`}
                         />
                       ) : (
                         user.phone_number || "N/A"
@@ -835,7 +837,7 @@ const OverViewAdmin = () => {
                     </td>
                     {/* Role */}
                     <td
-                      className={`border px-2 py-1 text-center ${
+                      className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''} ${
                         user.role === "ADMIN"
                           ? " text-red-500"
                           : user.role === "SUPER_ADMIN"
@@ -846,28 +848,28 @@ const OverViewAdmin = () => {
                       {user.role}
                     </td>
                     {/* Count Bid */}
-                    <td className="border px-2 py-1 text-center">{user.bid_count}</td>
+                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{user.bid_count}</td>
                     {/* Company */}
-                    <td className="border px-2 py-1">
+                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                       {currentEditing === idx ? (
                         <input
                           type="text"
                           name="name"
                           value={company}
                           onChange={(e) => setCompanyName(e.target.value)}
-                          className="border px-2 py-1 w-full rounded text-black"
+                          className={`border px-2 py-1 w-full rounded ${tetMode ? 'bg-[#242526] border-[#4a4b4c] text-white' : 'text-black'}`}
                         />
                       ) : (
                         user.company || "N/A"
                       )}
                       </td>
                     {/* Status */}
-                    <td className="border px-2 py-1">
+                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                       <div className="flex justify-center">
                         {user.status ? (
                           <button
                             onClick={() => handleDeactiveUser(user)}
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 hover:scale-105"
+                            className={`text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 hover:scale-105 ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
                           >
                             {t("active")}
                           </button>
@@ -882,18 +884,18 @@ const OverViewAdmin = () => {
                       </div>
                     </td>
                     {/* Action */}
-                    <td className="border px-2 py-1 space-x-1 text-center max-sm:flex whitespace-nowrap">
+                    <td className={`border px-2 py-1 space-x-1 text-center max-sm:flex whitespace-nowrap ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                       {currentEditing === idx ? (
                         <>
                           <button
                             onClick={() => handleEditUser(user)}
-                            className="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-2 min-w-16 rounded-md border border-teal-200 hover:bg-teal-300 transition"
+                            className={`text-xs font-semibold px-3 py-2 min-w-16 rounded-md border transition ${tetMode ? 'bg-teal-900/50 text-teal-400 border-teal-700 hover:bg-teal-800' : 'bg-teal-100 text-teal-600 border-teal-200 hover:bg-teal-300'}`}
                           >
                             {t("save")}
                           </button>
                           <button
                             onClick={() => setCurrentEditing(null)}
-                            className="bg-orange-100 text-orange-600 font-semibold text-xs px-3 py-2 rounded-md min-w-[60px] border border-orange-200 hover:bg-orange-300 transition"
+                            className={`font-semibold text-xs px-3 py-2 rounded-md min-w-[60px] border transition ${tetMode ? 'bg-orange-900/50 text-orange-400 border-orange-700 hover:bg-orange-800' : 'bg-orange-100 text-orange-600 border-orange-200 hover:bg-orange-300'}`}
                           >
                             {t("cancle")}
                           </button>
@@ -902,13 +904,13 @@ const OverViewAdmin = () => {
                         <>
                           <button
                             onClick={() => handelClickEdit(user, idx)}
-                            className="bg-indigo-100 hover:bg-indigo-200 transform duration-300 hover:scale-105 font-semibold text-indigo-700 text-xs px-3 py-2 rounded min-w-[60px] transition"
+                            className={`font-semibold text-xs px-3 py-2 rounded min-w-[60px] transform duration-300 hover:scale-105 transition ${tetMode ? 'bg-indigo-900/50 text-indigo-400 hover:bg-indigo-800' : 'bg-indigo-100 hover:bg-indigo-200 text-indigo-700'}`}
                           >
                             {t("edit")}
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="bg-red-100 text-red-600 transform duration-300 hover:scale-105 text-xs font-semibold px-3 py-2 rounded-md border border-red-200 hover:bg-red-300 transition"
+                            className={`text-xs font-semibold px-3 py-2 rounded-md border transform duration-300 hover:scale-105 transition ${tetMode ? 'bg-red-900/50 text-red-400 border-red-700 hover:bg-red-800' : 'bg-red-100 text-red-600 border-red-200 hover:bg-red-300'}`}
                           >
                             {t("delete")}
                           </button>
@@ -931,14 +933,14 @@ const OverViewAdmin = () => {
         
         {/* <!-- MANAGER AUCTIONS --> */}
 
-        <div className="shadow-[0_2px_8px_rgba(0,0,0,0.3)]  p-4 rounded-lg">
+        <div className={`shadow-[0_2px_8px_rgba(0,0,0,0.3)] p-4 rounded-lg ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : ''}`}>
           <div className="flex-1 flex flex-col md:flex-row justify-between items-center md:space-y-0 md:space-x-4 w-full">
             <div className="flex gap-10 w-full items-center max-sm:flex-col max-sm:gap-4 max-sm:mb-4">
-              <h2 className="text-lg font-bold"> {t("manager_auctions")}</h2>
+              <h2 className={`text-lg font-bold ${tetMode ? 'text-white' : ''}`}> {t("manager_auctions")}</h2>
               
               <button
                 onClick={() => setModeCreate()}
-                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white will-change-transform flex items-center justify-center transform transition-transform duration-300 hover:scale-105 font-bold text-base px-4 py-3 rounded-lg max-sm:w-full"
+                className={`text-white will-change-transform flex items-center justify-center transform transition-transform duration-300 hover:scale-105 font-bold text-base px-4 py-3 rounded-lg max-sm:w-full ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
               ><svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>{t("create_auction_btn")}
@@ -950,7 +952,7 @@ const OverViewAdmin = () => {
                   <input
                     type="text"
                     placeholder={t("enter_title")}
-                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full pl-8 pr-4 py-2 rounded-lg border outline-none transition-all ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:border-[#CB0502] focus:ring-2 focus:ring-red-900/30' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
                     onChange={(e) =>
                       setAuctionFilterInput((prev) => ({
                         ...prev,
@@ -958,7 +960,7 @@ const OverViewAdmin = () => {
                       }))
                     }
                   />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  <span className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${tetMode ? 'text-gray-500' : 'text-gray-400'}`}>
                     <FontAwesomeIcon icon={faSearch} />
                   </span>
                 </div>
@@ -966,7 +968,7 @@ const OverViewAdmin = () => {
               <div className="w-[20%] pb-6 max-sm:w-full">
                 {/* Sort select */}
                 <div className="col-span-1">
-                  <label className="text-sm font-[700] mb-1 mr-2 block">
+                  <label className={`text-sm font-[700] mb-1 mr-2 block ${tetMode ? 'text-gray-300' : ''}`}>
                     {t("sort_by")}
                   </label>
                   <select
@@ -978,7 +980,7 @@ const OverViewAdmin = () => {
                         sort_order: selectedOption.dataset.order,
                       }));
                     }}
-                    className="border border-gray-400 rounded-lg px-3 py-2 w-full"
+                    className={`rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
                   >
                     <option value="">{t("select_sort")}</option>
                     <option value="title" data-order="asc">
@@ -1011,7 +1013,7 @@ const OverViewAdmin = () => {
               <div className="w-[15%] pb-6 max-sm:w-full">
                 {/* Status select */}
                 <div className="col-span-1">
-                  <label className="text-sm font-[700] mb-1 mr-2 block">
+                  <label className={`text-sm font-[700] mb-1 mr-2 block ${tetMode ? 'text-gray-300' : ''}`}>
                     {t("status")}
                   </label>
                   <select
@@ -1021,7 +1023,7 @@ const OverViewAdmin = () => {
                     status: e.target.value === "" ? null : e.target.value,
                   }))
                 }
-                className="border border-gray-400 rounded-lg px-3 py-2 max-sm:w-full"
+                className={`rounded-lg px-3 py-2 max-sm:w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
               >
                 <option value="">{t("select_status")}</option>
                 <option value="0">{t("ongoing_auctions")}</option>
@@ -1035,10 +1037,10 @@ const OverViewAdmin = () => {
               <div className="">
                 <button
                   onClick={handleSearch}
-                  className="inline-flex items-center gap-2 px-4 py-3 pr-5 will-change-transform rounded-lg font-bold text-white text-base
+                  className={`inline-flex items-center gap-2 px-4 py-3 pr-5 will-change-transform rounded-lg font-bold text-white text-base
                     border border-transparent
                     transform transition-transform duration-300 hover:scale-105
-                    bg-gradient-to-r from-blue-500 to-indigo-500"
+                    ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
                 >
                   <FontAwesomeIcon icon={faSearch} />
                   <span> {t("search_btn")}</span>
@@ -1046,23 +1048,23 @@ const OverViewAdmin = () => {
               </div>
             </div>
           </div>
-          <div className="overflow-x-auto border border-gray-300 rounded">
+          <div className={`overflow-x-auto border rounded ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-300'}`}>
             <div className="text-center ">
               {isLoadingSearch && <div className="loader" />}
             </div>
             <table className="min-w-full border-collapse">
-              <thead className="bg-gray-200">
+              <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
                 <tr>
-                  <th className="border px-2 py-1">#</th>
-                  <th className="border px-2 py-1">{t("title")}</th>
-                  <th className="border px-2 py-1">{t("type")}</th>
-                  <th className="border px-2 py-1">{t("auction_type")}</th>
-                  <th className="border px-2 py-1">{t("start_time")}</th>
-                  <th className="border px-2 py-1">{t("end_time")}</th>
-                  <th className="border px-2 py-1">{t("starting_price")}</th>
-                  <th className="border px-2 py-1">{t("highest_price")}</th>
-                  <th className="border px-2 py-1">{t("status")}</th>
-                  <th className="border px-2 py-1">#</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("title")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("type")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("auction_type")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("start_time")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("end_time")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("starting_price")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("highest_price")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
                 </tr>
               </thead>
               <tbody>
@@ -1075,7 +1077,8 @@ const OverViewAdmin = () => {
                     <tr
                       key={auction.id || idx}
                       className={clsx(
-                        " hover:bg-blue-400 hover:text-white transition",
+                        "transition",
+                        tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white',
                         {
                           "cursor-pointer": auction.status === 1,
                         }
@@ -1086,25 +1089,25 @@ const OverViewAdmin = () => {
                           : undefined
                       }
                     >
-                      <td className="border px-2 py-1 max-w-96 text-center break-words">
+                      <td className={`border px-2 py-1 max-w-96 text-center break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {idx + 1}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words" title={auction.title}>
+                      <td className={`border px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`} title={auction.title}>
                         {auction.title.length > 70 ? auction.title.slice(0, 70) + "..." : auction.title}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words">
+                      <td className={`border px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {auction.category.category_name || "N/A"}
                       </td>
-                      <td className="border text-center px-2 py-1 max-w-96 break-words">
+                      <td className={`border text-center px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {auction.auction_type === "BUY" ? t("buy") : t("sell")}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words text-center">
+                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {dayjs(auction.start_time).format("MM/DD/YYYY HH:mm")}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words text-center">
+                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {dayjs(auction.end_time).format("MM/DD/YYYY HH:mm")}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words text-center">
+                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {auction.starting_price?.toLocaleString(
                           auction.currency === "VND" ? "vi-VN" : "en-US",
                           {
@@ -1113,7 +1116,7 @@ const OverViewAdmin = () => {
                           }
                         )}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words text-center">
+                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {auction.highest_amount?.toLocaleString(
                           auction.currency === "VND" ? "vi-VN" : "en-US",
                           {
@@ -1122,7 +1125,7 @@ const OverViewAdmin = () => {
                           }
                         ) || "N/A"}
                       </td>
-                      <td className="border px-2 py-1 max-w-96 break-words text-center">
+                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {statusText}
                       </td>
                       <td
@@ -1130,7 +1133,7 @@ const OverViewAdmin = () => {
                           e.stopPropagation();
                           openDetailBid(auction.id);
                         }}
-                        className="border px-2 py-1 max-w-96 text-blue-500 underline cursor-pointer break-words"
+                        className={`border px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'text-blue-500'}`}
                       >
                         {t("view")}
                       </td>

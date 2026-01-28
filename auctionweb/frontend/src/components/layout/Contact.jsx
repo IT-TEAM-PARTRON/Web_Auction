@@ -3,8 +3,11 @@ import imagefac from "../../assets/images/factory.jpg";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import MapEmbed from "./MapEmbed";
+import { useTetMode } from "../../contexts/TetModeContext";
+
 function Contact() {
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -15,15 +18,16 @@ function Contact() {
   
   return (
     <AnimatedContent>
-      <main className="rule-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <main className="rule-content mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
-            background: "#fff",
+            background: tetMode ? "#242526" : "#fff",
             borderRadius: "6px",
             padding: "32px",
             maxWidth: "1200px",
             margin: "0px auto",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            boxShadow: tetMode ? "0 2px 8px rgba(0, 0, 0, 0.5)" : "0 2px 8px rgba(0, 0, 0, 0.3)",
+            border: tetMode ? "1px solid #3a3b3c" : "none",
           }}
         >
           <h3
@@ -32,6 +36,7 @@ function Contact() {
               marginBottom: "24px",
               textAlign: "center",
               fontSize: "2rem",
+              color: tetMode ? "#fff" : "inherit",
             }}
           >
             {t("contact_title").toUpperCase()}
@@ -42,25 +47,26 @@ function Contact() {
                 style={{
                   fontSize: "32px",
                   fontWeight: 400,
+                  color: tetMode ? "#CB0502" : "inherit",
                 }}
               >
                 {t("contact_company_name")}
               </h2>
 
               <div
-                style={{ fontSize: "16px", color: "#222", lineHeight: "1.8" }}
+                style={{ fontSize: "16px", color: tetMode ? "#e4e6eb" : "#222", lineHeight: "1.8" }}
               >
                 <div className="text-[18px] my-3">
                   <div>
-                    <strong>{t("contact_phone_label")}</strong>{" "}
+                    <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("contact_phone_label")}</strong>{" "}
                     {t("contact_phone_value")}
                   </div>
                   <div>
-                    <strong>{t("contact_fax_label")}</strong>{" "}
+                    <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("contact_fax_label")}</strong>{" "}
                     {t("contact_fax_value")}
                   </div>
                   <div>
-                    <strong>{t("contact_email_label")}</strong>{" "}
+                    <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("contact_email_label")}</strong>{" "}
                     {t("contact_email_value")}
                   </div>
                 </div>
@@ -70,6 +76,7 @@ function Contact() {
                       fontWeight: "bold",
                       fontSize: "18px",
                       marginBottom: "8px",
+                      color: tetMode ? "#CB0502" : "inherit",
                     }}
                   >
                     {t("contact_1_title")}
@@ -79,11 +86,11 @@ function Contact() {
                       <p>{t("contact_1_company")}</p>
                     </div>
                     <div>
-                      <strong>{t("contact_1_tax_label")}</strong>{" "}
+                      <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("contact_1_tax_label")}</strong>{" "}
                       {t("contact_1_tax_value")}
                     </div>
                     <div>
-                      <span style={{ fontWeight: "bold" }}>
+                      <span style={{ fontWeight: "bold", color: tetMode ? "#fbbf24" : "inherit" }}>
                         {t("contact_1_address_label")}
                       </span>{" "}
                       {t("contact_1_address_value")}
@@ -97,6 +104,7 @@ function Contact() {
                       fontWeight: "bold",
                       fontSize: "18px",
                       marginBottom: "8px",
+                      color: tetMode ? "#CB0502" : "inherit",
                     }}
                   >
                     {t("contact_2_title")}
@@ -106,11 +114,11 @@ function Contact() {
                       <p>{t("contact_2_company")}</p>
                     </div>
                     <div>
-                      <strong>{t("contact_2_tax_label")}</strong>{" "}
+                      <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("contact_2_tax_label")}</strong>{" "}
                       {t("contact_2_tax_value")}
                     </div>
                     <div>
-                      <span style={{ fontWeight: "bold" }}>
+                      <span style={{ fontWeight: "bold", color: tetMode ? "#fbbf24" : "inherit" }}>
                         {t("contact_2_address_label")}
                       </span>{" "}
                       {t("contact_2_address_value")}

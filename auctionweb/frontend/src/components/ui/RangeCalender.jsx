@@ -4,10 +4,13 @@ import "flatpickr/dist/flatpickr.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
+import { useTetMode } from "../../contexts/TetModeContext";
 
 function RangeCalender({ onChange, value, allowMinDate }) {
   const calendarRef = useRef(null);
+  const containerRef = useRef(null);
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
   const handleFocus = () => {
     calendarRef.current?.focus();
   };
@@ -51,11 +54,34 @@ function RangeCalender({ onChange, value, allowMinDate }) {
     }
   }, [i18n]);
 
+  // Xử lý click outside để đóng calendar
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Kiểm tra xem click có nằm ngoài container và calendar popup không
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target) &&
+        fpInstance.current
+      ) {
+        // Kiểm tra xem click có phải vào flatpickr calendar popup không
+        const flatpickrCalendar = document.querySelector('.flatpickr-calendar');
+        if (!flatpickrCalendar || !flatpickrCalendar.contains(event.target)) {
+          fpInstance.current.close();
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="flex items-center border rounded overflow-hidden">
+    <div ref={containerRef} className={`flex items-center border rounded overflow-hidden ${tetMode ? 'border-[#3a3b3c]' : ''}`}>
       <div
         onClick={handleFocus}
-        className="bg-blue-500 h-8 flex items-center px-3"
+        className={`h-8 flex items-center px-3 ${tetMode ? 'bg-[#CB0502]' : 'bg-blue-500'}`}
       >
         <FontAwesomeIcon
           icon={faCalendar}
@@ -65,7 +91,7 @@ function RangeCalender({ onChange, value, allowMinDate }) {
       <input
         ref={calendarRef}
         placeholder={t("select_time_range")}
-        className="p-2 w-full h-full focus:outline-none"
+        className={`p-2 w-full h-full focus:outline-none ${tetMode ? 'bg-[#3a3b3c] text-white placeholder-gray-400' : ''}`}
       />
     </div>
   );

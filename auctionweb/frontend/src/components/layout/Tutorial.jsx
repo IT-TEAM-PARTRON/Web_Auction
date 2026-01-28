@@ -3,9 +3,11 @@ import login from "../../assets/images/login.png";
 import register from "../../assets/images/register.png";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useTetMode } from "../../contexts/TetModeContext";
 
 function Tutorial() {
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -16,15 +18,16 @@ function Tutorial() {
 
   return (
     <AnimatedContent>
-      <main className="tutorial-content mt-[250px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <main className="tutorial-content mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
         <div
           style={{
-            background: "#fff",
+            background: tetMode ? "#242526" : "#fff",
             borderRadius: "6px",
             padding: "32px",
             maxWidth: "1200px",
             margin: "0px auto",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            boxShadow: tetMode ? "0 2px 8px rgba(0, 0, 0, 0.5)" : "0 2px 8px rgba(0, 0, 0, 0.3)",
+            border: tetMode ? "1px solid #3a3b3c" : "none",
           }}
         >
           <h3
@@ -33,6 +36,7 @@ function Tutorial() {
               marginBottom: "24px",
               textAlign: "center",
               fontSize: "2rem",
+              color: tetMode ? "#fff" : "inherit",
             }}
           >
             {t("auction_guide_title").toUpperCase()}
@@ -40,12 +44,12 @@ function Tutorial() {
           <ol
             style={{
               fontSize: "18px",
-              color: "#222",
+              color: tetMode ? "#e4e6eb" : "#222",
               lineHeight: "2",
             }}
           >
             <li>
-              <b className="italic">{t("auction_guide_step_1_title")}</b>{" "}
+              <b className="italic" style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("auction_guide_step_1_title")}</b>{" "}
               <ul className="list-disc pl-5">
                 <li>{t("auction_guide_step_1_content_1")}</li>
                 <li>{t("auction_guide_step_1_content_2")}</li>
@@ -65,7 +69,7 @@ function Tutorial() {
               />
             </li>
             <li>
-              <b className="italic">{t("auction_guide_step_2_title")}</b>
+              <b className="italic" style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("auction_guide_step_2_title")}</b>
               <br />
               <ul className="list-disc pl-5">
                 <li>{t("auction_guide_step_2_content_1")}</li>
@@ -86,17 +90,17 @@ function Tutorial() {
               />
             </li>
             <li>
-              <b className="italic">{t("auction_guide_step_3_title")}</b>
+              <b className="italic" style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("auction_guide_step_3_title")}</b>
               <br />
               {t("auction_guide_step_3_content")}
             </li>
             <li>
-              <b className="italic">{t("auction_guide_step_4_title")}</b>
+              <b className="italic" style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("auction_guide_step_4_title")}</b>
               <br />
               {t("auction_guide_step_4_content")}
             </li>
             <li>
-              <b className="italic">{t("auction_guide_step_5_title")}</b>
+              <b className="italic" style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("auction_guide_step_5_title")}</b>
               <br />
               {
                 <ul className="list-disc pl-5">
@@ -106,7 +110,7 @@ function Tutorial() {
               }
             </li>
             <li>
-              <b className="italic">{t("auction_guide_step_6_title")}</b>
+              <b className="italic" style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("auction_guide_step_6_title")}</b>
               <br />
               {t("auction_guide_step_6_content")}
             </li>
