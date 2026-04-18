@@ -1,8 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/HomePage";
-import Login from "./components/layout/Login";
-import Register from "./components/layout/Register";
-import ForgotPassword from "./components/layout/ForgotPassword.jsx";
 import AuctionDetail from "./components/layout/AuctionDetail";
 import CreateAuctionForm from "./components/layout/AuctionCreate.jsx";
 import AuctionSearch from "./components/layout/AuctionSearch.jsx";
@@ -47,9 +44,6 @@ function App() {
           
         </Route>
         {/* Not use layout */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
       

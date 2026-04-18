@@ -5,7 +5,7 @@ const TetModeContext = createContext();
 export function TetModeProvider({ children }) {
   const [tetMode, setTetMode] = useState(() => {
     const saved = localStorage.getItem("tetMode");
-    return saved !== null ? JSON.parse(saved) : true; // Mặc định bật
+    return saved !== null ? JSON.parse(saved) : false; // Mặc định tắt Tet Mode
   });
 
   useEffect(() => {

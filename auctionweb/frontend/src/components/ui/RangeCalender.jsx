@@ -6,7 +6,7 @@ import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 import { useTetMode } from "../../contexts/TetModeContext";
 
-function RangeCalender({ onChange, value, allowMinDate }) {
+function RangeCalender({ onChange, value, allowMinDate, hideIcon }) {
   const calendarRef = useRef(null);
   const containerRef = useRef(null);
   const { t, i18n } = useTranslation();
@@ -79,19 +79,21 @@ function RangeCalender({ onChange, value, allowMinDate }) {
 
   return (
     <div ref={containerRef} className={`flex items-center border rounded overflow-hidden ${tetMode ? 'border-[#3a3b3c]' : ''}`}>
-      <div
-        onClick={handleFocus}
-        className={`h-8 flex items-center px-3 ${tetMode ? 'bg-[#CB0502]' : 'bg-blue-500'}`}
-      >
-        <FontAwesomeIcon
-          icon={faCalendar}
-          className="text-white cursor-pointer"
-        />
-      </div>
+      {!hideIcon && (
+        <div
+          onClick={handleFocus}
+          className={`h-8 flex items-center px-3 ${tetMode ? 'bg-[#CB0502]' : 'bg-blue-500'}`}
+        >
+          <FontAwesomeIcon
+            icon={faCalendar}
+            className="text-white cursor-pointer"
+          />
+        </div>
+      )}
       <input
         ref={calendarRef}
         placeholder={t("select_time_range")}
-        className={`p-2 w-full h-full focus:outline-none ${tetMode ? 'bg-[#3a3b3c] text-white placeholder-gray-400' : ''}`}
+        className={`p-[10px] w-full h-full focus:outline-none ${tetMode ? 'bg-[#3a3b3c] text-white placeholder-gray-400' : ''}`}
       />
     </div>
   );

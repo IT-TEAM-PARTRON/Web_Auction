@@ -78,64 +78,6 @@ class EmailService:
             print(f"Error sending reset password email: {e}")
             return False
 
-    #Gửi 1 lần cho all user tham gia
-    # def send_auction_invitation_email(self, emails: list[str], auction_title: str, auction_id: str, auction_start_time: str, auction_end_time: str) -> bool:
-    #     """
-    #     Gửi email mời tham gia đấu giá cho nhiều user trong 1 lần gửi.
-    #     """
-    #     try:
-    #         if not emails:
-    #             print("List email  NULL.")
-    #             return False
-    #         # Tạo email
-    #         msg = MIMEMultipart()
-    #         msg['From'] = self.sender_email
-    #         msg['To'] = self.sender_email  
-    #         msg['Bcc'] = ", ".join(emails)
-    #         msg['Subject'] = f"Auction System | Partron Vina - Invitation to Join Auction"
-
-    #         # Link đấu giá
-    #         auction_link = f"{self.app_domain}/auctions/{auction_id}"
-
-    #         # Nội dung email
-    #         body = f"""
-    #         Dear Participant,
-
-    #         You have been invited to participate in the auction:
-
-    #         Auction Name: {auction_title}
-    #         Start Time: {auction_start_time}
-    #         End Time: {auction_end_time}
-
-    #         Click the link below to view the auction and place your bids:
-    #         {auction_link}
-
-    #         If you have any questions, please contact our support team.
-    #         IT Team
-            
-    #         -----------------------------------------------
-    #         This is an automated email, please do not reply.
-    #         """
-
-    #         msg.attach(MIMEText(body, 'plain'))
-
-    #         # Gửi email
-    #         if self.sender_email and self.sender_password:
-    #             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
-    #             server.starttls()
-    #             server.login(self.sender_email, self.sender_password)
-    #             server.sendmail(self.sender_email, emails, msg.as_string())
-    #             server.quit()
-
-    #             print(f"Đã gửi email mời đấu giá tới {len(emails)} người.")
-    #             return True
-    #         else:
-    #             print("Thiếu cấu hình SMTP.")
-    #             return False
-
-    #     except Exception as e:
-    #         print(f"Lỗi gửi email mời đấu giá: {e}")
-    #         return False
     #Gửi lần lượt cho all user tham gia
     def send_auction_invitation_email(self, emails: list[str], auction_title: str, auction_id: str, auction_start_time: str, auction_end_time: str) -> bool:
         """
@@ -161,13 +103,13 @@ class EmailService:
             # Gửi lần lượt cho từng người
             for email in emails:
                 try:
-                    msg = MIMEMultipart()
+                    msg = MIMEMultipart('alternative')
                     msg['From'] = self.sender_email
                     msg['To'] = email
                     msg['Subject'] = "Auction System | Partron Vina - Invitation to Join Auction"
 
-                    # Nội dung email
-                    body = f"""
+                    # Nội dung email dạng Plain Text
+                    text_body = f"""
                     Dear Participant,
 
                     You have been invited to participate in the auction:
@@ -185,8 +127,44 @@ class EmailService:
                     -----------------------------------------------
                     This is an automated email, please do not reply.
                     """
+                    html_body = f"""
+                    <html>
+                      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                          <h2 style="color: #ef4444; margin: 0;">Auction Invitation</h2>
+                        </div>
+                        <p>Dear Participant,</p>
+                        <p>You have been invited to participate in the following auction:</p>
+                        <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #f3f4f6;">
+                          <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Auction Name:</strong></td>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; color: #111;">{auction_title}</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Start Time:</strong></td>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; color: #111;">{auction_start_time}</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px 0;"><strong>End Time:</strong></td>
+                              <td style="padding: 8px 0; color: #111;">{auction_end_time}</td>
+                            </tr>
+                          </table>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px;">Click the button below to view the auction details and place your bids:</p>
+                        <div style="text-align: center; margin: 10px 0;">
+                          <a href="{auction_link}" style="background-color: #ef4444; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">JOIN AUCTION</a>
+                        </div>
+                        <p style="font-size: 14px; color: #666; margin-top: 10px;">If you have any questions, please contact our support team.</p>
+                        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>IT Team</strong></p>
+                        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
+                        <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">This is an automated email, please do not reply.</p>
+                      </body>
+                    </html>
+                    """
 
-                    msg.attach(MIMEText(body, 'plain'))
+                    msg.attach(MIMEText(text_body, 'plain'))
+                    msg.attach(MIMEText(html_body, 'html'))
                     server.sendmail(self.sender_email, email, msg.as_string())
 
                     print(f"Đã gửi email mời đấu giá tới: {email}")

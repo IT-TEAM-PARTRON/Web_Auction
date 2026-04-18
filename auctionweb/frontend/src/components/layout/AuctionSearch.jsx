@@ -1,8 +1,8 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faThLarge, faList } from "@fortawesome/free-solid-svg-icons";
+import { Search, Grid3x3, List, Tag, Gavel, Info, ArrowUpDown, CalendarDays } from "lucide-react";
 import RangeCalender from "../ui/RangeCalender";
 import RenderCardAuction from "../ui/CardComponent";
 import RenderListAuction from "../ui/ListComponent";
+import CustomSelect from "../ui/CustomSelect";
 import { useEffect, useState } from "react";
 import { getAll } from "../../services/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -65,6 +65,37 @@ const AuctionSearch = () => {
       };
       fetchCategories();
   }, []);
+
+  // Prepare options for selects
+  const categoryOptions = [
+    { value: "", label: t("select_group") },
+    ...categories.map(cat => ({ value: cat.category_id, label: cat.category_name }))
+  ];
+
+  const auctionTypeOptions = [
+    { value: "", label: t("select_group") },
+    { value: "SELL", label: t("sell") },
+    { value: "BUY", label: t("buy") }
+  ];
+
+  const statusOptions = [
+    { value: "", label: t("select_status") },
+    { value: "0", label: t("ongoing_auctions") },
+    { value: "1", label: t("upcoming_auctions") },
+    { value: "2", label: t("ended_auctions") }
+  ];
+
+  const sortOptions = [
+    { value: "", label: t("select_sort"), order: "" },
+    { value: "title_asc", label: t("sort_title_asc"), order: "asc", field: "title" },
+    { value: "title_desc", label: t("sort_title_desc"), order: "desc", field: "title" },
+    { value: "create_at_asc", label: t("sort_create_at_asc"), order: "asc", field: "create_at" },
+    { value: "create_at_desc", label: t("sort_create_at_desc"), order: "desc", field: "create_at" },
+    { value: "start_time_asc", label: t("sort_start_time_asc"), order: "asc", field: "start_time" },
+    { value: "start_time_desc", label: t("sort_start_time_desc"), order: "desc", field: "start_time" },
+    { value: "end_time_asc", label: t("sort_end_time_asc"), order: "asc", field: "end_time" },
+    { value: "end_time_desc", label: t("sort_end_time_desc"), order: "desc", field: "end_time" }
+  ];
 
   const setDataForParam = () => {
     setSearchParam({
@@ -138,8 +169,12 @@ const AuctionSearch = () => {
         <div className="flex flex-wrap gap-3 mb-4 items-end">
           {/* Search input */}
           <div className="relative flex-1 min-w-[150px]">
-            <span className={`absolute inset-y-0 left-0 pl-3 flex items-center ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              <FontAwesomeIcon icon={faSearch} />
+            <label className={`text-sm mb-1 block flex items-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <Search size={16} className="mr-1.5" />
+              {t("search_btn")}
+            </label>
+            <span className={`absolute bottom-0 inset-y-0 left-0 pl-3 flex items-center ${tetMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            
             </span>
             <input
               type="text"
@@ -151,109 +186,77 @@ const AuctionSearch = () => {
 
           {/* Group select */}
           <div className="flex-1 min-w-[130px]">
-            <label className={`text-sm mb-1 mr-2 block ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <label className={`text-sm mb-1 mr-2 block flex items-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <Tag size={16} className="mr-1.5" />
               {t("type")}
             </label>
-            <select
-              onChange={(e) =>
-                setCategory_id(e.target.value === "" ? null : e.target.value)
-              }
-              className={`border rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#242526] border-[#3a3b3c] text-white' : 'border-gray-400'}`}
+            <CustomSelect
               value={category_id || ""}
-            >
-              <option value="">{t("select_group")}</option>
-              {categories.map((cat) => (
-                <option key={cat.category_id} value={cat.category_id}>
-                  {cat.category_name}
-                </option>
-              ))}
-            </select>
+              onChange={setCategory_id}
+              options={categoryOptions}
+              placeholder={t("select_group")}
+            />
           </div>
 
           {/* Auction type select */}
           <div className="flex-1 min-w-[120px]">
-            <label className={`text-sm mb-1 mr-2 block ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <label className={`text-sm mb-1 mr-2 block flex items-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <Gavel size={16} className="mr-1.5" />
               {t("auction_type")}
             </label>
-            <select onChange={(e) =>
-                setAuction_type(e.target.value === "" ? null : e.target.value)
-              }
-              className={`border rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#242526] border-[#3a3b3c] text-white' : 'border-gray-400'}`}
-              value={auction_type || ""}>
-              <option value="">{t("select_group")}</option>
-              <option value="SELL">{t("sell")}</option>
-              <option value="BUY">{t("buy")}</option>
-            </select>
+            <CustomSelect
+              value={auction_type || ""}
+              onChange={setAuction_type}
+              options={auctionTypeOptions}
+              placeholder={t("select_group")}
+            />
           </div>
           
           {/* Status select */}
           <div className="flex-1 min-w-[120px]">
-            <label className={`text-sm mb-1 mr-2 block ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <label className={`text-sm mb-1 mr-2 block flex items-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <Info size={16} className="mr-1.5" />
               {t("status")}
             </label>
-            <select
-              onChange={(e) =>
-                setStatus(e.target.value === "" ? null : e.target.value)
-              }
-              className={`border rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#242526] border-[#3a3b3c] text-white' : 'border-gray-400'}`}
-            >
-              <option value="">{t("select_status")}</option>
-              <option value="0">{t("ongoing_auctions")}</option>
-              <option value="1">{t("upcoming_auctions")}</option>
-              <option value="2">{t("ended_auctions")}</option>
-            </select>
+            <CustomSelect
+              value={status || ""}
+              onChange={setStatus}
+              options={statusOptions}
+              placeholder={t("select_status")}
+            />
           </div>
 
           {/* Sort select */}
           <div className="flex-1 min-w-[150px]">
-            <label className={`text-sm mb-1 mr-2 block ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <label className={`text-sm mb-1 mr-2 block flex items-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <ArrowUpDown size={16} className="mr-1.5" />
               {t("sort_by")}
             </label>
-            <select
-              onChange={(e) => {
-                const selectedOption = e.target.selectedOptions[0];
-                setSortBy(selectedOption.value);
-                setSortOder(selectedOption.dataset.order);
+            <CustomSelect
+              value={sortBy && sortOder ? `${sortBy}_${sortOder}` : ""}
+              onChange={(value) => {
+                const selectedOption = sortOptions.find(opt => opt.value === value);
+                if (selectedOption) {
+                  setSortBy(selectedOption.field || "");
+                  setSortOder(selectedOption.order || "");
+                }
               }}
-              className={`border rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#242526] border-[#3a3b3c] text-white' : 'border-gray-400'}`}
-            >
-              <option value="">{t("select_sort")}</option>
-              <option value="title" data-order="asc">
-                {t("sort_title_asc")}
-              </option>
-              <option value="title" data-order="desc">
-                {t("sort_title_desc")}
-              </option>
-              <option value="create_at" data-order="asc">
-                {t("sort_create_at_asc")}
-              </option>
-              <option value="create_at" data-order="desc">
-                {t("sort_create_at_desc")}
-              </option>
-              <option value="start_time" data-order="asc">
-                {t("sort_start_time_asc")}
-              </option>
-              <option value="start_time" data-order="desc">
-                {t("sort_start_time_desc")}
-              </option>
-              <option value="end_time" data-order="asc">
-                {t("sort_end_time_asc")}
-              </option>
-              <option value="end_time" data-order="desc">
-                {t("sort_end_time_desc")}
-              </option>
-            </select>
+              options={sortOptions}
+              placeholder={t("select_sort")}
+            />
           </div>
 
           {/* Calendar */}
           <div className="flex-1 min-w-[150px]">
-            <label className={`text-sm mb-1 block ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <label className={`text-sm mb-1 block flex items-center ${tetMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <CalendarDays size={16} className="mr-1.5" />
               {t("calendar")}
             </label>
             <RangeCalender
               value={dateRange}
               onChange={setDateRange}
               allowMinDate={true}
+              hideIcon={true}
             />
           </div>
 
@@ -276,7 +279,7 @@ const AuctionSearch = () => {
                 }`}
                 title="Grid View"
               >
-                <FontAwesomeIcon icon={faThLarge} className="text-lg" />
+                <Grid3x3 size={18} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
@@ -291,7 +294,7 @@ const AuctionSearch = () => {
                 }`}
                 title="List View"
               >
-                <FontAwesomeIcon icon={faList} className="text-lg" />
+                <List size={18} />
               </button>
             </div>
           </div>
@@ -305,7 +308,7 @@ const AuctionSearch = () => {
               onClick={() => setDataForParam()}
               className={`text-white px-6 py-2 rounded-lg shadow-md hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-full font-semibold tracking-wide h-[40px] flex items-center justify-center ${tetMode ? 'bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900' : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:bg-blue-600'}`}
             >
-              <FontAwesomeIcon icon={faSearch} className="mr-2" />
+              <Search size={18} className="mr-2" />
               {t("search_btn")}
             </button>
           </div>

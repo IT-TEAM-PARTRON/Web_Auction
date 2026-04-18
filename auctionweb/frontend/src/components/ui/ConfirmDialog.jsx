@@ -20,7 +20,7 @@ export default function ConfirmDialog({
   }, [i18n]);
 
   return (
-    <div className={clsx("relative z-10", open ? "visible" : "invisible")}>
+    <div className={clsx("relative z-[9999]", open ? "visible" : "invisible")}>
       <div className="fixed inset-0 bg-gray-500/75 transition-opacity" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div

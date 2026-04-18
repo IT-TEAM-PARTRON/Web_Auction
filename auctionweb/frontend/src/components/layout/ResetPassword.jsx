@@ -7,6 +7,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { resetPassword, verifyResetToken } from "../../services/api";
+import { useTetMode } from "../../contexts/TetModeContext";
 import z from "zod";
 
 function ResetPassword() {
@@ -21,6 +22,7 @@ function ResetPassword() {
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { tetMode } = useTetMode();
 
   const token = searchParams.get('token');
 
@@ -116,7 +118,7 @@ function ResetPassword() {
         
         // Chuyển hướng đến trnag login sau khi reset thành công
         setTimeout(() => {
-          navigate("/login");
+          navigate("/");
         }, 2000);
       }
     } catch (error) {
@@ -131,12 +133,12 @@ function ResetPassword() {
 
   if (isCheckingToken) {
     return (
-      <div className="reset-password-bg">
+      <div className={`reset-password-bg ${tetMode ? "tet-mode" : ""}`}>
         <img src={logo} alt="Logo" className="reset-password-logo" />
-        <div className="reset-password-form-container">
+        <div className={`reset-password-form-container ${tetMode ? "tet-mode" : ""}`}>
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p>Verifying reset link...</p>
+            <p className={tetMode ? "text-gray-300" : ""}>Verifying reset link...</p>
           </div>
         </div>
       </div>
@@ -145,13 +147,13 @@ function ResetPassword() {
 
   if (!isValidToken) {
     return (
-      <div className="reset-password-bg">
+      <div className={`reset-password-bg ${tetMode ? "tet-mode" : ""}`}>
         <img src={logo} alt="Logo" className="reset-password-logo" />
-        <div className="reset-password-form-container">
+        <div className={`reset-password-form-container ${tetMode ? "tet-mode" : ""}`}>
           <div className="error-container">
-            <h2>Invalid Reset Link</h2>
-            <p>{t("invalid_reset_token", "Invalid or expired reset token.")}</p>
-            <Link to="/forgot-password" className="reset-password-btn">
+            <h2 className={tetMode ? "text-red-400" : ""}>Invalid Reset Link</h2>
+            <p className={tetMode ? "text-gray-300" : ""}>{t("invalid_reset_token", "Invalid or expired reset token.")}</p>
+            <Link to="/" className={`reset-password-btn ${tetMode ? "tet-mode" : ""}`} style={{ textAlign: "center", textDecoration: "none" }}>
               Request New Reset Link
             </Link>
           </div>
@@ -161,24 +163,24 @@ function ResetPassword() {
   }
 
   return (
-    <div className="reset-password-bg">
+    <div className={`reset-password-bg ${tetMode ? "tet-mode" : ""}`}>
       <img src={logo} alt="Logo" className="reset-password-logo" />
       <div
-        className={`reset-password-form-container transition-all duration-700 ease-out ${
+        className={`reset-password-form-container transition-all duration-700 ease-out ${tetMode ? "tet-mode" : ""} ${
           show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
         <div className="reset-password-header">
-          <h1 className="reset-password-title">{t("reset_password_title", "Reset Password")}</h1>
+          <h1 className={`reset-password-title ${tetMode ? "tet-mode" : ""}`}>{t("reset_password_title", "Reset Password")}</h1>
         </div>
         
-        <p className="reset-password-desc">
+        <p className={`reset-password-desc ${tetMode ? "tet-mode" : ""}`}>
           {t("reset_password_desc", "Enter your new password below.")}
         </p>
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="w-full">
           <div className="input-group">
-            <span className="input-icon">
+            <span className={`input-icon ${tetMode ? "tet-mode" : ""}`}>
               <FontAwesomeIcon icon={faLock} />
             </span>
             <input
@@ -189,9 +191,10 @@ function ResetPassword() {
               onChange={(e) => setNewPassword(e.target.value)}
               disabled={isLoading}
               minLength={8}
+              className={tetMode ? "tet-mode" : ""}
             />
             <span
-              className="input-icon right"
+              className={`input-icon right ${tetMode ? "tet-mode" : ""}`}
               style={{ cursor: "pointer" }}
               onClick={() => setShowNewPassword((prev) => !prev)}
             >
@@ -200,7 +203,7 @@ function ResetPassword() {
           </div>
           
           <div className="input-group">
-            <span className="input-icon">
+            <span className={`input-icon ${tetMode ? "tet-mode" : ""}`}>
               <FontAwesomeIcon icon={faLock} />
             </span>
             <input
@@ -211,6 +214,7 @@ function ResetPassword() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
               minLength={8}
+              className={tetMode ? "tet-mode" : ""}
             />
           </div>          
           <div
@@ -229,9 +233,12 @@ function ResetPassword() {
               style={{
                 padding: "4px 8px",
                 borderRadius: 6,
-                border: "1px solid #ddd",
+                border: tetMode ? "1px solid #4b5563" : "1px solid #ddd",
+                background: tetMode ? "#3a3b3c" : "transparent",
+                color: tetMode ? "#fff" : "inherit",
                 fontSize: 12,
               }}
+              className="outline-none"
             >
               <option value="vi">Tiếng Việt</option>
               <option value="en">English</option>
@@ -241,15 +248,15 @@ function ResetPassword() {
           
           <button 
             type="submit" 
-            className="reset-password-btn"
+            className={`reset-password-btn w-full ${tetMode ? "tet-mode" : ""}`}
             disabled={isLoading}
           >
             {isLoading ? "Resetting..." : t("reset_password", "Reset Password")}
           </button>
           
           <div className="reset-password-footer">
-            <Link to="/login" className="back-to-login-link">
-              {t("back_to_login", "Back to Login")}
+            <Link to="/" className={`back-to-login-link ${tetMode ? "tet-mode" : ""}`}>
+              {t("back_to_login", "Back to Home")}
             </Link>
           </div>
         </form>

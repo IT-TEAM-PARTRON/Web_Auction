@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
 const PrivateRoute = () => {
-  const { user, isLoggingOut } = useAuth();
+  const { user, isLoggingOut, openAuthModal } = useAuth();
   const location = useLocation();
   const [redirectPath, setRedirectPath] = useState(null);
 
@@ -15,8 +15,11 @@ const PrivateRoute = () => {
           ? "You need login to continue!"
           : "You don't have permission!";
         toast.error(message);
+        if (!user) {
+          openAuthModal("login");
+        }
       }
-      setRedirectPath("/login");
+      setRedirectPath("/");
     }
   }, [user]);
 
@@ -32,3 +35,4 @@ const PrivateRoute = () => {
 };
 
 export default PrivateRoute;
+

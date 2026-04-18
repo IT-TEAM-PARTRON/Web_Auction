@@ -12,7 +12,6 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(36, 198, 220, 0.4), rgba(81, 74, 157, 0.4));
   /* backdrop-filter: blur(2px); */
   z-index: 1;
 }

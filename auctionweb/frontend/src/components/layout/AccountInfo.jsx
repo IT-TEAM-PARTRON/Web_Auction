@@ -16,7 +16,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
   const [error, setError] = useState(null);
   const { t, i18n } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
   const { tetMode } = useTetMode();
   const schema = z.object({
       username: z
@@ -59,6 +59,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
     role: "",
     password: ""
   });
+  const [initialData, setInitialData] = useState(null);
 
   useEffect(() => {
     if (!isOpen || !user?.user_id) return;
@@ -70,19 +71,22 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
       .get(`/users/${user.user_id}`)
       .then((res) => {
         const userData = res.data;
-        setFormData({
+        const mappedData = {
           email: userData.email || "",
           username: userData.username || "",
           phone_number: userData.phone_number || "",
           company: userData.company || "",
           role: userData.role || "",
           password: userData.password || ""
-        });
+        };
+        setFormData(mappedData);
+        setInitialData(mappedData);
       })
       .catch((err) => {
         toast.error(err.response?.data?.detail || err.message || "Error load account info");
         if (err.response?.status === 401) {
-          navigate("/login");
+          navigate("/");
+          openAuthModal("login");
           return;
         }
       })
@@ -98,6 +102,12 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (initialData && JSON.stringify(formData) === JSON.stringify(initialData)) {
+      toast.error(t("no_changes_update", "No changes detected to update."));
+      return;
+    }
+
     setLoading(true);
     setError(null);
     
@@ -134,7 +144,7 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
     >
       <div
         className={
-          `sm:mt-[60px] md:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-3xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'} ` +
+          `overscroll-contain sm:mt-[60px] md:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-3xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? 'bg-[#242526] border border-[#3a3b3c]' : 'bg-white'} ` +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}
@@ -156,20 +166,19 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
         </div>
 
         {/* Modal Content */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
-          {loading && !formData.email && (
-            <div className="flex items-center justify-center py-8">
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-120px)] min-h-[50vh] flex flex-col">
+          {loading && !formData.email ? (
+            <div className="flex-1 flex items-center justify-center min-h-[40vh]">
               <div className="loader"></div>
-              <span className="ml-3 text-gray-600">Loading...</span>
             </div>
-          )}
-          
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
-          {/* Form */}
+          ) : (
+            <>
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <p className="text-red-600 text-sm">{error}</p>
+                </div>
+              )}
+              {/* Form */}
           <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Email */}
             <div>
@@ -322,6 +331,8 @@ export default function UpdateAccountModal({ isOpen, onClose }) {
               </button>
             </div>
           </form>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import "./Login.css";
 import logo from "../../assets/images/logo.png";
-import flagVn from "../../assets/images/flag_vietnam.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
@@ -98,12 +97,6 @@ function Login() {
       console.error("Login error:", error);
     }
   };
-  let emails = JSON.parse(localStorage.getItem("login_emails") || "[]");
-  if (!emails.includes(email)) {
-    emails.push(email);
-    localStorage.setItem("login_emails", JSON.stringify(emails));
-  }
-
   return (
     <div className="login-bg">
       <img src={logo} alt="Logo" className="login-logo" />

@@ -65,9 +65,7 @@ class AuctionOut(BaseModel):
     status: int
     highest_amount: Optional[float] = None
     winner_info: Optional[dict] = None
-    category: Optional[CategoryOut] = None  # thông tin chi tiết của danh mục
-    # participants: Optional[List[AuctionParticipantOut]] = None  #lấy ra list các user được tham gia đấu giá auction_id đó
-    # bids: Optional[List] = None  
+    category: Optional[CategoryOut] = None
     @field_validator("image_url", mode="before")
     @classmethod
     def parse_image_url(cls, value):
@@ -409,8 +407,42 @@ def update_auction(
     else:
         raise HTTPException(status_code=403, detail=_("You are not allowed to edit auctions", request))
 
+    # Xác định trạng thái của phiên đấu giá
+    now = datetime.now()
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=ZoneInfo("Asia/Ho_Chi_Minh"))
+
+    db_start = auction.start_time
+    if db_start and db_start.tzinfo is None:
+        db_start = db_start.replace(tzinfo=ZoneInfo("Asia/Ho_Chi_Minh"))
+
+    db_end = auction.end_time
+    if db_end and db_end.tzinfo is None:
+        db_end = db_end.replace(tzinfo=ZoneInfo("Asia/Ho_Chi_Minh"))
+
+    is_ongoing = False
+    is_ended = False
+    if db_start and db_end:
+        is_ongoing = db_start <= now < db_end
+        is_ended = now >= db_end
+
+    if is_ended:
+        raise HTTPException(
+            status_code=400,
+            detail=_("Cannot update an ended auction.", request)
+        )
+
     # Cập nhật các trường
     update_data = auction_in.dict(exclude_unset=True)
+    
+    if is_ongoing:
+        # Ràng buộc Security/Validation Standard: 
+        # Cấm sửa các trường cơ sở khi phiên đang diễn ra, loại bỏ mọi field ngoại trừ participants
+        if "participants" in update_data:
+            update_data = {"participants": update_data["participants"]}
+        else:
+            update_data = {}
+
     if "title" in update_data:
         existing = db.query(Auction).filter(Auction.title == update_data["title"], Auction.id != auction_id).first()
         if existing:
@@ -447,6 +479,12 @@ def update_auction(
         }
         to_add = new_participants - current_ids
         to_remove = current_ids - new_participants
+
+        if is_ongoing and to_remove:
+            raise HTTPException(
+                status_code=400,
+                detail=_("You can only add new participants to an ongoing auction. Removing participants is not allowed.", request)
+            )
 
         if to_remove:
             db.execute(
@@ -765,6 +803,97 @@ def search_auctions(
         "auctions": auctions_out
     }
 
+#lấy ra đấu giá chi tiết cho client ẩn thông tin bảo mật
+@router.get("/client/auctions/{auction_id}", response_model=AuctionDetailOut)
+def get_client_auction_by_id(request:Request, auction_id: str, db: Session = Depends(get_db)):
+    lang = request.state.locale
+    auction = db.query(Auction).options(joinedload(Auction.category)).filter(Auction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail=_("Auction not found", request))
+    
+    auction_data = AuctionOut.from_orm(auction).model_dump()
+    #xử lý đa ngôn ngữ cho trường title và description
+    if lang == "vi" and getattr(auction, "title_vi", None):
+        auction_data["title"] = auction.title_vi or auction.title
+        auction_data["description"] = auction.description_vi or auction.description
+    elif lang == "ko" and getattr(auction, "title_ko", None):
+        auction_data["title"] = auction.title_ko or auction.title
+        auction_data["description"] = auction.description_ko or auction.description
+    
+    # Xử lý đa ngôn ngữ cho category
+    if auction.category:
+        if lang == "vi":
+            auction_data["category"] = {
+                "category_id": auction.category.category_id,
+                "category_name": auction.category.category_name_vi or auction.category.category_name,
+                "description": auction.category.description_vi if hasattr(auction.category, 'description_vi') else auction.category.description
+            }
+        elif lang == "ko":
+            auction_data["category"] = {
+                "category_id": auction.category.category_id,
+                "category_name": auction.category.category_name_ko or auction.category.category_name,
+                "description": auction.category.description_ko if hasattr(auction.category, 'description_ko') else auction.category.description
+            }
+        else:
+            auction_data["category"] = {
+                "category_id": auction.category.category_id,
+                "category_name": auction.category.category_name,
+                "description": auction.category.description
+            }
+    # Xử lý image_url
+    if isinstance(auction.image_url, str):
+        try:
+            auction_data["image_url"] = json.loads(auction.image_url)
+        except Exception:
+            auction_data["image_url"] = []
+    else:
+        auction_data["image_url"] = []
+    
+    # Tính lại status động
+    now = datetime.now()
+    if now < auction.start_time:
+        auction_data["status"] = 1  # upcoming
+    elif auction.start_time <= now < auction.end_time:
+        auction_data["status"] = 0  # ongoing
+    else:
+        auction_data["status"] = 2  # ended
+
+    # Bảo mật thông tin: Chỉ hiện highest_amount khi phiên kết thúc
+    if auction_data["status"] == 2:
+        highest_bid = db.query(Bid).filter(
+            Bid.auction_id == auction_id
+        ).order_by(Bid.bid_amount.desc()).first()
+        auction_data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
+    else:
+        auction_data["highest_amount"] = None
+
+    if auction_data["status"] in [0, 2]:
+        count_users = db.query(Bid.user_id).filter(Bid.auction_id == auction_id).distinct().count()
+        auction_data["count_users"] = count_users
+    else:
+        auction_data["count_users"] = None
+
+    # Bảo mật: Không trả về danh sách email/user_id của người tham gia
+    auction_data["participants"] = []
+
+    # Bids: Chỉ trả về user nếu là winner khi phiên kết thúc để hiển thị
+    bid_list = []
+    if auction_data["status"] == 2:
+        winner_bid = db.query(Bid).filter(
+            Bid.auction_id == auction_id,
+            Bid.is_winner == True
+        ).first()
+        if winner_bid:
+            user = db.query(User).filter(User.id == winner_bid.user_id).first()
+            if user:
+                bid_list.append({
+                    "is_winner": True,
+                    "user_name": user.username
+                })
+    auction_data["bids"] = bid_list
+
+    return auction_data
+
 #lấy ra đấu giá chi tiết gồm các user đã đấu giá theo auction_id
 @router.get("/auctions/{auction_id}", response_model=AuctionDetailOut)
 def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(get_db)):
@@ -839,7 +968,11 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
             "created_at": bid.created_at,
             "note": bid.note,
             "address": bid.address,
-            "is_winner": bid.is_winner
+            "is_winner": bid.is_winner,
+            "status": bid.status,
+            "void_reason": bid.void_reason,
+            "voided_at": bid.voided_at,
+            "voided_by": bid.voided_by
         })
     if auction_data["status"] in [0, 2]:
         count_users = db.query(Bid.user_id).filter(Bid.auction_id == auction_id).distinct().count()

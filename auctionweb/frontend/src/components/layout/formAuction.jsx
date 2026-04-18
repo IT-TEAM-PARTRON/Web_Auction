@@ -110,6 +110,17 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId, currency })
       throw error;
     }
   };
+  useEffect(() => {
+    if (isOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [isOpen]);
   return (
     <div
       className={clsx(
@@ -307,20 +318,41 @@ function ModalAuction({ isOpen, onClose, email, username, auctionId, currency })
                   {currency === "VND" ? "₫" : "$"}
                 </span>
               </div>
-              <input
-                type="number"
-                placeholder="0.00"
-                className={`w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400'}`}
-                {...register("bid_amount", { valueAsNumber: true })}
+              
+              <Controller
+                name="bid_amount"
+                control={control}
+                render={({ field: { onChange, value, ref } }) => {
+                  // Hiển thị với dấu chấm phân cách hàng nghìn (ví dụ: 1.000.000)
+                  const displayValue =
+                    value !== null && value !== undefined && value !== ""
+                      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                      : "";
+
+                  return (
+                    <input
+                      ref={ref}
+                      type="text" 
+                      value={displayValue}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/\D/g, "");
+                        const numericValue = rawValue ? parseInt(rawValue, 10) : 0;
+                        onChange(numericValue);
+                      }}
+                      className={`w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400'}`}
+                    />
+                  );
+                }}
               />
 
               {errors.bid_amount && (
-                <p className="text-red-500 text-[10px]">
+                <p className="text-red-500 text-[10px] mt-1">
                   {errors.bid_amount.message}
                 </p>
               )}
             </div>
           </div>
+
            <div className="">
             <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
               <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500">

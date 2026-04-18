@@ -12,6 +12,7 @@ from app.core.auth import get_current_user_id_from_token
 from app.models.Notification import Notification
 from app.i18n import _
 from app.enums import UserRole
+from app.enums import BidStatus
 from fastapi.responses import FileResponse
 import os
 from app.models.AuctionParticipant import AuctionParticipant
@@ -99,7 +100,7 @@ def create_bid(
             raise HTTPException(status_code=403, detail=_("User not invited to bid", request))
         
         # Kiểm tra user đã đặt bid cho auction này chưa
-        existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id).first()
+        existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id, Bid.status == BidStatus.VALID.value).first()
         
         # khoảng cách giá cũ và giá mới tối thiểu phải >= bước giá của acution_id
         if existing_bid and abs(float(bid_in.bid_amount) - float(existing_bid.bid_amount)) < float(auction.step_price):
@@ -117,7 +118,8 @@ def create_bid(
             file=bid_in.file,
             created_at=datetime.now(),
             address=bid_in.address,
-            note=bid_in.note
+            note=bid_in.note,
+            status= BidStatus.VALID.value
         )
         db.add(bid)
         if auction.currency == "USD":
@@ -170,6 +172,56 @@ def create_bid(
         db.rollback()
         raise HTTPException(status_code=500, detail="Unexpected error: " + str(e))
 
+@router.put("/bids/{id}/void", response_model=BidOut)
+def void_bid(
+    request: Request,
+    id: str,
+    reason: str,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id_from_token)
+):
+    try:
+        bid = db.query(Bid).filter(Bid.id == id).first()
+        if not bid:
+            raise HTTPException(status_code=404, detail=_("Bid not found", request))
+        
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user or user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+            raise HTTPException(status_code=403, detail=_("Only Admin or Super Admin can void bids", request))
+        
+        bid.status = BidStatus.INVALID.value
+        bid.void_reason = reason
+        bid.voided_at = datetime.now()
+        bid.voided_by = user_id
+        formatted_amount = "{:,.0f}".format(bid.bid_amount)
+        # Tạo thông báo notification với văn phong Senior
+        notification = Notification(
+            user_id=bid.user_id,
+            auction_id=bid.auction_id,
+            message=_(
+                "Your bid of {amount} has been voided (Reason: {reason}). Please submit a new bid.", 
+                request
+            ).format(amount=formatted_amount, reason=reason),
+            message_vi="Lượt đặt giá {amount} của bạn không hợp lệ và đã bị hủy (Lý do: {reason}). Vui lòng đặt lại giá mới.".format(
+                amount=formatted_amount, 
+                reason=reason
+            ),
+            message_ko="{amount} 입찰이 유효하지 않아 취소되었습니다 (사유: {reason}). 확인 후 다시 입찰해 주시기 바랍니다.".format(
+                amount=formatted_amount, 
+                reason=reason
+            ),
+            
+            notification_type="void_bid",
+            created_at=datetime.now(),
+            is_read=False
+        )
+        db.add(notification)
+        db.commit()
+        db.refresh(bid)
+        return bid
+    except HTTPException:
+        db.rollback()
+        raise
 
 
 @router.get("/bids/user", response_model=List[BidWithAuctionOut])

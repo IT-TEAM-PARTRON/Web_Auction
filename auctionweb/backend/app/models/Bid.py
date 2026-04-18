@@ -16,7 +16,10 @@ class Bid(Base):
     note = Column(Text)
     address = Column(String)
     is_winner = Column(Boolean, default=False)
-
+    status = Column(String, default="VALID")
+    void_reason = Column(Text, nullable=True)
+    voided_at = Column(DateTime, nullable=True)
+    voided_by = Column(String(36), nullable=True)
     # Quan hệ ngược về User và Auction
     auction = relationship("Auction", back_populates="bids")
     user = relationship("User", back_populates="bids")

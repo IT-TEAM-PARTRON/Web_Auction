@@ -5,6 +5,7 @@ import CreateCategoryForm from "../components/layout/CategoryCreate";
 import ModalDetailAuction from "../components/layout/ModalDetailAuction";
 import Pagination from "../components/ui/Pagination";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import CustomSelect from "../components/ui/CustomSelect";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { useDebounceCallback } from "../hooks/useDebounceCallback";
@@ -13,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import AnimatedCounter from "../common/AnimatedNumber";
 import { useNavigate } from "react-router-dom";
 import { useTetMode } from "../contexts/TetModeContext";
+import { useAuth } from "../contexts/AuthContext";
 import {
   faUsers,
   faGavel,
@@ -29,6 +31,7 @@ import clsx from "clsx";
 const OverViewAdmin = () => {
   const navigate = useNavigate();
   const { tetMode } = useTetMode();
+  const { openAuthModal } = useAuth();
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
   const [currentIndexPageCategory, setCurrentIndexPageCategory] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
@@ -57,7 +60,7 @@ const OverViewAdmin = () => {
   const [mode, setMode] = useState("create");
   const { t, i18n } = useTranslation();
   const formRef = useRef();
-  
+
   const [userParam, setUserParam] = useState({
     sort_by: "",
     sort_order: "",
@@ -124,7 +127,6 @@ const OverViewAdmin = () => {
   };
 
   const setModeEdit = (auction) => {
-    console.log("Editing auction:", auction);
     setMode("edit");    
     setDisplayCreateForm(true);
     setAuctionObject(auction);
@@ -146,7 +148,7 @@ const OverViewAdmin = () => {
       lang,
     };
     try {
-      // setIsLoadingSearch(true);
+      setIsLoadingSearch(true);
       const response = await getAll("users", true, param);
       setUserData(response.data.users);
       setTotalPageUser(
@@ -157,10 +159,11 @@ const OverViewAdmin = () => {
     } catch (error) {
       const status = error?.response?.status;
       if (status === 401) {
-        navigate("/login");
+        navigate("/");
+        openAuthModal("login");
       }
     } finally {
-      // setIsLoadingSearch(false);
+      setIsLoadingSearch(false);
       setCurrentIndexPageUser(page - 1);
     }
   };
@@ -173,7 +176,7 @@ const OverViewAdmin = () => {
       lang,
     };
     try {
-      // setIsLoadingSearch(true);
+      setIsLoadingSearch(true);
       const response = await getAll("categories", true, param,{
             lang: sessionStorage.getItem("lang") || "en",
           });
@@ -186,17 +189,18 @@ const OverViewAdmin = () => {
     } catch (error) {
       const status = error?.response?.status;
       if (status === 401) {
-        navigate("/login");
+        navigate("/");
+        openAuthModal("login");
       }
     } finally {
-      // setIsLoadingSearch(false);
+      setIsLoadingSearch(false);
       setCurrentIndexPageCategory(page - 1);
     }
   };
 
   const getPageAuction = async (page = 1) => {
     try {
-      // setIsLoadingSearch(true);
+      setIsLoadingSearch(true);
       const lang = sessionStorage.getItem("lang") || "en";
       const paramWithPage = {
         ...auctionParam,
@@ -215,7 +219,7 @@ const OverViewAdmin = () => {
       );
       console.log(error);
     } finally {
-      // setIsLoadingSearch(false);
+      setIsLoadingSearch(false);
       setCurrentIndexPageAuction(page - 1);
     }
   };
@@ -444,7 +448,11 @@ const OverViewAdmin = () => {
     fetchDataOverview();
   }, []);
 
-  // if (isLoadingPage) return <div className="loader" />;
+  if (isLoadingPage) return (
+    <div className="flex items-center justify-center min-h-[60vh] mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <div className="loader"></div>
+    </div>
+  );
   return (
     <>
       <ConfirmDialog
@@ -724,42 +732,38 @@ const OverViewAdmin = () => {
                 </label>
                 {/* Sort select */}
                 <div className="">
-                  <select
-                    onChange={(e) => {
-                      const selectedOption = e.target.selectedOptions[0];
+                  <CustomSelect
+                    value={userFilterInput.sort_by && userFilterInput.sort_order ? `${userFilterInput.sort_by}_${userFilterInput.sort_order}` : ""}
+                    onChange={(value) => {
+                      if (!value) {
+                        setUserFilterInput((prev) => ({
+                          ...prev,
+                          sort_by: "",
+                          sort_order: "",
+                        }));
+                        return;
+                      }
+                      const lastUnderscoreIndex = value.lastIndexOf("_");
+                      const sort_by = value.substring(0, lastUnderscoreIndex);
+                      const sort_order = value.substring(lastUnderscoreIndex + 1);
                       setUserFilterInput((prev) => ({
                         ...prev,
-                        sort_by: selectedOption.value,
-                        sort_order: selectedOption.dataset.order,
+                        sort_by,
+                        sort_order,
                       }));
                     }}
-                    className={`rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
-                  >
-                    <option value="username" data-order="asc">
-                      {t("sort_username_asc")}
-                    </option>
-                    <option value="username" data-order="desc">
-                      {t("sort_username_desc")}
-                    </option>
-                    <option value="email" data-order="asc">
-                      {t("sort_email_asc")}
-                    </option>
-                    <option value="email" data-order="desc">
-                      {t("sort_email_desc")}
-                    </option>
-                    <option value="create_at" data-order="asc">
-                      {t("sort_create_at_asc")}
-                    </option>
-                    <option value="create_at" data-order="desc">
-                      {t("sort_create_at_desc")}
-                    </option>
-                    <option value="bid_count" data-order="asc">
-                      {t("sort_bid_count_asc")}
-                    </option>
-                    <option value="bid_count" data-order="desc">
-                      {t("sort_bid_count_desc")}
-                    </option>
-                  </select>
+                    options={[
+                      { value: "username_asc", label: t("sort_username_asc") },
+                      { value: "username_desc", label: t("sort_username_desc") },
+                      { value: "email_asc", label: t("sort_email_asc") },
+                      { value: "email_desc", label: t("sort_email_desc") },
+                      { value: "create_at_asc", label: t("sort_create_at_asc") },
+                      { value: "create_at_desc", label: t("sort_create_at_desc") },
+                      { value: "bid_count_asc", label: t("sort_bid_count_asc") },
+                      { value: "bid_count_desc", label: t("sort_bid_count_desc") },
+                    ]}
+                    placeholder={t("select_sort")}
+                  />
                 </div>
               </div>
 
@@ -784,18 +788,18 @@ const OverViewAdmin = () => {
             <table className="min-w-full border-collapse">
               <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
                 <tr>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("name")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("email")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>#</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("name")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("email")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>
                     {t("contact_phone_label").split(":")}
                   </th>
                   {/* <th className="border px-2 py-1">{t("created_at")}</th> */}
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("role")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("bid_count")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("company")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("action")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("role")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("bid_count")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("company")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("status")}</th>
+                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -971,43 +975,38 @@ const OverViewAdmin = () => {
                   <label className={`text-sm font-[700] mb-1 mr-2 block ${tetMode ? 'text-gray-300' : ''}`}>
                     {t("sort_by")}
                   </label>
-                  <select
-                    onChange={(e) => {
-                      const selectedOption = e.target.selectedOptions[0];
+                  <CustomSelect
+                    value={auctionFilterInput.sort_by && auctionFilterInput.sort_order ? `${auctionFilterInput.sort_by}_${auctionFilterInput.sort_order}` : ""}
+                    onChange={(value) => {
+                      if (!value) {
+                        setAuctionFilterInput((prev) => ({
+                          ...prev,
+                          sort_by: "",
+                          sort_order: "",
+                        }));
+                        return;
+                      }
+                      const lastUnderscoreIndex = value.lastIndexOf("_");
+                      const sort_by = value.substring(0, lastUnderscoreIndex);
+                      const sort_order = value.substring(lastUnderscoreIndex + 1);
                       setAuctionFilterInput((prev) => ({
                         ...prev,
-                        sort_by: selectedOption.value,
-                        sort_order: selectedOption.dataset.order,
+                        sort_by,
+                        sort_order,
                       }));
                     }}
-                    className={`rounded-lg px-3 py-2 w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
-                  >
-                    <option value="">{t("select_sort")}</option>
-                    <option value="title" data-order="asc">
-                      {t("sort_title_asc")}
-                    </option>
-                    <option value="title" data-order="desc">
-                      {t("sort_title_desc")}
-                    </option>
-                    <option value="create_at" data-order="asc">
-                      {t("sort_create_at_asc")}
-                    </option>
-                    <option value="create_at" data-order="desc">
-                      {t("sort_create_at_desc")}
-                    </option>
-                    <option value="start_time" data-order="asc">
-                      {t("sort_start_time_asc")}
-                    </option>
-                    <option value="start_time" data-order="desc">
-                      {t("sort_start_time_desc")}
-                    </option>
-                    <option value="end_time" data-order="asc">
-                      {t("sort_end_time_asc")}
-                    </option>
-                    <option value="end_time" data-order="desc">
-                      {t("sort_end_time_desc")}
-                    </option>
-                  </select>
+                    options={[
+                      { value: "title_asc", label: t("sort_title_asc") },
+                      { value: "title_desc", label: t("sort_title_desc") },
+                      { value: "create_at_asc", label: t("sort_create_at_asc") },
+                      { value: "create_at_desc", label: t("sort_create_at_desc") },
+                      { value: "start_time_asc", label: t("sort_start_time_asc") },
+                      { value: "start_time_desc", label: t("sort_start_time_desc") },
+                      { value: "end_time_asc", label: t("sort_end_time_asc") },
+                      { value: "end_time_desc", label: t("sort_end_time_desc") },
+                    ]}
+                    placeholder={t("select_sort")}
+                  />
                 </div>
               </div>
               <div className="w-[15%] pb-6 max-sm:w-full">
@@ -1016,20 +1015,21 @@ const OverViewAdmin = () => {
                   <label className={`text-sm font-[700] mb-1 mr-2 block ${tetMode ? 'text-gray-300' : ''}`}>
                     {t("status")}
                   </label>
-                  <select
-                onChange={(e) =>
-                  setAuctionFilterInput((prev) => ({
-                    ...prev,
-                    status: e.target.value === "" ? null : e.target.value,
-                  }))
-                }
-                className={`rounded-lg px-3 py-2 max-sm:w-full ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-white' : 'border border-gray-400'}`}
-              >
-                <option value="">{t("select_status")}</option>
-                <option value="0">{t("ongoing_auctions")}</option>
-                <option value="1">{t("upcoming_auctions")}</option>
-                <option value="2">{t("ended_auctions")}</option>
-              </select>
+                  <CustomSelect
+                    value={auctionFilterInput.status || ""}
+                    onChange={(value) =>
+                      setAuctionFilterInput((prev) => ({
+                        ...prev,
+                        status: value === "" ? null : value,
+                      }))
+                    }
+                    options={[
+                      { value: "0", label: t("ongoing_auctions") },
+                      { value: "1", label: t("upcoming_auctions") },
+                      { value: "2", label: t("ended_auctions") },
+                    ]}
+                    placeholder={t("select_status")}
+                  />
                 </div>
               </div>
               
@@ -1055,16 +1055,16 @@ const OverViewAdmin = () => {
             <table className="min-w-full border-collapse">
               <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
                 <tr>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("title")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("type")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("auction_type")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("start_time")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("end_time")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("starting_price")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("highest_price")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("title")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("type")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("auction_type")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("start_time")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("end_time")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("starting_price")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("highest_price")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
+                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
                 </tr>
               </thead>
               <tbody>
@@ -1080,11 +1080,11 @@ const OverViewAdmin = () => {
                         "transition",
                         tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white',
                         {
-                          "cursor-pointer": auction.status === 1,
+                          "cursor-pointer": auction.status === 1 || auction.status === 0,
                         }
                       )}
                       onClick={
-                        auction.status === 1
+                        auction.status === 1 || auction.status === 0
                           ? () => setModeEdit(auction)
                           : undefined
                       }
@@ -1133,7 +1133,7 @@ const OverViewAdmin = () => {
                           e.stopPropagation();
                           openDetailBid(auction.id);
                         }}
-                        className={`border px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'text-blue-500'}`}
+                        className={`border text-center px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'text-blue-500'}`}
                       >
                         {t("view")}
                       </td>

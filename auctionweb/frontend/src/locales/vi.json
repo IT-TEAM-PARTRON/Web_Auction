@@ -1,5 +1,6 @@
 {
   "login": "Đăng nhập",
+  "no_changes_update": "Không có thay đổi nào được phát hiện để cập nhật.",
   "email": "Email",
   "password": "Mật khẩu",
   "remember_me": "Lưu tài khoản",
@@ -8,7 +9,7 @@
   "forgot_password_title": "Quên Mật Khẩu",
   "forgot_password_desc": "Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn một liên kết để đặt lại mật khẩu.",
   "send_reset_link": "Gửi Liên Kết Đặt Lại",
-  "back_to_login": "Quay Lại Đăng Nhập",
+  "back_to_login": "Quay Lại trang chủ",
   "reset_password_title": "Đặt Lại Mật Khẩu",
   "reset_password_desc": "Nhập mật khẩu mới của bạn bên dưới.",
   "new_password": "Mật Khẩu Mới",
@@ -113,6 +114,7 @@
   "disactive": "Không hoạt động",
   "view": "Xem",
   "action": "Hành động",
+  "actions": "Hành động",
   "deadline": "Hạn chót",
   "step_price": "Bước giá",
   "attached_file": "Tệp đính kèm",
@@ -154,6 +156,11 @@
   "excute": "Thực thi",
   "select_time": "Chọn khoảng thời gian",
   "description": "Thông tin chi tiết",
+  "reason": "Lý do",
+  "void_bid": "Hủy lượt đấu giá",
+  "void_bid_confirm": "Bạn có chắc chắn muốn hủy lượt đấu giá của",
+  "enter_void_reason": "Nhập lý do hủy lượt đấu giá này...",
+  "confirm_void": "Xác nhận hủy",
   "excel": "Excel file",
   "img": "Chọn ảnh",
   "click_to_select_image": "Nhấn để chọn ảnh",
@@ -285,7 +292,8 @@
     "update_status": "Cập nhật trạng thái thành công!",
     "update_auction": "Cập nhật phiên đấu giá thành công!",
     "update_category": "Cập nhật danh mục thành công!",
-    "create_category_success": "Tạo danh mục thành công!"
+    "create_category_success": "Tạo danh mục thành công!",
+    "invalidate_bid": "Đã hủy lượt đấu giá thành công"
   },
   "error": {
     "add_new_auction": "Lỗi tạo phiên đấu giá mới!",
@@ -306,7 +314,9 @@
     "description_required": "Mô tả là bắt buộc",
     "description_max_length": "Mô tả không được vượt quá 500 ký tự",
     "create_category_failed": "Tạo danh mục thất bại!",
-    "download_file": "Tải tệp thất bại!"
+    "download_file": "Tải tệp thất bại!",
+    "void_reason_required": "Vui lòng nhập lý do hủy lượt đấu giá",
+    "invalidate_bid": "Hủy lượt đấu giá thất bại"
   },
   "no_data": "Không có dữ liệu",
   "no_file": "Không có file",
@@ -414,5 +424,10 @@
   "enter_product_name": "Nhập tên sản phẩm đấu giá...",
   "product_description_detail": "Mô tả chi tiết về sản phẩm...",
   "processing": "Đang xử lý...",
-  "delete_image": "Xóa ảnh"
+  "delete_image": "Xóa ảnh",
+  "void_bid_warning_title": "Đấu giá bị hủy bởi Quản trị viên",
+  "void_bid_warning_count": "{{count}} lượt đấu giá đã bị hủy",
+  "void_bid_warning_single": "Đấu giá của bạn đã bị vô hiệu hóa",
+  "void_bid_acknowledge": "Tôi đã hiểu",
+  "view_auction_detail": "Xem đấu giá"
 }

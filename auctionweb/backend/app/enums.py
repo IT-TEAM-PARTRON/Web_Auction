@@ -19,3 +19,7 @@ class AuctionStatus(enum.Enum):
     UPCOMING = 1     # Sắp diễn ra
     ENDED = 2        # Đã kết thúc, chờ admin phê duyệt
     APPROVED = 3     # Đã được admin phê duyệt người trúng thầu
+
+class BidStatus(enum.Enum):
+    VALID = "VALID"      # Hợp lệ
+    INVALID = "INVALID"    # Không hợp lệ

@@ -10,6 +10,7 @@ import os
 import time
 import dotenv
 from app.enums import TypeAuction
+from app.enums import BidStatus
 
 dotenv.load_dotenv()
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 async def auto_set_winner_task():
     """
-    Background task: Tự động set is_winner cho bid cao nhất của các auction đã kết thúc mà chưa có winner.
+    Background task: Tự động set is_winner cho bid cao nhất của các auction đã kết thúc mà chưa có winner với status bid = Valid.
     Chạy mỗi 1 phút.
     """
     while True:
@@ -32,7 +33,7 @@ async def auto_set_winner_task():
                 db.query(Auction)
                 .filter(
                     Auction.end_time < now,
-                    ~db.query(Bid).filter(Bid.auction_id == Auction.id, Bid.is_winner == True).exists()
+                    ~db.query(Bid).filter(Bid.auction_id == Auction.id, Bid.is_winner == True, Bid.status == BidStatus.VALID.value).exists()
                 )
                 .limit(BATCH_SIZE)
                 .all()
@@ -43,13 +44,13 @@ async def auto_set_winner_task():
                 if auction.auction_type == TypeAuction.SELL:
                     highest_bid = (
                         db.query(Bid)
-                        .filter(Bid.auction_id == auction.id)
+                        .filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value)
                         .order_by(Bid.bid_amount.desc())
                         .first()
                     )
 
                     if highest_bid:
-                        db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False}, synchronize_session=False)
+                        db.query(Bid).filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value).update({"is_winner": False}, synchronize_session=False)
                         highest_bid.is_winner = True
                         messages = get_auction_message("win", None, auction.title)
                         notification = Notification(
@@ -62,7 +63,7 @@ async def auto_set_winner_task():
                             is_read=False
                         )
                         db.add(notification)
-                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != highest_bid.id).all()
+                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != highest_bid.id, Bid.status == BidStatus.VALID.value).all()
                         for losing_bid in losing_bids:
                             messages = get_auction_message("lose", None, auction.title)
                             losing_notification = Notification(
@@ -80,12 +81,12 @@ async def auto_set_winner_task():
                 else:
                     lowest_bid = (
                         db.query(Bid)
-                        .filter(Bid.auction_id == auction.id)
+                        .filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value)
                         .order_by(Bid.bid_amount.asc())
                         .first()
                     )
                     if lowest_bid:
-                        db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False}, synchronize_session=False)
+                        db.query(Bid).filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value).update({"is_winner": False}, synchronize_session=False)
                         lowest_bid.is_winner = True
                         messages = get_auction_message("win", None, auction.title)
                         notification = Notification(
@@ -98,7 +99,7 @@ async def auto_set_winner_task():
                             is_read=False
                         )
                         db.add(notification)
-                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != lowest_bid.id).all()
+                        losing_bids = db.query(Bid).filter(Bid.auction_id == auction.id, Bid.id != lowest_bid.id, Bid.status == BidStatus.VALID.value).all()
                         for losing_bid in losing_bids:
                             messages = get_auction_message("lose", None, auction.title)
                             losing_notification = Notification(

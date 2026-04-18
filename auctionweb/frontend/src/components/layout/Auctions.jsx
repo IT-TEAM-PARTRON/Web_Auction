@@ -7,7 +7,7 @@ import RenderCardAuction from "../ui/CardComponent";
 import axiosDefault from "../../services/axiosClient";
 import { useTetMode } from "../../contexts/TetModeContext";
 
-const AuctionSection = ({ titleKey, type }) => {
+const AuctionSection = ({ titleKey, type, excludeId }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,8 +47,12 @@ const AuctionSection = ({ titleKey, type }) => {
         );
         
         const data = res.data;
+        // Lọc auction đang được xem chi tiết (nếu có)
+        const filteredAuctions = (data.auctions || []).filter(
+          (auction) => auction.id !== excludeId
+        );
         // Lấy 4 phần tử đầu tiên
-        const firstFour = (data.auctions || []).slice(0, 4);
+        const firstFour = filteredAuctions.slice(0, 4);
         setItems(firstFour);
         setTotal(data[totalMap[type]] || 0);
       } catch (err) {
@@ -60,7 +64,7 @@ const AuctionSection = ({ titleKey, type }) => {
     };
 
     fetchData();
-  }, [type]);
+  }, [type, excludeId]);
 
   return (
     <AnimatedContent>

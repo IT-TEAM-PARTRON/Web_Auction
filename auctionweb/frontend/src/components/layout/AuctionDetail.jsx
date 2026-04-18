@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 import { BASE_URL } from "../../config";
 import { CheckCircle, ClockFading, AlarmClockCheck, ClockIcon, Banknote, ArrowUp01, Boxes, Group, File, Users, Trophy } from "lucide-react";
 import { useTetMode } from "../../contexts/TetModeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AuctionDetail = () => {
   const { id } = useParams();
@@ -72,6 +73,7 @@ const AuctionDetail = () => {
   }, [id]);
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
+  const { openAuthModal } = useAuth();
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -136,7 +138,7 @@ const AuctionDetail = () => {
 
   const getAuction = async () => {
     try {
-      const response = await getOne("auctions", id, false, {
+      const response = await getOne("client/auctions", id, false, {
         lang: sessionStorage.getItem("lang") || "en",
       });
       setAuction(response.data);
@@ -197,53 +199,28 @@ const AuctionDetail = () => {
 
   const getCurrentDotIndex = () => {
     const totalSlides = auction.image_url.length;
-    if (selectImg === 0) return totalSlides - 1; // clone đầu → dot cuối
-    if (selectImg === totalSlides + 1) return 0; // clone cuối → dot đầu
-    return selectImg - 1; // các ảnh thật
+    if (selectImg === 0) return totalSlides - 1; 
+    if (selectImg === totalSlides + 1) return 0; 
+    return selectImg - 1; 
   };
 
   //xử lý token hết hạn bắt user login để thực hiện thao tác đấu giá
   const openAuctionForm = () => {
     if (!isTokenValid()) {
-      // toast.error("You must be logged in to participate in the auction!");
       toast.error(t("error.must_logged"));
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 2000);
+      openAuthModal("login");
       return;
     }
-    //chặn người dùng đấu giá khi phiên đấu giá đã kết thúc
     if (auction.status === 2) {
-      // toast.error("This auction has ended!");
       toast.error(t("error.auction_ended"));
       return;
     }
-    //chặn người dùng đấu giá khi phiên đấu giá chưa diễn ra
     else if (auction.status === 1) {
-      // toast.error("This auction has not started yet.");
       toast.error(t("error.auction_not_start"));
       return;
     }
     setIsOpen(true);
   };
-
-  // const handleDownload = async (id) => {
-  //   try {
-  //     const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
-  //     if (!res.ok) throw new Error("Dowload file fail!");
-  //     const blob = await res.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = `auction-${id}.xlsx`;
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     const detail = error?.response?.data?.detail;
-  //     toast.error(detail || "Error download file:", error);
-  //     console.error("Error download file:", error);
-  //   }
-  // };
 
   const handleDownload = (id) => {
     window.open(`${BASE_URL}/api/v1/download/excel/by-auction/${id}`, "_self");
@@ -282,7 +259,11 @@ const AuctionDetail = () => {
     );
   };
 
-  if (loading) return <div className="loader"></div>;
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[60vh] mt-[130px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
+      <div className="loader"></div>
+    </div>
+  );
   if (!auction) return <p>{t("no_data")}</p>;
 
   return (

@@ -1,5 +1,6 @@
 {
   "vision_title": "Vision & Development Orientation",
+  "no_changes_update": "No changes detected to update.",
   "vision_content": "As one of the leading companies in the field of electronic component manufacturing in Vietnam, Partron Vina Co., Ltd. constantly innovates and pioneers in applying technology to business activities. The implementation of an online auction platform is not only a step forward in diversifying product distribution channels but also demonstrates the company's commitment to enhancing customer experience and optimizing product value.",
   "vision_content_2": "Through this platform, Partron Vina aims to create a transparent, fair, and efficient trading environment, while expanding product access opportunities to more customer groups.",
   "login": "Login",
@@ -11,7 +12,7 @@
   "forgot_password_title": "Forgot Password",
   "forgot_password_desc": "Enter your email address and we'll send you a link to reset your password.",
   "send_reset_link": "Send Reset Link",
-  "back_to_login": "Back to Login",
+  "back_to_login": "Back to Home",
   "reset_password_title": "Reset Password",
   "reset_password_desc": "Enter your new password below.",
   "new_password": "New Password",
@@ -109,6 +110,7 @@
   "disactive": "Inactive",
   "view": "View",
   "action": "Action",
+  "actions": "Actions",
   "deadline": "Deadline",
   "starting_price": "Starting Price",
   "step_price": "Step Price",
@@ -152,6 +154,12 @@
   "excute": "Excute",
   "select_time": "Select time",
   "description": "Detail Info",
+  "reason": "Reason",
+  "void_bid": "Void Bid",
+  "void_bid_confirm": "Are you sure you want to void the bid from",
+  "enter_void_reason": "Enter reason for voiding this bid...",
+  "confirm_void": "Confirm Void",
+  "irreversible_action": "This action cannot be undone",
   "excel": "Excel file",
   "img": "Select Image",
   "click_to_select_image": "Click to select image",
@@ -283,7 +291,8 @@
     "update_status": "update status user successful!",
     "update_auction": "update auction successful!",
     "update_category": "update category successful!",
-    "create_category_success": "create category successful!"
+    "create_category_success": "create category successful!",
+    "invalidate_bid": "Bid invalidated successfully"
   },
   "error": {
     "add_new_auction": "Error add auction",
@@ -305,7 +314,9 @@
     "description_required": "Description is required",
     "description_max_length": "Description must not exceed 500 characters",
     "create_category_failed": "create category failed",
-    "download_file": "Failed to download file"
+    "download_file": "Failed to download file",
+    "void_reason_required": "Please enter a reason for voiding the bid",
+    "invalidate_bid": "Failed to invalidate bid"
   },
   "no_data": "No data available",
   "no_file": "No file",
@@ -413,5 +424,10 @@
   "enter_product_name": "Enter product name for auction...",
   "product_description_detail": "Product detailed description...",
   "processing": "Processing...",
-  "delete_image": "Delete image"
+  "delete_image": "Delete image",
+  "void_bid_warning_title": "Bid Voided by Administrator",
+  "void_bid_warning_count": "{{count}} bid(s) have been voided",
+  "void_bid_warning_single": "Your bid has been invalidated",
+  "void_bid_acknowledge": "I Understand",
+  "view_auction_detail": "View Auction"
 }

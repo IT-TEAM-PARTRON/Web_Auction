@@ -121,7 +121,7 @@ const NotificationDropdown = ({ triggerRef }) => {
             <FontAwesomeIcon icon={faBell} style={{ marginRight: "8px" }} />
             {t("notification")}
           </div>
-          <ul className="notification-list" style={tetMode ? { backgroundColor: '#242526' } : {}}>
+          <ul className="notification-list overscroll-contain" style={tetMode ? { backgroundColor: '#242526' } : {}}>
             {notifications.length === 0 ? (
               <li className="notification-item" style={tetMode ? { color: '#e4e6eb' } : {}}>{t('no_announcements')}</li>
             ) : (
