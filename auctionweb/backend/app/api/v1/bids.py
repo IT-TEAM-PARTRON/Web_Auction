@@ -94,6 +94,7 @@ def create_bid(
                 status_code=400,
                 detail=_("Bid amount must be at least the starting price", request)
             )
+            
         #Kiểm tra xem user có được mời tham gia đấu giá không
         invited = db.query(AuctionParticipant).filter(AuctionParticipant.auction_id == bid_in.auction_id, AuctionParticipant.user_id == user_id).first()
         if not invited:
