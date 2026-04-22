@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { useTetMode } from "../../contexts/TetModeContext";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 function ModalAuction({
   isOpen,
@@ -16,6 +17,8 @@ function ModalAuction({
   username,
   auctionId,
   currency,
+  stepPrice,
+  startingPrice,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t, i18n } = useTranslation();
@@ -62,6 +65,8 @@ function ModalAuction({
     register,
     watch,
     reset,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -69,7 +74,7 @@ function ModalAuction({
     defaultValues: {
       auction_id: auctionId,
       address: "",
-      bid_amount: 0,
+      bid_amount: startingPrice || 0,
       note: "",
       file_excel: null,
     },
@@ -124,7 +129,7 @@ function ModalAuction({
       reset({
         auction_id: auctionId,
         address: "",
-        bid_amount: 0,
+        bid_amount: startingPrice || 0,
         note: "",
         file_excel: null,
       });
@@ -141,14 +146,14 @@ function ModalAuction({
   return (
     <div
       className={clsx(
-        "fixed inset-0 bg-black bg-opacity-50 flex items-center pt-[80px] max-sm:pt-[170px] justify-center p-2 z-[2000]",
+        "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 z-[2000]",
         isOpen ? "visible" : "invisible",
       )}
       // onClick={onClose}
     >
       <div
         className={clsx(
-          `rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg transform transition-all duration-300 fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"}`,
+          `rounded-2xl shadow-2xl w-full max-w-md sm:max-w-3xl lg:max-w-4xl transform transition-all duration-300 fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"}`,
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden",
         )}
         onClick={(e) => e.stopPropagation()}
@@ -188,7 +193,7 @@ function ModalAuction({
         {/* Content */}
         <form
           onSubmit={handleSubmit(submitAuctionForm)}
-          className="p-3 sm:p-6 space-y-4 sm:space-y-1"
+          className="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-3 lg:space-y-4"
         >
           {/* Username Field */}
           <div className="">
@@ -317,7 +322,7 @@ function ModalAuction({
                   <input
                     type="text"
                     {...field}
-                    className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"}`}
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
                     placeholder={t("enter_delivery_address")}
                   />
                   {fieldState.error && (
@@ -353,7 +358,7 @@ function ModalAuction({
               <span className="text-red-500 ml-1">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-2 sm:pl-2.5 flex items-center pointer-events-none">
                 <span
                   className={`font-medium text-sm sm:text-base ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                 >
@@ -365,26 +370,64 @@ function ModalAuction({
                 name="bid_amount"
                 control={control}
                 render={({ field: { onChange, value, ref } }) => {
-                  // Hiển thị với dấu chấm phân cách hàng nghìn (ví dụ: 1.000.000)
                   const displayValue =
                     value !== null && value !== undefined && value !== ""
                       ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
                       : "";
 
+                  const handleIncrement = () => {
+                    const currentVal = getValues("bid_amount") || 0;
+                    const step = stepPrice || 1;
+                    setValue("bid_amount", currentVal + step, {
+                      shouldValidate: true,
+                    });
+                  };
+
+                  const handleDecrement = () => {
+                    const currentVal = getValues("bid_amount") || 0;
+                    const step = stepPrice || 1;
+                    const newVal = Math.max(0, currentVal - step);
+                    setValue("bid_amount", newVal, { shouldValidate: true });
+                  };
+
                   return (
-                    <input
-                      ref={ref}
-                      type="text"
-                      value={displayValue}
-                      onChange={(e) => {
-                        const rawValue = e.target.value.replace(/\D/g, "");
-                        const numericValue = rawValue
-                          ? parseInt(rawValue, 10)
-                          : 0;
-                        onChange(numericValue);
-                      }}
-                      className={`w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"}`}
-                    />
+                    <div className="group relative">
+                      <input
+                        ref={ref}
+                        type="text"
+                        value={displayValue}
+                        onChange={(e) => {
+                          const rawValue = e.target.value.replace(/\D/g, "");
+                          const numericValue = rawValue
+                            ? parseInt(rawValue, 10)
+                            : 0;
+                          onChange(numericValue);
+                        }}
+                        className={`w-full pl-3 sm:pl-4 pr-12 sm:pr-14 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
+                      />
+                      {/* Spin Buttons */}
+                      <div className={`absolute inset-y-0 right-0 flex flex-col border-l overflow-hidden rounded-r-md sm:rounded-r-lg ${tetMode ? "border-[#4a4b4c]" : "border-gray-300"}`}>
+                        <button
+                          type="button"
+                          onClick={handleIncrement}
+                          className={`flex-1 px-2 sm:px-3 flex items-center justify-center transition-colors ${tetMode ? "hover:bg-[#4a4b4c] text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-blue-600"}`}
+                          aria-label="Increase price"
+                        >
+                          <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                        <div
+                          className={`h-[1px] w-full ${tetMode ? "bg-[#4a4b4c]" : "bg-gray-200"}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleDecrement}
+                          className={`flex-1 px-2 sm:px-3 flex items-center justify-center transition-colors ${tetMode ? "hover:bg-[#4a4b4c] text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-blue-600"}`}
+                          aria-label="Decrease price"
+                        >
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                      </div>
+                    </div>
                   );
                 }}
               />
@@ -398,13 +441,13 @@ function ModalAuction({
           </div>
 
           <div className="">
-            <label className="flex items-center text-xs sm:text-sm font-semibold text-gray-700">
+            <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}>
               <svg
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-gray-500"
+                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
               >
                 <path
                   strokeLinecap="round"
@@ -429,7 +472,7 @@ function ModalAuction({
                       type="text"
                       readOnly
                       value={fileName}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-white border border-gray-300 rounded-md sm:rounded-lg cursor-pointer"
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg cursor-pointer transition-all duration-200 ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500" : "bg-white border-gray-300 placeholder-gray-400"}`}
                       placeholder={t("select_excel_file")}
                       onClick={() =>
                         document.getElementById("excelFile")?.click()
@@ -486,7 +529,7 @@ function ModalAuction({
                 <>
                   <textarea
                     {...field}
-                    className={`w-full px-4 sm:px-2 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 resize-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"}`}
+                    className={`w-full px-4 sm:px-2 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 resize-none outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
                     rows="3"
                     placeholder={t("add_special_requirement_or_comment")}
                   />
@@ -498,11 +541,11 @@ function ModalAuction({
             />
           </div>
 
-          {/* Submit Button */}
-          <div className="pt-2">
+          <div className="pt-4 flex justify-center">
             <button
               type="submit"
-              className={`w-full will-change-transform text-white font-semibold py-3 sm:py-4 px-4 sm:px-3 text-sm sm:text-base rounded-md sm:rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2 ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#b00400] hover:to-[#dd3333] disabled:from-gray-600 disabled:to-gray-700" : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500"}`}
+              disabled={isSubmitting}
+              className={`w-full sm:w-1/2 lg:w-2/5 will-change-transform text-white font-semibold py-3 sm:py-4 px-6 text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2 ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#b00400] hover:to-[#dd3333] disabled:from-gray-600 disabled:to-gray-700" : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500"}`}
             >
               {isSubmitting ? (
                 <>

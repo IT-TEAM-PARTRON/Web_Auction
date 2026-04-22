@@ -808,7 +808,7 @@ const OverViewAdmin = () => {
                     key={user.id || idx}
                     className={`transition ${tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white'}`}
                   >
-                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{idx + 1}</td>
+                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{currentIndexPageUser * Number(import.meta.env.VITE_PAGE_SIZE) + idx + 1}</td>
                     {/* Name */}
                     <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                       {currentEditing === idx ? (
@@ -1090,7 +1090,7 @@ const OverViewAdmin = () => {
                       }
                     >
                       <td className={`border px-2 py-1 max-w-96 text-center break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
-                        {idx + 1}
+                        {currentIndexPageAuction * Number(import.meta.env.VITE_PAGE_SIZE) + idx + 1}
                       </td>
                       <td className={`border px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`} title={auction.title}>
                         {auction.title.length > 70 ? auction.title.slice(0, 70) + "..." : auction.title}

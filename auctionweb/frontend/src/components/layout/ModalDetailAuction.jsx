@@ -160,7 +160,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   return (
     <div
       className={
-        "fixed inset-0 flex items-center justify-center z-[2000] max-sm:pt-[60px] bg-black bg-opacity-50 " +
+        "fixed inset-0 flex items-center justify-center z-[2000] bg-black bg-opacity-50 " +
         (isOpen ? "visible" : "invisible")
       }
       style={{ pointerEvents: isOpen ? "auto" : "none" }}
@@ -168,7 +168,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     >
       <div
         className={
-          ` overscroll-contain sm:mt-[60px] md:mt-[100px] lg:mt-[55px] rounded-xl shadow-2xl 2xl:mb-[10px] w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[95vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"} ` +
+          ` overscroll-contain rounded-xl shadow-2xl w-full max-w-lg sm:max-w-2xl md:max-w-4xl lg:max-w-7xl max-h-[90vh] overflow-hidden mx-2 sm:mx-4 md:mx-auto flex flex-col fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"} ` +
           (isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden")
         }
         onClick={(e) => e.stopPropagation()}

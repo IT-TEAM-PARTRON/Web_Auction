@@ -14,7 +14,6 @@ import {
   CheckCircle,
   ClockFading,
   AlarmClockCheck,
-  ClockIcon,
   Banknote,
   ArrowUp01,
   Boxes,
@@ -165,11 +164,20 @@ const AuctionDetail = () => {
       const response = await getOne("client/auctions", id, false, {
         lang: sessionStorage.getItem("lang") || "en",
       });
-      setAuction(response.data);
+      const rawAuction = response?.data?.data || response?.data || {};
+      setAuction({
+        ...rawAuction,
+        image_url: Array.isArray(rawAuction.image_url) ? rawAuction.image_url : [],
+        bids: Array.isArray(rawAuction.bids) ? rawAuction.bids : [],
+        category: rawAuction.category || null,
+        file_exel:
+          typeof rawAuction.file_exel === "string" ? rawAuction.file_exel : "",
+      });
       setLoading(false);
     } catch (error) {
       toast.error(t("error.error_get_data"));
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -198,7 +206,9 @@ const AuctionDetail = () => {
       sliderRef.current.style.transform = `translateX(-${selectImg * 100}%)`;
 
       // Logic xử lý khi đến clone
-      const totalSlides = auction.image_url.length;
+      const totalSlides = Array.isArray(auction?.image_url)
+        ? auction.image_url.length
+        : 0;
       const timeout = setTimeout(() => {
         if (selectImg === 0) {
           sliderRef.current.style.transition = "none";
@@ -227,7 +237,9 @@ const AuctionDetail = () => {
   }, [selectImg, auction]);
 
   const getCurrentDotIndex = () => {
-    const totalSlides = auction.image_url.length;
+    const totalSlides = Array.isArray(auction?.image_url)
+      ? auction.image_url.length
+      : 0;
     if (selectImg === 0) return totalSlides - 1;
     if (selectImg === totalSlides + 1) return 0;
     return selectImg - 1;
@@ -297,13 +309,15 @@ const AuctionDetail = () => {
       </div>
     );
   if (!auction) return <p>{t("no_data")}</p>;
+  const imageUrls = Array.isArray(auction.image_url) ? auction.image_url : [];
+  const excelFileName = auction.file_exel?.split("/").pop() || "";
 
   return (
     <>
       <ImageModal
         isOpen={imageModalOpen}
         onClose={() => setImageModalOpen(false)}
-        images={auction.image_url || []}
+        images={imageUrls}
         initialIndex={modalInitialIndex}
       />
       {/* Modal đấu giá */}
@@ -313,6 +327,8 @@ const AuctionDetail = () => {
         username={getUser()?.username}
         auctionId={auction.id}
         currency={auction.currency || "USD"}
+        stepPrice={auction.step_price}
+        startingPrice={auction.starting_price}
         onClose={() => setIsOpen(false)}
       />
       <AnimatedContent>
@@ -377,11 +393,11 @@ const AuctionDetail = () => {
               ref={sliderRef}
               className="absolute inset-0 flex transition-transform duration-700 ease-in-out"
             >
-              {auction.image_url.length > 1 ? (
+              {imageUrls.length > 1 ? (
                 clonedImages.map((imageUrl, index) => {
                   let realIndex = index - 1;
-                  if (realIndex === -1) realIndex = auction.image_url.length - 1;
-                  else if (realIndex === auction.image_url.length) realIndex = 0;
+                  if (realIndex === -1) realIndex = imageUrls.length - 1;
+                  else if (realIndex === imageUrls.length) realIndex = 0;
                   
                   return (
                     <img
@@ -396,9 +412,9 @@ const AuctionDetail = () => {
                     />
                   );
                 })
-              ) : auction.image_url.length > 0 ? (
+              ) : imageUrls.length > 0 ? (
                 <img
-                  src={`${BASE_URL}${auction.image_url[0]}`}
+                  src={`${BASE_URL}${imageUrls[0]}`}
                   alt={auction.title}
                   className="min-w-full h-full shrink-0 object-contain cursor-pointer hover:opacity-95 transition-opacity"
                   onClick={() => {
@@ -417,8 +433,8 @@ const AuctionDetail = () => {
 
             {/* Indicator dots nằm absolute bên trong ảnh */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {auction.image_url.length > 0 &&
-                auction.image_url.map((_, index) => (
+              {imageUrls.length > 0 &&
+                imageUrls.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => handleSelectImg(index + 1)}
@@ -448,7 +464,7 @@ const AuctionDetail = () => {
               <p
                 className={`p-[16px] pb-0 text-sm font-medium ${tetMode ? "text-[#CB0502]" : "text-blue-600"}`}
               >
-                {t("deadline")}
+                {auction.status === 1 ? t("start_time") : t("deadline")}
               </p>
 
               {/* Inline CSS for animations */}
@@ -844,7 +860,7 @@ const AuctionDetail = () => {
                 <p
                   className={`text-lg font-semibold ${tetMode ? "text-gray-200" : "text-gray-600"}`}
                 >
-                  {auction.category.category_name || t("unknown")}
+                  {auction.category?.category_name || t("unknown")}
                 </p>
                 <div
                   className={`absolute bottom-2 right-2 opacity-40 ${tetMode ? "text-[#CB0502]" : "text-blue-500"}`}
@@ -891,13 +907,13 @@ const AuctionDetail = () => {
                     <button
                       onClick={() => handleDownload(auction.id)}
                       className={`hover:underline font-semibold ${tetMode ? "text-[#fbbf24]" : "text-blue-600"}`}
-                      title={auction.file_exel.split("/").pop()}
+                      title={excelFileName}
                     >
                       <p>
-                        {auction.file_exel.split("/").pop().length > 15
-                          ? auction.file_exel.split("/").pop().slice(0, 15) +
+                        {excelFileName.length > 15
+                          ? excelFileName.slice(0, 15) +
                             "...xlsx"
-                          : auction.file_exel.split("/").pop()}
+                          : excelFileName}
                       </p>
                     </button>
                   ) : (

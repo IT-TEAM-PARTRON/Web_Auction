@@ -6,6 +6,7 @@ import AnimatedContent from "../ui/animatedContent";
 import RenderCardAuction from "../ui/CardComponent";
 import axiosDefault from "../../services/axiosClient";
 import { useTetMode } from "../../contexts/TetModeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AuctionSection = ({ titleKey, type, excludeId }) => {
   const [items, setItems] = useState([]);
@@ -15,6 +16,7 @@ const AuctionSection = ({ titleKey, type, excludeId }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
+  const { user, openAuthModal } = useAuth();
   const statusMap = {
     ongoing: 0,
     upcoming: 1,
@@ -84,24 +86,49 @@ const AuctionSection = ({ titleKey, type, excludeId }) => {
                 padding: "0px 0px 5px 0px",
               }}
             >
-              {t("total")}: {total} {t("asset")}
+            {t("total")}: {total} {t("asset")}
             </span>
-            <AnimatedContent>
-              <RenderCardAuction
-              arrAuction={items}
-              numberCol={4}
-              clickCard={handleClick}
-            />
-            </AnimatedContent>
-            <div 
-              onClick={handleSeeAll} 
-              className={`see-all ${tetMode ? 'text-white hover:text-yellow-300' : ''}`}
-              style={{ cursor: 'pointer' }}
-            >
-            <span className="break-all flex items-center">{t("see_all")} <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-            </svg></span>
-            </div>
+            {user ? (
+              <>
+                <AnimatedContent>
+                  <RenderCardAuction
+                    arrAuction={items}
+                    numberCol={4}
+                    clickCard={handleClick}
+                  />
+                </AnimatedContent>
+                <div
+                  onClick={handleSeeAll}
+                  className={`see-all ${tetMode ? "text-white hover:text-yellow-300" : ""}`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <span className="break-all flex items-center">
+                    {t("see_all")}{" "}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                      />
+                    </svg>
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div 
+                className="login-requirement" 
+                onClick={() => openAuthModal("login")}
+              >
+                {t("please_login_to_view")}
+              </div>
+            )}
           </>
         )}
       </div>

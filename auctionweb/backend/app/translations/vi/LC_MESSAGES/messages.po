@@ -184,5 +184,104 @@ msgstr "Danh mục đã tồn tại"
 msgid "User not invited to bid"
 msgstr "Bạn không được mời tham gia đấu giá"
 
+msgid "An error occurred while resetting password"
+msgstr "Đã xảy ra lỗi khi đặt lại mật khẩu"
+
+msgid "Bid amount must be at least the starting price"
+msgstr "Giá thầu phải ít nhất bằng giá khởi điểm"
+
+msgid "Bid not found"
+msgstr "Không tìm thấy lượt đặt giá"
+
+msgid "Bid or file not found"
+msgstr "Không tìm thấy lượt đặt giá hoặc tệp đính kèm"
+
+msgid "Cannot update an ended auction."
+msgstr "Không thể cập nhật phiên đấu giá đã kết thúc."
+
+msgid "Category deleted successfully."
+msgstr "Xóa danh mục thành công."
+
+msgid "Category not found"
+msgstr "Không tìm thấy danh mục"
+
+msgid "Category updated successfully."
+msgstr "Cập nhật danh mục thành công."
+
+msgid "Database error: {error}"
+msgstr "Lỗi cơ sở dữ liệu: {error}"
+
+msgid "Error while creating auction: {error}"
+msgstr "Có lỗi xảy ra khi tạo phiên đấu giá: {error}"
+
+msgid "If the email exists, a reset link has been sent"
+msgstr "Nếu email tồn tại, liên kết đặt lại mật khẩu đã được gửi"
+
+msgid "Image file too large (max 5MB): {filename}"
+msgstr "Ảnh vượt quá dung lượng cho phép (tối đa 5MB): {filename}"
+
+msgid "Internal server error: {error}"
+msgstr "Lỗi máy chủ nội bộ: {error}"
+
+msgid "Invalid auction_type value"
+msgstr "Giá trị auction_type không hợp lệ"
+
+msgid "Invalid authorization header"
+msgstr "Header ủy quyền không hợp lệ"
+
+msgid "Invalid image file type: {filename}"
+msgstr "Định dạng ảnh không hợp lệ: {filename}"
+
+msgid "Invalid or expired reset token"
+msgstr "Mã đặt lại mật khẩu không hợp lệ hoặc đã hết hạn"
+
+msgid "Invalid reset token"
+msgstr "Mã đặt lại mật khẩu không hợp lệ"
+
+msgid "Invalid token"
+msgstr "Token không hợp lệ"
+
+msgid "Not Found"
+msgstr "Không tìm thấy"
+
+msgid "Only Admin or Super Admin can void bids"
+msgstr "Chỉ Admin hoặc Super Admin mới có thể hủy lượt đặt giá"
+
+msgid "Password has been reset successfully"
+msgstr "Đặt lại mật khẩu thành công"
+
+msgid "Set read successful!"
+msgstr "Đánh dấu đã đọc thành công!"
+
+msgid "Unexpected error: {error}"
+msgstr "Lỗi không mong muốn: {error}"
+
+msgid "User ID not found in token"
+msgstr "Không tìm thấy User ID trong token"
+
+msgid "User is inactive"
+msgstr "Người dùng đang bị vô hiệu hóa"
+
+msgid "You can only add new participants to an ongoing auction. Removing participants is not allowed."
+msgstr "Chỉ được thêm người tham gia mới khi phiên đang diễn ra. Không được phép xóa người tham gia."
+
+msgid "You can only modify your own information"
+msgstr "Bạn chỉ có thể chỉnh sửa thông tin của chính mình"
+
+msgid "You don't have permission to create auction!"
+msgstr "Bạn không có quyền tạo phiên đấu giá!"
+
+msgid "Your bid of {amount} has been voided (Reason: {reason}). Please submit a new bid."
+msgstr "Lượt đặt giá {amount} của bạn đã bị hủy (Lý do: {reason}). Vui lòng gửi lượt đặt giá mới."
+
+msgid "end_time must be after start_time"
+msgstr "end_time phải sau start_time"
+
+msgid "index.html not found"
+msgstr "Không tìm thấy index.html"
+
+msgid "start_time must be before end_time"
+msgstr "start_time phải trước end_time"
+
 msgid "Email already exists"
 msgstr "Email đã tồn tại."

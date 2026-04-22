@@ -11,6 +11,7 @@ import AnimatedContent from "../ui/animatedContent";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useTetMode } from "../../contexts/TetModeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AuctionSearch = () => {
   const [searchText, setSearchText] = useState("");
@@ -23,6 +24,7 @@ const AuctionSearch = () => {
   const [dateRange, setDateRange] = useState([]);
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
+  const { user, openAuthModal } = useAuth();
   const [searchParams] = useSearchParams();
   const [searchParam, setSearchParam] = useState({});
   const [arrAuction, setArrAuction] = useState([]);
@@ -320,6 +322,13 @@ const AuctionSearch = () => {
         </div>
         {isLoading ? (
           <div className="loader my-5" />
+        ) : !user ? (
+          <div 
+            className="login-requirement" 
+            onClick={() => openAuthModal("login")}
+          >
+            {t("please_login_to_view")}
+          </div>
         ) : viewMode === 'grid' ? (
           <RenderCardAuction
             arrAuction={arrAuction}
@@ -332,11 +341,13 @@ const AuctionSearch = () => {
             clickCard={handleClick}
           />
         )}
-        <Pagination
-          currentPage={currentIndexPage}
-          totalPage={totalPage}
-          onPageChange={searchData}
-        />
+        {user && (
+          <Pagination
+            currentPage={currentIndexPage}
+            totalPage={totalPage}
+            onPageChange={searchData}
+          />
+        )}
       </div>
     </AnimatedContent>
   );

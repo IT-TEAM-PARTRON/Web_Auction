@@ -184,5 +184,104 @@ msgstr "카테고리 이름이 이미 존재합니다"
 msgid "User not invited to bid"
 msgstr "사용자가 입찰에 초대되지 않았습니다"
 
+msgid "An error occurred while resetting password"
+msgstr "비밀번호 재설정 중 오류가 발생했습니다"
+
+msgid "Bid amount must be at least the starting price"
+msgstr "입찰 금액은 시작가 이상이어야 합니다"
+
+msgid "Bid not found"
+msgstr "입찰 정보를 찾을 수 없습니다"
+
+msgid "Bid or file not found"
+msgstr "입찰 또는 파일을 찾을 수 없습니다"
+
+msgid "Cannot update an ended auction."
+msgstr "종료된 경매는 수정할 수 없습니다."
+
+msgid "Category deleted successfully."
+msgstr "카테고리가 성공적으로 삭제되었습니다."
+
+msgid "Category not found"
+msgstr "카테고리를 찾을 수 없습니다"
+
+msgid "Category updated successfully."
+msgstr "카테고리가 성공적으로 수정되었습니다."
+
+msgid "Database error: {error}"
+msgstr "데이터베이스 오류: {error}"
+
+msgid "Error while creating auction: {error}"
+msgstr "경매 생성 중 오류가 발생했습니다: {error}"
+
+msgid "If the email exists, a reset link has been sent"
+msgstr "이메일이 존재하면 비밀번호 재설정 링크가 전송되었습니다"
+
+msgid "Image file too large (max 5MB): {filename}"
+msgstr "이미지 파일이 너무 큽니다(최대 5MB): {filename}"
+
+msgid "Internal server error: {error}"
+msgstr "내부 서버 오류: {error}"
+
+msgid "Invalid auction_type value"
+msgstr "유효하지 않은 auction_type 값입니다"
+
+msgid "Invalid authorization header"
+msgstr "잘못된 인증 헤더입니다"
+
+msgid "Invalid image file type: {filename}"
+msgstr "잘못된 이미지 파일 형식입니다: {filename}"
+
+msgid "Invalid or expired reset token"
+msgstr "재설정 토큰이 유효하지 않거나 만료되었습니다"
+
+msgid "Invalid reset token"
+msgstr "유효하지 않은 재설정 토큰입니다"
+
+msgid "Invalid token"
+msgstr "유효하지 않은 토큰입니다"
+
+msgid "Not Found"
+msgstr "찾을 수 없습니다"
+
+msgid "Only Admin or Super Admin can void bids"
+msgstr "Admin 또는 Super Admin만 입찰을 무효 처리할 수 있습니다"
+
+msgid "Password has been reset successfully"
+msgstr "비밀번호가 성공적으로 재설정되었습니다"
+
+msgid "Set read successful!"
+msgstr "읽음 처리되었습니다!"
+
+msgid "Unexpected error: {error}"
+msgstr "예기치 않은 오류: {error}"
+
+msgid "User ID not found in token"
+msgstr "토큰에서 사용자 ID를 찾을 수 없습니다"
+
+msgid "User is inactive"
+msgstr "비활성 사용자입니다"
+
+msgid "You can only add new participants to an ongoing auction. Removing participants is not allowed."
+msgstr "진행 중인 경매에는 참가자만 추가할 수 있으며 제거는 허용되지 않습니다."
+
+msgid "You can only modify your own information"
+msgstr "본인 정보만 수정할 수 있습니다"
+
+msgid "You don't have permission to create auction!"
+msgstr "경매를 생성할 권한이 없습니다!"
+
+msgid "Your bid of {amount} has been voided (Reason: {reason}). Please submit a new bid."
+msgstr "{amount} 입찰이 취소되었습니다 (사유: {reason}). 새 입찰을 제출해 주세요."
+
+msgid "end_time must be after start_time"
+msgstr "end_time은 start_time보다 늦어야 합니다"
+
+msgid "index.html not found"
+msgstr "index.html을 찾을 수 없습니다"
+
+msgid "start_time must be before end_time"
+msgstr "start_time은 end_time보다 빨라야 합니다"
+
 msgid "Email already exists"
 msgstr "이메일이 이미 존재합니다."

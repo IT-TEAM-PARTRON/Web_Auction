@@ -189,3 +189,102 @@ msgstr "User not invited to bid"
 
 msgid "Email already exists"
 msgstr "Email already exists"
+
+msgid "An error occurred while resetting password"
+msgstr "An error occurred while resetting password"
+
+msgid "Bid amount must be at least the starting price"
+msgstr "Bid amount must be at least the starting price"
+
+msgid "Bid not found"
+msgstr "Bid not found"
+
+msgid "Bid or file not found"
+msgstr "Bid or file not found"
+
+msgid "Cannot update an ended auction."
+msgstr "Cannot update an ended auction."
+
+msgid "Category deleted successfully."
+msgstr "Category deleted successfully."
+
+msgid "Category not found"
+msgstr "Category not found"
+
+msgid "Category updated successfully."
+msgstr "Category updated successfully."
+
+msgid "Database error: {error}"
+msgstr "Database error: {error}"
+
+msgid "Error while creating auction: {error}"
+msgstr "Error while creating auction: {error}"
+
+msgid "If the email exists, a reset link has been sent"
+msgstr "If the email exists, a reset link has been sent"
+
+msgid "Image file too large (max 5MB): {filename}"
+msgstr "Image file too large (max 5MB): {filename}"
+
+msgid "Internal server error: {error}"
+msgstr "Internal server error: {error}"
+
+msgid "Invalid auction_type value"
+msgstr "Invalid auction_type value"
+
+msgid "Invalid authorization header"
+msgstr "Invalid authorization header"
+
+msgid "Invalid image file type: {filename}"
+msgstr "Invalid image file type: {filename}"
+
+msgid "Invalid or expired reset token"
+msgstr "Invalid or expired reset token"
+
+msgid "Invalid reset token"
+msgstr "Invalid reset token"
+
+msgid "Invalid token"
+msgstr "Invalid token"
+
+msgid "Not Found"
+msgstr "Not Found"
+
+msgid "Only Admin or Super Admin can void bids"
+msgstr "Only Admin or Super Admin can void bids"
+
+msgid "Password has been reset successfully"
+msgstr "Password has been reset successfully"
+
+msgid "Set read successful!"
+msgstr "Set read successful!"
+
+msgid "Unexpected error: {error}"
+msgstr "Unexpected error: {error}"
+
+msgid "User ID not found in token"
+msgstr "User ID not found in token"
+
+msgid "User is inactive"
+msgstr "User is inactive"
+
+msgid "You can only add new participants to an ongoing auction. Removing participants is not allowed."
+msgstr "You can only add new participants to an ongoing auction. Removing participants is not allowed."
+
+msgid "You can only modify your own information"
+msgstr "You can only modify your own information"
+
+msgid "You don't have permission to create auction!"
+msgstr "You don't have permission to create auction!"
+
+msgid "Your bid of {amount} has been voided (Reason: {reason}). Please submit a new bid."
+msgstr "Your bid of {amount} has been voided (Reason: {reason}). Please submit a new bid."
+
+msgid "end_time must be after start_time"
+msgstr "end_time must be after start_time"
+
+msgid "index.html not found"
+msgstr "index.html not found"
+
+msgid "start_time must be before end_time"
+msgstr "start_time must be before end_time"

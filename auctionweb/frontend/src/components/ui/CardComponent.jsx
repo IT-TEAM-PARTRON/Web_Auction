@@ -31,7 +31,14 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
           {t("no_data")}
         </p>
       ) : (
-        arrAuction.map((item) => (
+        arrAuction.map((item) => {
+          const safeTitle = typeof item?.title === "string" ? item.title : "";
+          const titleTooLong = safeTitle.length > 70;
+          const displayTitle = titleTooLong
+            ? `${safeTitle.slice(0, 70)}...`
+            : safeTitle || "N/A";
+
+          return (
           <div
             key={item.id}
             role="button"
@@ -81,11 +88,9 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
             <div className={`p-3 text-sm leading-[1.5] flex-grow text-left rounded-b-[10px] ${tetMode ? 'bg-[#242526]' : 'bg-white'}`}>
               <p className="flex justify-between relative overflow-visible">
                 <span className={`relative break-words w-0 flex-1 min-w-0 text-left text-[16px] font-[600] group/title ${tetMode ? 'text-white' : ''}`}>
-                  {item.title.length > 70
-                    ? item.title.slice(0, 70) + "..."
-                    : item.title}
+                  {displayTitle}
 
-                  {item.title.length > 70 && (
+                  {titleTooLong && (
                     <span
                       className="absolute z-[1000] font-normal text-center left-1/2 bottom-full mb-2 
                         -translate-x-1/2 w-max max-w-[350px] rounded-lg bg-[#0082c8] px-3 py-2 
@@ -95,7 +100,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                         group-hover/title:opacity-100 group-hover/title:translate-y-0
                       "
                     >
-                      {item.title}
+                      {safeTitle}
                       <span
                         className="absolute top-full left-1/2 -translate-x-1/2 border-4 
           border-transparent border-t-[#0082c8]"
@@ -188,7 +193,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
               </div>
             </div>
           </div>
-        ))
+        )})
       )}
     </div>
   );

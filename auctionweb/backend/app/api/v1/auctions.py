@@ -19,7 +19,7 @@ from app.models.Bid import Bid
 import json
 from app.models.User import User
 from app.core.auth import get_current_user_id_from_token
-from app.enums import UserRole
+from app.enums import UserRole, BidStatus
 from pydantic import field_validator
 from zoneinfo import ZoneInfo
 from fastapi import APIRouter
@@ -27,6 +27,11 @@ from app.i18n import _
 from datetime import datetime, timedelta
 from app.models.Category import Category
 from app.services.email_service import email_service
+from app.services.auction_result_service import (
+    get_auction_result_bid,
+    get_auction_status,
+    get_bid_ranking_order,
+)
 
 router = APIRouter()
 class AuctionParticipantOut(BaseModel):
@@ -177,6 +182,31 @@ def get_current_user(
         raise HTTPException(status_code=401, detail=_("User not found", request))
     return user
 
+
+def build_winner_info(db: Session, winner_bid: Optional[Bid]) -> Optional[dict]:
+    if not winner_bid:
+        return None
+
+    winner_user = db.query(User).filter(User.id == winner_bid.user_id).first()
+    return {
+        "bid_id": winner_bid.id,
+        "user_id": winner_bid.user_id,
+        "user_name": winner_user.username if winner_user else "Unknown",
+        "bid_amount": float(winner_bid.bid_amount),
+        "created_at": winner_bid.created_at,
+    }
+
+
+def apply_auction_result_fields(db: Session, auction: Auction, data: dict) -> None:
+    data["winner_info"] = None
+    if data["status"] != 2:
+        data["highest_amount"] = None
+        return
+
+    winner_bid, result_bid = get_auction_result_bid(db, auction)
+    data["winner_info"] = build_winner_info(db, winner_bid)
+    data["highest_amount"] = float(result_bid.bid_amount) if result_bid else None
+
 #lấy ra ds các đấu giá
 @router.get("/auctions", response_model=AuctionsWithTotalOut)
 def get_auctions_by_status(
@@ -195,7 +225,7 @@ def get_auctions_by_status(
     elif status == 1:
         query = query.filter(Auction.start_time > now)
     elif status == 2:
-        query = query.filter(Auction.end_time < now)
+        query = query.filter(Auction.end_time <= now)
 
     # Lấy tối đa 4 kết quả mới nhất
     results = query.order_by(Auction.created_at.desc()).limit(4).all()
@@ -240,12 +270,7 @@ def get_auctions_by_status(
                     "description": auction.category.description
                 }
         # Tính lại status động
-        if now < auction.start_time:
-            data["status"] = 1  # upcoming
-        elif auction.start_time <= now < auction.end_time:
-            data["status"] = 0  # ongoing
-        else:
-            data["status"] = 2  # ended
+        data["status"] = get_auction_status(auction, now)
 
         # Thêm highest_amount nếu là phiên đã kết thúc
         if data["status"] == 2:
@@ -278,13 +303,13 @@ def get_auctions_by_status(
                     data["highest_amount"] = float(highest_valid_bid.bid_amount) if highest_valid_bid else None
                 except Exception:
                     data["highest_amount"] = None
-
+        apply_auction_result_fields(db, auction, data)
         auctions_out.append(AuctionOut(**data))
 
     # Tính tổng số phiên theo từng trạng thái
     total_ongoing = db.query(Auction).filter(Auction.start_time <= now, Auction.end_time > now).count()
     total_upcoming = db.query(Auction).filter(Auction.start_time > now).count()
-    total_ended = db.query(Auction).filter(Auction.end_time < now).count()
+    total_ended = db.query(Auction).filter(Auction.end_time <= now).count()
 
     return {
         "auctions": auctions_out,
@@ -378,7 +403,10 @@ def create_auction(
         )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Error while creating auction: " + str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=_("Error while creating auction: {error}", request).format(error=str(e))
+        )
 
     # auction_data = auction.__dict__.copy()
     # auction_data['image_url'] = json.loads(auction.image_url) if auction.image_url else []
@@ -446,16 +474,16 @@ def update_auction(
     if "title" in update_data:
         existing = db.query(Auction).filter(Auction.title == update_data["title"], Auction.id != auction_id).first()
         if existing:
-            raise HTTPException(status_code=400, detail="Auction title already exists")
+            raise HTTPException(status_code=400, detail=_("Auction title already exists", request))
     if "start_time" in update_data and "end_time" in update_data:
         if update_data["start_time"] >= update_data["end_time"]:
-            raise HTTPException(status_code=400, detail="start_time must be before end_time")
+            raise HTTPException(status_code=400, detail=_("start_time must be before end_time", request))
     elif "start_time" in update_data:
         if auction.end_time and update_data["start_time"] >= auction.end_time:
-            raise HTTPException(status_code=400, detail="start_time must be before end_time")
+            raise HTTPException(status_code=400, detail=_("start_time must be before end_time", request))
     elif "end_time" in update_data:
         if auction.start_time and auction.start_time >= update_data["end_time"]:
-            raise HTTPException(status_code=400, detail="end_time must be after start_time")    
+            raise HTTPException(status_code=400, detail=_("end_time must be after start_time", request))
     if "image_url" in update_data and update_data["image_url"] is not None:
         update_data["image_url"] = json.dumps(update_data["image_url"])
     new_participants = None
@@ -463,7 +491,7 @@ def update_auction(
         new_participants = set(update_data.pop("participants"))
     if "auction_type" in update_data:
         if update_data["auction_type"] not in ["BUY", "SELL"]:
-            raise HTTPException(status_code=400, detail="Invalid auction_type value")
+            raise HTTPException(status_code=400, detail=_("Invalid auction_type value", request))
     # set các field còn lại vào Auction
     for key, value in update_data.items():
         setattr(auction, key, value)
@@ -533,13 +561,21 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
             if ext not in allowed_exts:
                 return JSONResponse(
                     status_code=400,
-                    content={"detail": _("Invalid image file type: ", request) + file.filename}
+                    content={
+                        "detail": _("Invalid image file type: {filename}", request).format(
+                            filename=file.filename
+                        )
+                    }
                 )
             contents = file.file.read() 
             if len(contents) > max_size:
                 return JSONResponse(
                     status_code=400,
-                    content={"detail": _("Image file too large (max 5MB): ", request) + file.filename}
+                    content={
+                        "detail": _("Image file too large (max 5MB): {filename}", request).format(
+                            filename=file.filename
+                        )
+                    }
                 )
 
             # Xử lý trùng tên file
@@ -559,11 +595,19 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
             if total_length > 500:
                 return JSONResponse(
                     status_code=400,
-                    content={"detail": _("Total image URLs length too long (max 500 chars): ", request) + str(image_urls)}
+                    content={
+                        "detail": _(
+                            "Total image URLs length too long (max 500 chars): {image_urls}",
+                            request
+                        ).format(image_urls=image_urls)
+                    }
                 )
         return {"image_urls": image_urls}
     except Exception as e:
-        return JSONResponse(status_code=500, content={"detail": _("Internal server error: ", request) + str(e)})
+        return JSONResponse(
+            status_code=500,
+            content={"detail": _("Internal server error: {error}", request).format(error=str(e))}
+        )
 
 #admin upload excel khi thêm auction và user đính kèm file
 @router.post("/upload/excel")
@@ -596,7 +640,10 @@ def upload_excel(request: Request, file: UploadFile = File(...)):
         saved_filename = os.path.basename(file_location)
         return {"file_excel": f"/uploads/excels/{saved_filename}"}
     except Exception as e:
-        return JSONResponse(status_code=500, content={"detail": _("Internal server error: ", request) + str(e)})
+        return JSONResponse(
+            status_code=500,
+            content={"detail": _("Internal server error: {error}", request).format(error=str(e))}
+        )
 
 #user down excel auction_id
 @router.get("/download/excel/by-auction/{auction_id}")
@@ -752,12 +799,7 @@ def search_auctions(
             data["image_url"] = []
 
         # Tính lại status động
-        if now < auction.start_time:
-            data["status"] = 1  # upcoming
-        elif auction.start_time <= now < auction.end_time:
-            data["status"] = 0  # ongoing
-        else:
-            data["status"] = 2  # ended
+        data["status"] = get_auction_status(auction, now)
 
         # Thêm highest_amount nếu là phiên đã kết thúc
         if data["status"] == 2:
@@ -796,6 +838,7 @@ def search_auctions(
                 except Exception:
                     data["highest_amount"] = None
 
+        apply_auction_result_fields(db, auction, data)
         auctions_out.append(AuctionOut(**data))
     total = query.order_by(None).count()
     return {
@@ -851,21 +894,10 @@ def get_client_auction_by_id(request:Request, auction_id: str, db: Session = Dep
     
     # Tính lại status động
     now = datetime.now()
-    if now < auction.start_time:
-        auction_data["status"] = 1  # upcoming
-    elif auction.start_time <= now < auction.end_time:
-        auction_data["status"] = 0  # ongoing
-    else:
-        auction_data["status"] = 2  # ended
+    auction_data["status"] = get_auction_status(auction, now)
 
     # Bảo mật thông tin: Chỉ hiện highest_amount khi phiên kết thúc
-    if auction_data["status"] == 2:
-        highest_bid = db.query(Bid).filter(
-            Bid.auction_id == auction_id
-        ).order_by(Bid.bid_amount.desc()).first()
-        auction_data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
-    else:
-        auction_data["highest_amount"] = None
+    apply_auction_result_fields(db, auction, auction_data)
 
     if auction_data["status"] in [0, 2]:
         count_users = db.query(Bid.user_id).filter(Bid.auction_id == auction_id).distinct().count()
@@ -878,18 +910,11 @@ def get_client_auction_by_id(request:Request, auction_id: str, db: Session = Dep
 
     # Bids: Chỉ trả về user nếu là winner khi phiên kết thúc để hiển thị
     bid_list = []
-    if auction_data["status"] == 2:
-        winner_bid = db.query(Bid).filter(
-            Bid.auction_id == auction_id,
-            Bid.is_winner == True
-        ).first()
-        if winner_bid:
-            user = db.query(User).filter(User.id == winner_bid.user_id).first()
-            if user:
-                bid_list.append({
-                    "is_winner": True,
-                    "user_name": user.username
-                })
+    if auction_data["status"] == 2 and auction_data.get("winner_info"):
+        bid_list.append({
+            "is_winner": True,
+            "user_name": auction_data["winner_info"]["user_name"]
+        })
     auction_data["bids"] = bid_list
 
     return auction_data
@@ -942,19 +967,15 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
     
     # Tính lại status động
     now = datetime.now()
-    if now < auction.start_time:
-        auction_data["status"] = 1  # upcoming
-    elif auction.start_time <= now < auction.end_time:
-        auction_data["status"] = 0  # ongoing
-    else:
-        auction_data["status"] = 2  # ended
-
-    highest_bid = db.query(Bid).filter(
-        Bid.auction_id == auction_id
-    ).order_by(Bid.bid_amount.desc()).first()
-    auction_data["highest_amount"] = float(highest_bid.bid_amount) if highest_bid else None
+    auction_data["status"] = get_auction_status(auction, now)
+    apply_auction_result_fields(db, auction, auction_data)
     # Lấy danh sách thông tin các user tham gia đấu giá
-    bids = db.query(Bid).filter(Bid.auction_id == auction_id).order_by(Bid.bid_amount.desc(), Bid.created_at.asc()).all()
+    bids = (
+        db.query(Bid)
+        .filter(Bid.auction_id == auction_id)
+        .order_by(*get_bid_ranking_order(auction))
+        .all()
+    )
     bid_list = []
     for bid in bids:
         user = db.query(User).filter(User.id == bid.user_id).first()
@@ -968,7 +989,7 @@ def get_auction_by_id(request:Request ,auction_id: str, db: Session = Depends(ge
             "created_at": bid.created_at,
             "note": bid.note,
             "address": bid.address,
-            "is_winner": bid.is_winner,
+            "is_winner": bid.is_winner and bid.status == BidStatus.VALID.value,
             "status": bid.status,
             "void_reason": bid.void_reason,
             "voided_at": bid.voided_at,
@@ -1014,7 +1035,8 @@ def get_monthly_stats(db: Session, target_date: datetime):
         Auction.end_time <= end_of_month,
         db.query(Bid).filter(
             Bid.auction_id == Auction.id,
-            Bid.is_winner == 1
+            Bid.is_winner == 1,
+            Bid.status == BidStatus.VALID.value
         ).exists()
     ).count()
     # tổng số phiên chưa diễn ra có time bắt đầu lớn hơn tháng hiện tại - 1
@@ -1027,7 +1049,8 @@ def get_monthly_stats(db: Session, target_date: datetime):
         Auction.end_time <= end_of_month,
         ~db.query(Bid).filter(
             Bid.auction_id == Auction.id,
-            Bid.is_winner == 1
+            Bid.is_winner == 1,
+            Bid.status == BidStatus.VALID.value
         ).exists()
     ).count()
     
@@ -1058,18 +1081,20 @@ def get_overview_stats(db: Session = Depends(get_db)):
             Auction.start_time <= now, Auction.end_time > now
         ).count(),
         "total_successful_auctions": db.query(Auction).filter(
-            Auction.end_time < now,
+            Auction.end_time <= now,
             db.query(Bid).filter(
                 Bid.auction_id == Auction.id,
-                Bid.is_winner == 1
+                Bid.is_winner == 1,
+                Bid.status == BidStatus.VALID.value
             ).exists()
         ).count(),
         "total_upcoming_auctions": db.query(Auction).filter(Auction.start_time > now).count(),
         "total_unsuccessful_auctions": db.query(Auction).filter(
-            Auction.end_time < now,
+            Auction.end_time <= now,
             ~db.query(Bid).filter(
                 Bid.auction_id == Auction.id,
-                Bid.is_winner == 1
+                Bid.is_winner == 1,
+                Bid.status == BidStatus.VALID.value
             ).exists()
         ).count()
     }

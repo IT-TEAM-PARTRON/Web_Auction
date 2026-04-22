@@ -32,7 +32,7 @@ async def auto_set_winner_task():
             ended_auctions = (
                 db.query(Auction)
                 .filter(
-                    Auction.end_time < now,
+                    Auction.end_time <= now,
                     ~db.query(Bid).filter(Bid.auction_id == Auction.id, Bid.is_winner == True, Bid.status == BidStatus.VALID.value).exists()
                 )
                 .limit(BATCH_SIZE)
@@ -40,17 +40,25 @@ async def auto_set_winner_task():
             )
             # quét qua từng auction và set người thắng
             for auction in ended_auctions:
+                auction = (
+                    db.query(Auction)
+                    .filter(Auction.id == auction.id)
+                    .with_for_update()
+                    .first()
+                )
+                if not auction:
+                    continue
                 # nếu gói đấu giá là "đăng bán" thì người thắng sẽ là người trả giá cao nhất
                 if auction.auction_type == TypeAuction.SELL:
                     highest_bid = (
                         db.query(Bid)
                         .filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value)
-                        .order_by(Bid.bid_amount.desc())
+                        .order_by(Bid.bid_amount.desc(), Bid.created_at.asc(), Bid.id.asc())
                         .first()
                     )
 
                     if highest_bid:
-                        db.query(Bid).filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value).update({"is_winner": False}, synchronize_session=False)
+                        db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False}, synchronize_session=False)
                         highest_bid.is_winner = True
                         messages = get_auction_message("win", None, auction.title)
                         notification = Notification(
@@ -82,11 +90,11 @@ async def auto_set_winner_task():
                     lowest_bid = (
                         db.query(Bid)
                         .filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value)
-                        .order_by(Bid.bid_amount.asc())
+                        .order_by(Bid.bid_amount.asc(), Bid.created_at.asc(), Bid.id.asc())
                         .first()
                     )
                     if lowest_bid:
-                        db.query(Bid).filter(Bid.auction_id == auction.id, Bid.status == BidStatus.VALID.value).update({"is_winner": False}, synchronize_session=False)
+                        db.query(Bid).filter(Bid.auction_id == auction.id).update({"is_winner": False}, synchronize_session=False)
                         lowest_bid.is_winner = True
                         messages = get_auction_message("win", None, auction.title)
                         notification = Notification(

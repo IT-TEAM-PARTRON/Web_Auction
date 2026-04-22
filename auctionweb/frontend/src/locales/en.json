@@ -321,6 +321,7 @@
   "no_data": "No data available",
   "no_file": "No file",
   "no_announcements": "No announcements yet",
+  "please_login_to_view": "Please login to view",
   "user_not_valid": "Username is not valid!",
   "category_not_valid": "Category is not valid!",
   "update_user": "Update user successful!",

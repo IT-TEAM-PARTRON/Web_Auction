@@ -17,6 +17,7 @@ from fastapi.responses import FileResponse
 import os
 from app.models.AuctionParticipant import AuctionParticipant
 from sqlalchemy.exc import SQLAlchemyError
+from app.services.auction_result_service import sync_winner_for_auction
 
 router = APIRouter()
 
@@ -74,12 +75,17 @@ def create_bid(
     user_id: str = Depends(get_current_user_id_from_token)
 ):
     try:
-        auction = db.query(Auction).filter(Auction.id == bid_in.auction_id).first()
+        auction = (
+            db.query(Auction)
+            .filter(Auction.id == bid_in.auction_id)
+            .with_for_update()
+            .first()
+        )
         if not auction:
             raise HTTPException(status_code=404, detail=_("Auction not found", request))
         
         now = datetime.now()
-        if auction.start_time > now or auction.end_time < now:
+        if auction.start_time > now or auction.end_time <= now:
             raise HTTPException(status_code=400, detail=_("Auction is not active", request))
         
         user = db.query(User).filter(User.id == user_id, User.status == 1).first()
@@ -101,16 +107,28 @@ def create_bid(
             raise HTTPException(status_code=403, detail=_("User not invited to bid", request))
         
         # Kiểm tra user đã đặt bid cho auction này chưa
-        existing_bid = db.query(Bid).filter(Bid.auction_id == bid_in.auction_id, Bid.user_id == user_id, Bid.status == BidStatus.VALID.value).first()
+        existing_bids = (
+            db.query(Bid)
+            .filter(
+                Bid.auction_id == bid_in.auction_id,
+                Bid.user_id == user_id,
+                Bid.status == BidStatus.VALID.value,
+            )
+            .order_by(Bid.created_at.desc(), Bid.id.desc())
+            .all()
+        )
+        latest_existing_bid = existing_bids[0] if existing_bids else None
         
         # khoảng cách giá cũ và giá mới tối thiểu phải >= bước giá của acution_id
-        if existing_bid and abs(float(bid_in.bid_amount) - float(existing_bid.bid_amount)) < float(auction.step_price):
+        if latest_existing_bid and abs(float(bid_in.bid_amount) - float(latest_existing_bid.bid_amount)) < float(auction.step_price):
             raise HTTPException(
                 status_code=400,
                 detail=_("Your new price must be at least one price step away from your old price.", request)
             )
-        if existing_bid:
+        for existing_bid in existing_bids:
             db.delete(existing_bid)
+        if existing_bids:
+            db.flush()
             
         bid = Bid(
             auction_id=bid_in.auction_id,
@@ -168,10 +186,16 @@ def create_bid(
         raise
     except SQLAlchemyError as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Database error: " + str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=_("Database error: {error}", request).format(error=str(e))
+        )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Unexpected error: " + str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=_("Unexpected error: {error}", request).format(error=str(e))
+        )
 
 @router.put("/bids/{id}/void", response_model=BidOut)
 def void_bid(
@@ -185,12 +209,26 @@ def void_bid(
         bid = db.query(Bid).filter(Bid.id == id).first()
         if not bid:
             raise HTTPException(status_code=404, detail=_("Bid not found", request))
+
+        auction = (
+            db.query(Auction)
+            .filter(Auction.id == bid.auction_id)
+            .with_for_update()
+            .first()
+        )
+        if not auction:
+            raise HTTPException(status_code=404, detail=_("Auction not found", request))
+
+        bid = db.query(Bid).filter(Bid.id == id).first()
+        if not bid:
+            raise HTTPException(status_code=404, detail=_("Bid not found", request))
         
         user = db.query(User).filter(User.id == user_id).first()
         if not user or user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
             raise HTTPException(status_code=403, detail=_("Only Admin or Super Admin can void bids", request))
         
         bid.status = BidStatus.INVALID.value
+        bid.is_winner = False
         bid.void_reason = reason
         bid.voided_at = datetime.now()
         bid.voided_by = user_id
@@ -217,13 +255,57 @@ def void_bid(
             is_read=False
         )
         db.add(notification)
+        db.flush()
+
+        if auction.end_time <= datetime.now():
+            sync_winner_for_auction(db, auction)
+
         db.commit()
         db.refresh(bid)
         return bid
     except HTTPException:
         db.rollback()
         raise
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=_("Database error: {error}", request).format(error=str(e))
+        )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=_("Unexpected error: {error}", request).format(error=str(e))
+        )
 
+# lấy thông tin đấu giá theo user_id, auction_id
+@router.get("bids/auction/{auction_id}", response_model=List[BidOut])
+def get_bids_by_user_and_auction(
+    request: Request,
+    auction_id: str,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id_from_token)
+):
+    try:
+        bids = db.query(Bid).filter(Bid.auction_id == auction_id, Bid.user_id == user_id).order_by(Bid.created_at.desc()).all()
+        return [
+            BidOut(
+                id=bid.id,
+                auction_id=bid.auction_id,
+                user_id=bid.user_id,
+                bid_amount=float(bid.bid_amount),
+                file=bid.file,
+                created_at=bid.created_at,
+                address=bid.address,
+                note=bid.note,
+                is_winner=bid.is_winner and bid.status == BidStatus.VALID.value,
+            )
+            for bid in bids
+        ]
+    except HTTPException:
+        db.rollback()
+        raise
 
 @router.get("/bids/user", response_model=List[BidWithAuctionOut])
 def get_bids_by_user(
@@ -249,7 +331,7 @@ def get_bids_by_user(
             created_at=bid.created_at,
             address=bid.address,
             note=bid.note,
-            is_winner=bid.is_winner,
+            is_winner=bid.is_winner and bid.status == BidStatus.VALID.value,
             auction_title=auction.title,
             auction_description=auction.description,
             currency= auction.currency,
