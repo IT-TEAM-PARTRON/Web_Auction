@@ -926,7 +926,7 @@ const AuctionDetail = () => {
                       <p>
                         {excelFileName.length > 15
                           ? excelFileName.slice(0, 15) +
-                            "...xlsx"
+                            "..." + excelFileName.split(".")[1]
                           : excelFileName}
                       </p>
                     </button>
