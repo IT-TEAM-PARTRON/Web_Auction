@@ -20,7 +20,14 @@ app.add_middleware(
 
 @app.middleware("http")
 async def locale_middleware(request: Request, call_next):
-    locale = request.query_params.get("lang") or request.headers.get("Accept-Language", "en").split(",")[0]
+    raw = (
+        request.query_params.get("lang")
+        or request.headers.get("Accept-Language", "en").split(",")[0]
+    )
+    # Normalize values like "en-US" / "en_US" / "EN"
+    locale = (raw or "en").strip().lower().replace("_", "-").split("-")[0]
+    if locale not in {"en", "vi", "ko"}:
+        locale = "en"
     request.state.locale = locale
     response = await call_next(request)
     return response

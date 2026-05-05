@@ -285,3 +285,9 @@ msgstr "start_time phải trước end_time"
 
 msgid "Email already exists"
 msgstr "Email đã tồn tại."
+
+msgid "Invalid file type. Only Excel, PDF and Word are allowed."
+msgstr "Loại file không được phép. Chỉ cho phép file Excel, PDF và Word."
+
+msgid "File too large (max 100MB)"
+msgstr "File quá lớn (tối đa 100MB)"

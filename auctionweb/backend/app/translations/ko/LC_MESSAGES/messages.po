@@ -35,10 +35,10 @@ msgid "Invalid status value"
 msgstr "유효하지 않은 상태 값입니다"
 
 msgid "You don't have permison create auction!"
-msgstr "경매를 생성할 권한이 없습니다!"
+msgstr "입찰를 생성할 권한이 없습니다!"
 
 msgid "Auction title already exists"
-msgstr "동일한 경매 제목이 이미 존재합니다"
+msgstr "동일한 입찰 제목이 이미 존재합니다"
 
 msgid "No files provided"
 msgstr "파일이 제공되지 않았습니다"
@@ -64,23 +64,29 @@ msgstr "파일 이름이 제공되지 않았습니다"
 msgid "Invalid excel file type"
 msgstr "유효하지 않은 엑셀 파일 형식입니다"
 
+msgid "Invalid file type. Only Excel, PDF and Word are allowed."
+msgstr "잘못된 파일 형식입니다. 엑셀, PDF 및 Word 파일만 허용됩니다."
+
 msgid "Excel file too large (max 100MB)"
 msgstr "엑셀 파일이 너무 큽니다 (최대 100MB)"
 
+msgid "File too large (max 100MB)"
+msgstr "파일이 너무 큽니다 (최대 100MB)"
+
 msgid "Auction or file not found"
-msgstr "경매 또는 파일을 찾을 수 없습니다"
+msgstr "입찰 또는 파일을 찾을 수 없습니다"
 
 msgid "File not found on server"
 msgstr "서버에서 파일을 찾을 수 없습니다"
 
 msgid "Auction not found"
-msgstr "경매를 찾을 수 없습니다"
+msgstr "입찰를 찾을 수 없습니다"
 
 msgid "0: ongoing, 1: upcoming, 2: ended"
 msgstr "0: 진행 중, 1: 예정, 2: 종료됨"
 
 msgid "Tìm kiếm theo title auction"
-msgstr "경매 제목으로 검색"
+msgstr "입찰 제목으로 검색"
 
 msgid "Sắp xếp theo: title, created_at, start_time, end_time"
 msgstr "정렬 기준: 제목, 생성일, 시작 시간, 종료 시간"
@@ -101,7 +107,7 @@ msgid "Đến ngày"
 msgstr "종료일"
 
 msgid "Auction is not active"
-msgstr "경매가 활성 상태가 아닙니다"
+msgstr "입찰가 활성 상태가 아닙니다"
 
 msgid "User not allowed to bid"
 msgstr "입찰할 권한이 없습니다"
@@ -110,10 +116,10 @@ msgid "Bid amount is invalid. Your bid must be at least {min_bid:,.0f}$ {min_bid
 msgstr "잘못된 입찰 금액입니다. 입찰 금액은 최소 {min_bid:,.0f}$이어야 합니다 {min_bid_msg}"
 
 msgid "User has already placed a bid for this auction"
-msgstr "사용자가 이 경매에 이미 입찰했습니다"
+msgstr "사용자가 이 입찰에 이미 입찰했습니다"
 
 msgid "You have successfully placed a bid of  {bid_in.bid_amount:,.0f}$ on auction {auction.title}."
-msgstr "경매 {auction.title}에 {bid_in.bid_amount:,.0f}$ 입찰이 성공적으로 완료되었습니다."
+msgstr "입찰 {auction.title}에 {bid_in.bid_amount:,.0f}$ 입찰이 성공적으로 완료되었습니다."
 
 msgid "Incorrect email or password"
 msgstr "이메일 또는 비밀번호가 올바르지 않습니다"
@@ -146,10 +152,10 @@ msgid "User deleted successfully."
 msgstr "사용자가 성공적으로 삭제되었습니다."
 
 msgid "You are not allowed to edit this auction"
-msgstr "이 경매를 수정할 권한이 없습니다"
+msgstr "이 입찰를 수정할 권한이 없습니다"
 
 msgid "You are not allowed to edit auctions"
-msgstr "경매를 수정할 권한이 없습니다"
+msgstr "입찰를 수정할 권한이 없습니다"
 
 msgid "Your new price must be at least one price step away from your old price."
 msgstr "새 가격은 이전 가격과 최소 한 단계 이상 차이가 있어야 합니다."
@@ -197,7 +203,7 @@ msgid "Bid or file not found"
 msgstr "입찰 또는 파일을 찾을 수 없습니다"
 
 msgid "Cannot update an ended auction."
-msgstr "종료된 경매는 수정할 수 없습니다."
+msgstr "종료된 입찰는 수정할 수 없습니다."
 
 msgid "Category deleted successfully."
 msgstr "카테고리가 성공적으로 삭제되었습니다."
@@ -212,7 +218,7 @@ msgid "Database error: {error}"
 msgstr "데이터베이스 오류: {error}"
 
 msgid "Error while creating auction: {error}"
-msgstr "경매 생성 중 오류가 발생했습니다: {error}"
+msgstr "입찰 생성 중 오류가 발생했습니다: {error}"
 
 msgid "If the email exists, a reset link has been sent"
 msgstr "이메일이 존재하면 비밀번호 재설정 링크가 전송되었습니다"
@@ -263,13 +269,13 @@ msgid "User is inactive"
 msgstr "비활성 사용자입니다"
 
 msgid "You can only add new participants to an ongoing auction. Removing participants is not allowed."
-msgstr "진행 중인 경매에는 참가자만 추가할 수 있으며 제거는 허용되지 않습니다."
+msgstr "진행 중인 입찰에는 참가자만 추가할 수 있으며 제거는 허용되지 않습니다."
 
 msgid "You can only modify your own information"
 msgstr "본인 정보만 수정할 수 있습니다"
 
 msgid "You don't have permission to create auction!"
-msgstr "경매를 생성할 권한이 없습니다!"
+msgstr "입찰를 생성할 권한이 없습니다!"
 
 msgid "Your bid of {amount} has been voided (Reason: {reason}). Please submit a new bid."
 msgstr "{amount} 입찰이 취소되었습니다 (사유: {reason}). 새 입찰을 제출해 주세요."
@@ -285,3 +291,9 @@ msgstr "start_time은 end_time보다 빨라야 합니다"
 
 msgid "Email already exists"
 msgstr "이메일이 이미 존재합니다."
+
+msgid "Invalid file type. Only Excel and PDF are allowed."
+msgstr "잘못된 파일 형식입니다. 엑셀 및 PDF 파일만 허용됩니다."
+
+msgid "File too large (max 100MB)"
+msgstr "파일이 너무 큽니다 (최대 100MB)"

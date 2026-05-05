@@ -27,7 +27,7 @@ function HomePage() {
       <img
         src={register}
         alt="Auction"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-fill"
       />
       {/* Tet Fireworks Decorations */}
       {tetMode && (

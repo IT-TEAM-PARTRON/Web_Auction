@@ -116,7 +116,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 <span className={`text-right font-[600] ${tetMode ? 'text-white' : ''}`}>
                   {item.starting_price
                     ? item.starting_price.toLocaleString(
-                        item.currency === "VND" ? "vi-VN" : "en-US",
+                        "en-US",
                         {
                           style: "currency",
                           currency: item.currency === "VND" ? "VND" : "USD",
@@ -128,7 +128,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                 <span className={tetMode ? 'text-gray-400' : 'text-gray-500'}>{t("step_price")}:</span>
                 <span className={`text-right font-[600] ${tetMode ? 'text-white' : ''}`}>
                   {item.step_price?.toLocaleString(
-                    item.currency === "VND" ? "vi-VN" : "en-US",
+                    "en-US",
                     {
                       style: "currency",
                       currency: item.currency === "VND" ? "VND" : "USD",
@@ -176,7 +176,7 @@ const RenderCardAuction = ({ arrAuction, numberCol, clickCard }) => {
                     item.winner_info !== null ? (
                       <span className={`font-bold text-right ${tetMode ? 'text-yellow-400' : 'text-red-500'}`}>
                         {item.highest_amount?.toLocaleString(
-                          item.currency === "VND" ? "vi-VN" : "en-US",
+                          "en-US",
                           {
                             style: "currency",
                             currency: item.currency === "VND" ? "VND" : "USD",

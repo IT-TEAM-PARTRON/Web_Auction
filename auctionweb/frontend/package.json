@@ -28,6 +28,7 @@
     "react-hook-form": "^7.60.0",
     "react-hot-toast": "^2.5.2",
     "react-i18next": "^15.6.0",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^7.6.2",
     "styled-components": "^6.1.19",
     "tailwind-scrollbar-hide": "^4.0.0",

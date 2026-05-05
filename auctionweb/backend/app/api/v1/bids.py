@@ -18,6 +18,7 @@ import os
 from app.models.AuctionParticipant import AuctionParticipant
 from sqlalchemy.exc import SQLAlchemyError
 from app.services.auction_result_service import sync_winner_for_auction
+import mimetypes
 
 router = APIRouter()
 
@@ -150,7 +151,7 @@ def create_bid(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
-            message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
+            message_ko = "{auction_title} 입찰에 {bid_in_bid_amount:,.0f}$의 입찰을 성공적으로 완료하였습니다.".format(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
@@ -163,7 +164,7 @@ def create_bid(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
-            message_ko = "{auction_title} 경매에 {bid_in_bid_amount:,.0f}₫의 입찰을 성공적으로 완료하였습니다.".format(
+            message_ko = "{auction_title} 입찰에 {bid_in_bid_amount:,.0f}₫의 입찰을 성공적으로 완료하였습니다.".format(
                 bid_in_bid_amount=bid_in.bid_amount,
                 auction_title=auction.title
             )
@@ -361,9 +362,13 @@ def download_excel_by_auction(request: Request, id: str, db: Session = Depends(g
     headers = {
         "Content-Length": str(file_size)
     }
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
     return FileResponse(
         path=file_path,
         filename=filename,
         headers=headers,
-        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        media_type=mime_type
     )

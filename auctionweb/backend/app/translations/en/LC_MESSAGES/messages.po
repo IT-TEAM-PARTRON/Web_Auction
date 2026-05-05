@@ -288,3 +288,9 @@ msgstr "index.html not found"
 
 msgid "start_time must be before end_time"
 msgstr "start_time must be before end_time"
+
+msgid "Invalid file type. Only Excel, PDF and Word are allowed."
+msgstr "Invalid file type. Only Excel, PDF and Word are allowed."
+
+msgid "File too large (max 100MB)"
+msgstr "File too large (max 100MB)"

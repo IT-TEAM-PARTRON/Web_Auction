@@ -44,6 +44,27 @@ function ModalAuction({
       .refine(
         (file) => {
           if (!file || !(file instanceof File)) return true;
+          const isValidFile =
+            file.type ===
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+            file.type === "application/vnd.ms-excel" ||
+            file.name.endsWith(".xlsx") ||
+            file.name.endsWith(".xls") ||
+            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            file.type === "application/msword" ||
+            file.name.endsWith(".doc") ||
+            file.name.endsWith(".docx") ||
+            file.type === "application/pdf" ||
+            file.name.toLowerCase().endsWith(".pdf");
+          return isValidFile;
+        },
+        {
+          message: t("validate_auction.file_exel_instance"),
+        }
+      )
+      .refine(
+        (file) => {
+          if (!file || !(file instanceof File)) return true;
           return file.size <= MAX_FILE_SIZE;
         },
         {
@@ -56,7 +77,7 @@ function ModalAuction({
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+    if (savedLang) i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const {
@@ -153,29 +174,29 @@ function ModalAuction({
     >
       <div
         className={clsx(
-          `rounded-2xl shadow-2xl w-full max-w-md sm:max-w-3xl lg:max-w-4xl transform transition-all duration-300 fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"}`,
+          `rounded-2xl shadow-2xl w-full max-w-md sm:max-w-3xl lg:max-w-3xl transform transition-all duration-300 fade-slide-up ${tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white"}`,
           isOpen ? "fade-slide-up-visible" : "fade-slide-up-hidden",
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
-          className={`text-white sm:p-1 rounded-t-2xl relative ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444]" : "bg-gradient-to-r from-blue-500 to-indigo-500"}`}
+          className={`text-white sm:p-1 2xl:p-2 rounded-t-2xl relative ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444]" : "bg-gradient-to-r from-blue-500 to-indigo-500"}`}
         >
-          <h2 className="text-lg sm:text-2xl font-bold text-center">
+          <h2 className="text-lg sm:text-2xl 2xl:text-3xl font-bold text-center">
             {t("submit_your_bid")}
           </h2>
           <p
-            className={`text-center text-sm sm:text-base ${tetMode ? "text-red-100" : "text-blue-100"}`}
+            className={`text-center text-sm sm:text-base 2xl:text-lg ${tetMode ? "text-red-100" : "text-blue-100"}`}
           >
             {t("enter_auction_details")}
           </p>
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-all duration-200 text-white hover:text-gray-200"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 2xl:w-10 2xl:h-10 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-all duration-200 text-white hover:text-gray-200"
           >
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -193,15 +214,15 @@ function ModalAuction({
         {/* Content */}
         <form
           onSubmit={handleSubmit(submitAuctionForm)}
-          className="p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-3 lg:space-y-4"
+          className="p-3 sm:p-4 lg:p-5 2xl:p-6 space-y-2 sm:space-y-2 lg:space-y-2.5 2xl:space-y-4"
         >
           {/* Username Field */}
           <div className="">
             <label
-              className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+              className={`flex items-center text-xs sm:text-lg 2xl:text-xl font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
             >
               <svg
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                className={`w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 mr-1 sm:mr-2 2xl:mr-3 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -219,13 +240,13 @@ function ModalAuction({
             <div className="relative">
               <input
                 type="text"
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 cursor-not-allowed ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-gray-300 focus:ring-red-500" : "bg-gray-50 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"}`}
+                className={`w-full px-3 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-3 text-sm sm:text-base 2xl:text-xl border rounded-md sm:rounded-lg transition-all duration-200 cursor-not-allowed ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-gray-300 focus:ring-red-500" : "bg-gray-50 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"}`}
                 value={username}
                 disabled
               />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 2xl:pr-4">
                 <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
+                  className="w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -244,10 +265,10 @@ function ModalAuction({
           {/* Email Field */}
           <div className="">
             <label
-              className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+              className={`flex items-center text-xs sm:text-lg 2xl:text-xl font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
             >
               <svg
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                className={`w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 mr-1 sm:mr-2 2xl:mr-3 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -265,13 +286,13 @@ function ModalAuction({
             <div className="relative">
               <input
                 type="email"
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 cursor-not-allowed ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-gray-300 focus:ring-red-500" : "bg-gray-50 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"}`}
+                className={`w-full px-3 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-3 text-sm sm:text-base 2xl:text-xl border rounded-md sm:rounded-lg transition-all duration-200 cursor-not-allowed ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-gray-300 focus:ring-red-500" : "bg-gray-50 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"}`}
                 value={email}
                 disabled
               />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 2xl:pr-4">
                 <svg
-                  className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400"
+                  className="w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -290,10 +311,10 @@ function ModalAuction({
           {/* Address Field */}
           <div className="">
             <label
-              className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+              className={`flex items-center text-xs sm:text-lg 2xl:text-xl font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
             >
               <svg
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                className={`w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 mr-1 sm:mr-2 2xl:mr-3 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -322,11 +343,11 @@ function ModalAuction({
                   <input
                     type="text"
                     {...field}
-                    className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
+                    className={`w-full px-3 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-3 text-sm sm:text-base 2xl:text-xl border rounded-md sm:rounded-lg transition-all duration-200 outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
                     placeholder={t("enter_delivery_address")}
                   />
                   {fieldState.error && (
-                    <p className="text-red-500 text-[10px]">
+                    <p className="text-red-500 text-[10px] 2xl:text-xs">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -338,7 +359,7 @@ function ModalAuction({
           {/* Bid Amount Field */}
           <div className="">
             <label
-              className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+              className={`flex items-center text-xs sm:text-lg 2xl:text-xl font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -346,7 +367,7 @@ function ModalAuction({
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                className={`w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 mr-1 sm:mr-2 2xl:mr-3 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
               >
                 <path
                   strokeLinecap="round"
@@ -358,9 +379,9 @@ function ModalAuction({
               <span className="text-red-500 ml-1">*</span>
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-2 sm:pl-2.5 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-2 sm:pl-2.5 2xl:pl-3 flex items-center pointer-events-none">
                 <span
-                  className={`font-medium text-sm sm:text-base ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                  className={`font-medium text-sm sm:text-base 2xl:text-xl ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                 >
                   {currency === "VND" ? "₫" : "$"}
                 </span>
@@ -372,7 +393,7 @@ function ModalAuction({
                 render={({ field: { onChange, value, ref } }) => {
                   const displayValue =
                     value !== null && value !== undefined && value !== ""
-                      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                      ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       : "";
 
                   const handleIncrement = () => {
@@ -403,17 +424,19 @@ function ModalAuction({
                             : 0;
                           onChange(numericValue);
                         }}
-                        className={`w-full pl-3 sm:pl-4 pr-12 sm:pr-14 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
+                        className={`w-full pl-6 sm:pl-7 2xl:pl-8 pr-10 sm:pr-12 2xl:pr-14 py-1 sm:py-1.5 2xl:py-2.5 text-sm sm:text-base 2xl:text-xl border rounded-md sm:rounded-lg transition-all duration-200 outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
                       />
                       {/* Spin Buttons */}
-                      <div className={`absolute inset-y-0 right-0 flex flex-col border-l overflow-hidden rounded-r-md sm:rounded-r-lg ${tetMode ? "border-[#4a4b4c]" : "border-gray-300"}`}>
+                      <div
+                        className={`absolute inset-y-0 right-0 flex flex-col border-l overflow-hidden rounded-r-md sm:rounded-r-lg ${tetMode ? "border-[#4a4b4c]" : "border-gray-300"}`}
+                      >
                         <button
                           type="button"
                           onClick={handleIncrement}
-                          className={`flex-1 px-2 sm:px-3 flex items-center justify-center transition-colors ${tetMode ? "hover:bg-[#4a4b4c] text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-blue-600"}`}
+                          className={`flex-1 px-2 sm:px-3 2xl:px-4 flex items-center justify-center transition-colors ${tetMode ? "hover:bg-[#4a4b4c] text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-blue-600"}`}
                           aria-label="Increase price"
                         >
-                          <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <ChevronUp className="w-3 h-3 sm:w-4 sm:h-4 2xl:w-5 2xl:h-5" />
                         </button>
                         <div
                           className={`h-[1px] w-full ${tetMode ? "bg-[#4a4b4c]" : "bg-gray-200"}`}
@@ -421,10 +444,10 @@ function ModalAuction({
                         <button
                           type="button"
                           onClick={handleDecrement}
-                          className={`flex-1 px-2 sm:px-3 flex items-center justify-center transition-colors ${tetMode ? "hover:bg-[#4a4b4c] text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-blue-600"}`}
+                          className={`flex-1 px-2 sm:px-3 2xl:px-4 flex items-center justify-center transition-colors ${tetMode ? "hover:bg-[#4a4b4c] text-gray-400 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-blue-600"}`}
                           aria-label="Decrease price"
                         >
-                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 2xl:w-5 2xl:h-5" />
                         </button>
                       </div>
                     </div>
@@ -433,7 +456,7 @@ function ModalAuction({
               />
 
               {errors.bid_amount && (
-                <p className="text-red-500 text-[10px] mt-1">
+                <p className="text-red-500 text-[10px] 2xl:text-xs mt-1">
                   {errors.bid_amount.message}
                 </p>
               )}
@@ -441,13 +464,15 @@ function ModalAuction({
           </div>
 
           <div className="">
-            <label className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}>
+            <label
+              className={`flex items-center text-xs sm:text-lg 2xl:text-xl font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+            >
               <svg
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                className={`w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 mr-1 sm:mr-2 2xl:mr-3 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
               >
                 <path
                   strokeLinecap="round"
@@ -466,13 +491,13 @@ function ModalAuction({
               }) => {
                 const fileName = value instanceof File ? value.name : "";
                 return (
-                  <div className="relative space-y-2">
+                  <div className="relative space-y-2 2xl:space-y-3">
                     {/* Ô input hiển thị tên file */}
                     <input
                       type="text"
                       readOnly
                       value={fileName}
-                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg cursor-pointer transition-all duration-200 ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500" : "bg-white border-gray-300 placeholder-gray-400"}`}
+                      className={`w-full px-3 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-3 text-sm sm:text-base 2xl:text-xl border rounded-md sm:rounded-lg cursor-pointer transition-all duration-200 ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500" : "bg-white border-gray-300 placeholder-gray-400"}`}
                       placeholder={t("select_excel_file")}
                       onClick={() =>
                         document.getElementById("excelFile")?.click()
@@ -483,7 +508,7 @@ function ModalAuction({
                       {...field}
                       id="excelFile"
                       type="file"
-                      accept=".xlsx,.xls"
+                      accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf,.doc,.docx"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
@@ -493,7 +518,7 @@ function ModalAuction({
 
                     {/* Thông báo lỗi */}
                     {fieldState.error && (
-                      <p className="text-red-500 text-[10px]">
+                      <p className="text-red-500 text-[10px] 2xl:text-xs">
                         {fieldState.error.message}
                       </p>
                     )}
@@ -505,10 +530,10 @@ function ModalAuction({
           {/* Note Field */}
           <div className="">
             <label
-              className={`flex items-center text-xs sm:text-sm font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+              className={`flex items-center text-xs sm:text-lg 2xl:text-xl font-semibold ${tetMode ? "text-gray-300" : "text-gray-700"}`}
             >
               <svg
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
+                className={`w-3 h-3 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6 mr-1 sm:mr-2 2xl:mr-3 ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -529,7 +554,7 @@ function ModalAuction({
                 <>
                   <textarea
                     {...field}
-                    className={`w-full px-4 sm:px-2 py-2 sm:py-3 text-sm sm:text-base border rounded-md sm:rounded-lg transition-all duration-200 resize-none outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
+                    className={`w-full px-4 sm:px-2 2xl:px-5 py-1.5 sm:py-2 2xl:py-3 text-sm sm:text-base 2xl:text-xl border rounded-md sm:rounded-lg transition-all duration-200 resize-none outline-none ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c] text-white placeholder-gray-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"}`}
                     rows="3"
                     placeholder={t("add_special_requirement_or_comment")}
                   />
@@ -541,16 +566,16 @@ function ModalAuction({
             />
           </div>
 
-          <div className="pt-4 flex justify-center">
+          <div className="pt-2 flex justify-center">
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full sm:w-1/2 lg:w-2/5 will-change-transform text-white font-semibold py-3 sm:py-4 px-6 text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2 ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#b00400] hover:to-[#dd3333] disabled:from-gray-600 disabled:to-gray-700" : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500"}`}
+              className={`w-full sm:w-1/2 lg:w-2/5 will-change-transform text-white font-semibold py-2 sm:py-2.5 2xl:py-3 px-6 2xl:px-8 text-sm sm:text-base 2xl:text-xl rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center space-x-2 ${tetMode ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] hover:from-[#b00400] hover:to-[#dd3333] disabled:from-gray-600 disabled:to-gray-700" : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 disabled:from-gray-400 disabled:to-gray-500"}`}
             >
               {isSubmitting ? (
                 <>
                   <svg
-                    className="animate-spin -ml-1 mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-white"
+                    className="animate-spin -ml-1 mr-2 sm:mr-3 2xl:mr-4 h-4 w-4 sm:h-5 sm:w-5 2xl:h-6 2xl:w-6 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -569,12 +594,12 @@ function ModalAuction({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  <span className="text-sm sm:text-base">Submitting...</span>
+                  <span className="text-sm sm:text-base 2xl:text-xl">Submitting...</span>
                 </>
               ) : (
                 <>
                   <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    className="w-4 h-4 sm:w-5 sm:h-5 2xl:w-6 2xl:h-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -586,7 +611,7 @@ function ModalAuction({
                       d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                     />
                   </svg>
-                  <span className="text-sm sm:text-base">
+                  <span className="text-sm sm:text-base 2xl:text-xl">
                     {t("submit_bid")}
                   </span>
                 </>

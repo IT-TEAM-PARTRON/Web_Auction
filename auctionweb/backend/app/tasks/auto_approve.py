@@ -143,12 +143,12 @@ def get_auction_message(msg_type, lang, auction_title):
         "win": {
             "en": "Congratulations! You have won the auction {title}.",
             "vi": "Chúc mừng! Bạn đã chiến thắng phiên đấu giá {title}.",
-            "ko": "축하합니다! {title} 경매에서 낙찰되었습니다."
+            "ko": "축하합니다! {title} 입찰에서 낙찰되었습니다."
         },
         "lose": {
             "en": "Sorry! You did not win the auction {title}.",
             "vi": "Rất tiếc! Bạn đã đấu giá không thành công phiên đấu giá {title}.",
-            "ko": "안타깝게도 {title} 경매에서 낙찰되지 못했습니다."
+            "ko": "안타깝게도 {title} 입찰에서 낙찰되지 못했습니다."
         }
     }
     return {

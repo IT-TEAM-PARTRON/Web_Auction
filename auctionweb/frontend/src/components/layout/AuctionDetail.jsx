@@ -89,6 +89,9 @@ const AuctionDetail = () => {
   }, [targetTime]);
 
   useEffect(() => {
+    setLoading(true);
+    setselectImg(1);
+    setClonedImages([]);
     getAuction();
   }, [id]);
   useEffect(() => {
@@ -100,7 +103,7 @@ const AuctionDetail = () => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+    if (savedLang) i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   function isTokenValid() {
@@ -184,16 +187,21 @@ const AuctionDetail = () => {
   useEffect(() => {
     if (
       !auction ||
-      !Array.isArray(auction.image_url) ||
-      auction.image_url.length <= 1
+      !Array.isArray(auction.image_url)
     )
       return;
     let images = auction.image_url;
-    setClonedImages([
-      images[images.length - 1], // last
-      ...images,
-      images[0], //first
-    ]);
+    if (images.length > 1) {
+      setClonedImages([
+        images[images.length - 1], // last
+        ...images,
+        images[0], //first
+      ]);
+      setselectImg(1);
+    } else {
+      setClonedImages([]);
+      setselectImg(0);
+    }
     resetInterval();
     return () => clearInterval(intervalRef.current);
   }, [auction]);
@@ -273,6 +281,7 @@ const AuctionDetail = () => {
 
   const resetInterval = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
+    if (!auction || !auction.image_url || auction.image_url.length <= 1) return;
     intervalRef.current = setInterval(() => {
       if (isTransitioningRef.current) return;
       isTransitioningRef.current = true;
@@ -374,23 +383,28 @@ const AuctionDetail = () => {
           <div
             className={`flex-1 min-w-0 overflow-hidden relative rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border flex flex-col min-h-[350px] sm:min-h-[400px] ${tetMode ? "border-[#3a3b3c] bg-[#18191a]" : "border-gray-200 bg-[#fbfbfb]"}`}
           >
-            {/* Prev Button */}
-            <button
-              onClick={clickPreButton}
-              className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 text-white text-3xl rounded-r hover:bg-black/70 z-10"
-            >
-              &#10094;
-            </button>
-            {/* Next Button */}
-            <button
-              onClick={clickNextButton}
-              className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2  text-white text-3xl rounded-l hover:bg-black/70 z-10"
-            >
-              &#10095;
-            </button>
+            {imageUrls.length > 1 && (
+              <>
+                {/* Prev Button */}
+                <button
+                  onClick={clickPreButton}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 text-white text-3xl rounded-r hover:bg-black/70 z-10"
+                >
+                  &#10094;
+                </button>
+                {/* Next Button */}
+                <button
+                  onClick={clickNextButton}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-2  text-white text-3xl rounded-l hover:bg-black/70 z-10"
+                >
+                  &#10095;
+                </button>
+              </>
+            )}
 
             <div
               ref={sliderRef}
+              key={auction.id}
               className="absolute inset-0 flex transition-transform duration-700 ease-in-out"
             >
               {imageUrls.length > 1 ? (
@@ -433,7 +447,7 @@ const AuctionDetail = () => {
 
             {/* Indicator dots nằm absolute bên trong ảnh */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {imageUrls.length > 0 &&
+              {imageUrls.length > 1 &&
                 imageUrls.map((_, index) => (
                   <button
                     key={index}
@@ -802,7 +816,7 @@ const AuctionDetail = () => {
                 >
                   {auction.starting_price && auction.starting_price !== 0
                     ? auction.starting_price.toLocaleString(
-                        auction.currency === "VND" ? "vi-VN" : "en-US",
+                        "en-US",
                         {
                           style: "currency",
                           currency: auction.currency === "VND" ? "VND" : "USD",
@@ -831,7 +845,7 @@ const AuctionDetail = () => {
                   {auction.step_price !== null &&
                   auction.step_price !== undefined
                     ? auction.step_price.toLocaleString(
-                        auction.currency === "VND" ? "vi-VN" : "en-US",
+                        "en-US",
                         {
                           style: "currency",
                           currency: auction.currency === "VND" ? "VND" : "USD",

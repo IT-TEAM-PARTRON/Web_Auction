@@ -1109,7 +1109,7 @@ const OverViewAdmin = () => {
                       </td>
                       <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {auction.starting_price?.toLocaleString(
-                          auction.currency === "VND" ? "vi-VN" : "en-US",
+                          "en-US",
                           {
                             style: "currency",
                             currency: auction.currency === "VND" ? "VND" : "USD",
@@ -1118,7 +1118,7 @@ const OverViewAdmin = () => {
                       </td>
                       <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
                         {auction.highest_amount?.toLocaleString(
-                          auction.currency === "VND" ? "vi-VN" : "en-US",
+                          "en-US",
                           {
                             style: "currency",
                             currency: auction.currency === "VND" ? "VND" : "USD",

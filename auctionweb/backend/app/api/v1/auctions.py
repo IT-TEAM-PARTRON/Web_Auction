@@ -23,6 +23,7 @@ from app.enums import UserRole, BidStatus
 from pydantic import field_validator
 from zoneinfo import ZoneInfo
 from fastapi import APIRouter
+import mimetypes
 from app.i18n import _
 from datetime import datetime, timedelta
 from app.models.Category import Category
@@ -172,6 +173,46 @@ router = APIRouter()
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
 UPLOAD_IMAGE_DIR = os.path.join(BASE_DIR, 'uploads', 'images')
 UPLOAD_EXCEL_DIR = os.path.join(BASE_DIR, 'uploads', 'excels')
+
+def _safe_filename(filename: str) -> str:
+    """
+    Prevent path traversal and remove characters that are problematic on Windows/Linux.
+    Keeps a human-readable name when possible.
+    """
+    name = os.path.basename(filename or "").strip()
+    # Remove null bytes and path separators (extra safety)
+    name = name.replace("\x00", "").replace("/", "_").replace("\\", "_")
+    # Collapse to a conservative charset
+    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._() "
+    cleaned = "".join(ch if ch in allowed else "_" for ch in name)
+    cleaned = cleaned.strip(" ._")
+    return cleaned or f"file-{uuid.uuid4().hex}"
+
+def _write_upload_to_path(upload: UploadFile, dest_path: str, *, max_size: int) -> int:
+    """
+    Stream UploadFile to disk and enforce max_size.
+    Returns total bytes written.
+    """
+    total = 0
+    try:
+        with open(dest_path, "wb") as out:
+            while True:
+                chunk = upload.file.read(1024 * 1024)  # 1MB
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > max_size:
+                    raise ValueError("FILE_TOO_LARGE")
+                out.write(chunk)
+        return total
+    except Exception:
+        # Best-effort cleanup if partially written
+        try:
+            if os.path.exists(dest_path):
+                os.remove(dest_path)
+        except Exception:
+            pass
+        raise
 
 def get_current_user(
         request: Request, 
@@ -557,7 +598,8 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
         for file in files:
             if not file.filename or not isinstance(file.filename, str):
                 return JSONResponse(status_code=400, content={"detail": _("Invalid file name.", request)})
-            ext = os.path.splitext(file.filename)[1].lower()
+            safe_name = _safe_filename(file.filename)
+            ext = os.path.splitext(safe_name)[1].lower()
             if ext not in allowed_exts:
                 return JSONResponse(
                     status_code=400,
@@ -567,19 +609,9 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
                         )
                     }
                 )
-            contents = file.file.read() 
-            if len(contents) > max_size:
-                return JSONResponse(
-                    status_code=400,
-                    content={
-                        "detail": _("Image file too large (max 5MB): {filename}", request).format(
-                            filename=file.filename
-                        )
-                    }
-                )
 
             # Xử lý trùng tên file
-            base_name, ext = os.path.splitext(file.filename)
+            base_name, ext = os.path.splitext(safe_name)
             file_location = os.path.join(UPLOAD_IMAGE_DIR, f"{base_name}{ext}")
             counter = 1
             while os.path.exists(file_location):
@@ -588,7 +620,20 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
                 counter += 1
 
             with open(file_location, "wb") as f_out:
-                f_out.write(contents)
+                pass
+            try:
+                _write_upload_to_path(file, file_location, max_size=max_size)
+            except ValueError as ve:
+                if str(ve) == "FILE_TOO_LARGE":
+                    return JSONResponse(
+                        status_code=400,
+                        content={
+                            "detail": _("Image file too large (max 5MB): {filename}", request).format(
+                                filename=file.filename
+                            )
+                        },
+                    )
+                raise
             saved_filename = os.path.basename(file_location)
             image_urls.append(f"/uploads/images/{saved_filename}")
             total_length = sum(len(url) for url in image_urls)
@@ -609,25 +654,23 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
             content={"detail": _("Internal server error: {error}", request).format(error=str(e))}
         )
 
-#admin upload excel khi thêm auction và user đính kèm file
+#admin upload file khi thêm auction và user đính kèm file
 @router.post("/upload/excel")
 def upload_excel(request: Request, file: UploadFile = File(...)):
-    allowed_exts = {".xls", ".xlsx"}
+    allowed_exts = {".xls", ".xlsx", ".pdf", ".doc", ".docx"}
     max_size = 100 * 1024 * 1024  # 100MB
     if not file.filename:
         return JSONResponse(status_code=400, content={"detail": _("No filename provided", request)})
-    ext = os.path.splitext(file.filename)[1].lower()
+    safe_name = _safe_filename(file.filename)
+    ext = os.path.splitext(safe_name)[1].lower()
     if ext not in allowed_exts:
-        return JSONResponse(status_code=400, content={"detail": _("Invalid excel file type", request)})
-    contents = file.file.read()
-    if len(contents) > max_size:
-        return JSONResponse(status_code=400, content={"detail": _("Excel file too large (max 100MB)", request)})
+        return JSONResponse(status_code=400, content={"detail": _("Invalid file type. Only Excel, PDF and Word are allowed.", request)})
     if not os.path.exists(UPLOAD_EXCEL_DIR):
         os.makedirs(UPLOAD_EXCEL_DIR)
     
     # Xử lý trùng tên file
-    base_name, ext = os.path.splitext(file.filename)
-    file_location = os.path.join(UPLOAD_EXCEL_DIR, file.filename)
+    base_name, ext = os.path.splitext(safe_name)
+    file_location = os.path.join(UPLOAD_EXCEL_DIR, safe_name)
     counter = 1
     while os.path.exists(file_location):
         new_filename = f"{base_name}_{counter}{ext}"
@@ -635,8 +678,15 @@ def upload_excel(request: Request, file: UploadFile = File(...)):
         counter += 1
 
     try:
-        with open(file_location, "wb") as f:
-            f.write(contents)
+        try:
+            _write_upload_to_path(file, file_location, max_size=max_size)
+        except ValueError as ve:
+            if str(ve) == "FILE_TOO_LARGE":
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": _("File too large (max 100MB)", request)},
+                )
+            raise
         saved_filename = os.path.basename(file_location)
         return {"file_excel": f"/uploads/excels/{saved_filename}"}
     except Exception as e:
@@ -645,15 +695,13 @@ def upload_excel(request: Request, file: UploadFile = File(...)):
             content={"detail": _("Internal server error: {error}", request).format(error=str(e))}
         )
 
-#user down excel auction_id
+#user down file auction_id
 @router.get("/download/excel/by-auction/{auction_id}")
 def download_excel_by_auction(request: Request, auction_id: str, db: Session = Depends(get_db)):
     auction = db.query(Auction).filter(Auction.id == auction_id).first()
     if not auction or not auction.file_exel:
         raise HTTPException(status_code=404, detail=_("Auction or file not found", request))
-    # lấy filename = 'auction_xe_123.xlsx'
     filename = os.path.basename(auction.file_exel)
-    # Tạo đường dẫn thực tới file
     file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
     if not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
@@ -663,11 +711,17 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
     headers = {
         "Content-Length": str(file_size)
     }
+
+    # Tự động xác định media_type dựa trên extension
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+
     return FileResponse(
         path=file_path,
         filename=filename,
         headers=headers,
-        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        media_type=mime_type
     )
 
 @router.get("/auctions/search", response_model=AuctionSearchResponse)

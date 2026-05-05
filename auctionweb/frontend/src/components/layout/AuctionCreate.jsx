@@ -11,8 +11,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { BASE_URL } from "../../config";
 import { useTetMode } from "../../contexts/TetModeContext";
 
@@ -31,6 +31,8 @@ const CreateAuctionForm = ({
   const [participantQuery, setParticipantQuery] = useState("");
   const MAX_FILE_SIZE =
     Number(import.meta.env.VITE_MAX_FILE_SIZE) || 100 * 1024 * 1024;
+  const MAX_IMAGE_SIZE =
+    Number(import.meta.env.VITE_MAX_IMAGE_SIZE) || 5 * 1024 * 1024;
   const { t, i18n } = useTranslation();
   const { tetMode } = useTetMode();
   const [originalParticipantIds, setOriginalParticipantIds] = useState([]);
@@ -50,10 +52,43 @@ const CreateAuctionForm = ({
     step_price: z.number().optional(),
     image_url: z
       .array(z.union([z.instanceof(File), z.string()]))
-      .min(2, t("validate_auction.image_url_min")),
+      .min(1, t("validate_auction.image_url_min"))
+      .refine(
+        (files) =>
+          files.every((file) => {
+            if (file instanceof File) {
+              return file.size <= MAX_IMAGE_SIZE;
+            }
+            return true;
+          }),
+        {
+          message: t("validate_auction.image_max_size"),
+      }
+    ),
     file_exel: z
       .any()
       .optional()
+      .refine(
+        (file) => {
+          if (!file || !(file instanceof File)) return true;
+          const isValidFile =
+            file.type ===
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+            file.type === "application/vnd.ms-excel" ||
+            file.name.endsWith(".xlsx") ||
+            file.name.endsWith(".xls") ||
+            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            file.type === "application/msword" ||
+            file.name.endsWith(".docx") ||
+            file.name.endsWith(".doc") ||
+            file.type === "application/pdf" ||
+            file.name.toLowerCase().endsWith(".pdf");
+          return isValidFile;
+        },
+        {
+          message: t("validate_auction.file_exel_instance"),
+        },
+      )
       .refine(
         (file) => {
           if (!file || !(file instanceof File)) return true;
@@ -126,6 +161,36 @@ const CreateAuctionForm = ({
     { value: "BUY", label: t("buy") },
   ];
 
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      [{ align: [] }],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "align",
+  ];
+
   // chone mode
   useEffect(() => {
     if (mode === "create") {
@@ -167,7 +232,7 @@ const CreateAuctionForm = ({
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+    if (savedLang) i18n.changeLanguage(savedLang);
   }, [i18n]);
   // Call api Category
   useEffect(() => {
@@ -273,9 +338,9 @@ const CreateAuctionForm = ({
     }
 
     setIsSubmitting(true);
-    const arrLinkImg = await handlerUploadImgs(formData.image_url);
-    const linkExcel = await handleUpLoadExcel();
     try {
+      const arrLinkImg = await handlerUploadImgs(formData.image_url);
+      const linkExcel = await handleUpLoadExcel();
       const data = {
         ...formData,
         image_url: arrLinkImg,
@@ -310,16 +375,25 @@ const CreateAuctionForm = ({
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+    if (savedLang) i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   const imgFiles = watch("image_url") || [];
 
   const handleFileChange = (e) => {
     const currentFiles = watch("image_url") || [];
-    const files = Array.from(e.target.files);
+    const selectedFiles = Array.from(e.target.files);
+    const files = selectedFiles.filter((file) => file.type.startsWith("image/"));
 
-    const currentNames = currentFiles.map((file) => file.name);
+    if (files.length < selectedFiles.length) {
+      toast.error(t("validate_auction.image_type_invalid"));
+    }
+
+    if (files.length === 0) return;
+
+    const currentNames = currentFiles.map((file) =>
+      file instanceof File ? file.name : file,
+    );
     const newNames = files.map((file) => file.name);
 
     const hasDuplicate = newNames.some((name) => currentNames.includes(name));
@@ -330,6 +404,7 @@ const CreateAuctionForm = ({
     }
 
     setValue("image_url", [...currentFiles, ...files]);
+    trigger("image_url");
   };
 
   const handleDragOver = (e) => {
@@ -346,14 +421,19 @@ const CreateAuctionForm = ({
     e.preventDefault();
     setIsDragging(false);
 
-    const files = Array.from(e.dataTransfer.files).filter((file) =>
-      file.type.startsWith("image/"),
-    );
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    const files = droppedFiles.filter((file) => file.type.startsWith("image/"));
+
+    if (files.length < droppedFiles.length) {
+      toast.error(t("image_type_invalid"));
+    }
 
     if (files.length > 0) {
       const currentFiles = watch("image_url") || [];
 
-      const currentNames = currentFiles.map((file) => file.name);
+      const currentNames = currentFiles.map((file) =>
+        file instanceof File ? file.name : file,
+      );
       const newNames = files.map((file) => file.name);
 
       const hasDuplicate = newNames.some((name) => currentNames.includes(name));
@@ -364,6 +444,39 @@ const CreateAuctionForm = ({
       }
 
       setValue("image_url", [...currentFiles, ...files]);
+      trigger("image_url");
+    }
+  };
+
+  const [isDraggingExcel, setIsDraggingExcel] = useState(false);
+
+  const handleExcelDrop = (e) => {
+    e.preventDefault();
+    setIsDraggingExcel(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const isValidFile =
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel" ||
+        file.name.endsWith(".xlsx") ||
+        file.name.endsWith(".xls") ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        file.type === "application/msword" ||
+        file.name.toLowerCase().endsWith(".docx") ||
+        file.name.toLowerCase().endsWith(".doc") ||
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf");
+
+      if (!isValidFile) {
+        toast.error(t("validate_auction.file_exel_instance"));
+        return;
+      }
+
+      setValue("file_exel", file);
+      trigger("file_exel");
     }
   };
 
@@ -377,6 +490,42 @@ const CreateAuctionForm = ({
 
   const handleDragAreaClick = () => {
     document.getElementById("imageInput").click();
+  };
+
+  const handlePaste = (e) => {
+    if (isOngoingAuction) return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const files = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          // Create a more unique name for pasted images
+          const extension = file.type.split("/")[1] || "png";
+          const newFile = new File(
+            [file],
+            `pasted-image-${Date.now()}-${i}.${extension}`,
+            { type: file.type },
+          );
+          files.push(newFile);
+        }
+      }
+    }
+
+    if (files.length > 0) {
+      const currentFiles = watch("image_url") || [];
+      setValue("image_url", [...currentFiles, ...files]);
+      trigger("image_url");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleDragAreaClick();
+    }
   };
 
   const handlerUploadImgs = async (imgs) => {
@@ -876,7 +1025,7 @@ const CreateAuctionForm = ({
                         render={({ field: { onChange, value, ref } }) => {
                           // Format số thêm dấu chấm (vd: 1000000 -> 1.000.000)
                           const displayValue = (value !== null && value !== undefined && value !== "")
-                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             : "";
 
                           return (
@@ -945,7 +1094,7 @@ const CreateAuctionForm = ({
                         control={control}
                         render={({ field: { onChange, value, ref } }) => {
                           const displayValue = (value !== null && value !== undefined && value !== "")
-                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                            ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             : "";
 
                           return (
@@ -1355,46 +1504,23 @@ const CreateAuctionForm = ({
                   control={control}
                   render={({ field: { onChange, value } }) => (
                     <div
-                      className={`border-2 rounded-xl overflow-hidden transition-all ${tetMode ? "border-[#4a4b4c] focus-within:border-[#CB0502] focus-within:ring-4 focus-within:ring-red-900/30" : "border-gray-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100"}`}
+                      className={clsx(
+                        "rounded-xl overflow-hidden transition-all bg-white",
+                        tetMode
+                          ? "border-[#4a4b4c] focus-within:border-[#CB0502] focus-within:ring-4 focus-within:ring-red-900/30"
+                          : "border-gray-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100",
+                        "border-2 flex flex-col",
+                      )}
                     >
-                      <CKEditor
-                        editor={ClassicEditor}
-                        disabled={isOngoingAuction}
-                        data={value || ""}
-                        onChange={(event, editor) => {
-                          const data = editor.getData();
-                          onChange(data);
-                        }}
-                        config={{
-                          toolbar: {
-                            items: [
-                              "heading",
-                              "|",
-                              "bold",
-                              "italic",
-                              "link",
-                              "bulletedList",
-                              "numberedList",
-                              "|",
-                              "outdent",
-                              "indent",
-                              "|",
-                              "insertTable",
-                              "blockQuote",
-                              "|",
-                              "undo",
-                              "redo",
-                            ],
-                          },
-                          table: {
-                            contentToolbar: [
-                              "tableColumn",
-                              "tableRow",
-                              "mergeTableCells",
-                            ],
-                          },
-                          placeholder: t("product_description_detail"),
-                        }}
+                      <ReactQuill
+                        theme="snow"
+                        value={value || ""}
+                        onChange={onChange}
+                        readOnly={isOngoingAuction}
+                        modules={modules}
+                        formats={formats}
+                        placeholder={t("product_description_detail")}
+                        className="flex-1"
                       />
                     </div>
                   )}
@@ -1449,7 +1575,7 @@ const CreateAuctionForm = ({
                 </h3>
               </div>
 
-              {/* Excel File Upload */}
+              {/* File Upload */}
               <div
                 className={
                   isOngoingAuction ? "pointer-events-none opacity-60" : ""
@@ -1499,7 +1625,25 @@ const CreateAuctionForm = ({
                             onClick={() =>
                               document.getElementById("filePicker")?.click()
                             }
-                            className={`group flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 cursor-pointer transition-all ${tetMode ? "border-[#4a4b4c] hover:border-[#CB0502] hover:bg-[#3a3b3c]" : "border-gray-200 hover:border-blue-400 hover:bg-blue-50"}`}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              setIsDraggingExcel(true);
+                            }}
+                            onDragLeave={(e) => {
+                              e.preventDefault();
+                              setIsDraggingExcel(false);
+                            }}
+                            onDrop={handleExcelDrop}
+                            className={clsx(
+                              "group flex items-center gap-3 w-full px-4 py-3 rounded-xl border-2 cursor-pointer transition-all",
+                              isDraggingExcel
+                                ? tetMode
+                                  ? "border-[#CB0502] bg-[#3a3b3c] scale-[1.01]"
+                                  : "border-blue-500 bg-blue-50 scale-[1.01]"
+                                : tetMode
+                                  ? "border-[#4a4b4c] hover:border-[#CB0502] hover:bg-[#3a3b3c]"
+                                  : "border-gray-200 hover:border-blue-400 hover:bg-blue-50",
+                            )}
                           >
                             <div
                               className={`flex-shrink-0 p-2 rounded-lg transition-colors ${tetMode ? "bg-[#3a3b3c] group-hover:bg-[#4a4b4c]" : "bg-blue-100 group-hover:bg-blue-200"}`}
@@ -1529,8 +1673,7 @@ const CreateAuctionForm = ({
                                 <p
                                   className={`text-sm ${tetMode ? "text-gray-500" : "text-gray-500"}`}
                                 >
-                                  {t("select_excel_file") ||
-                                    "Chọn file Excel..."}
+                                  {t("select_excel_file")}
                                 </p>
                               )}
                             </div>
@@ -1570,7 +1713,7 @@ const CreateAuctionForm = ({
                             {...field}
                             id="filePicker"
                             type="file"
-                            accept=".xlsx,.xls"
+                            accept="application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.xlsx,.xls,.pdf,.doc,.docx"
                             className="hidden"
                             key={inputKey}
                             onChange={(e) => {
@@ -1635,27 +1778,24 @@ const CreateAuctionForm = ({
 
                   {/* Drop Zone */}
                   <div
+                    tabIndex={0}
                     className={clsx(
-                      "border-3 border-dashed rounded-xl transition-all cursor-pointer min-h-[200px] relative overflow-hidden",
+                      "border-2 border-dashed rounded-xl transition-all cursor-pointer min-h-[200px] relative overflow-hidden outline-none",
                       isDragging
                         ? tetMode
                           ? "border-[#CB0502] bg-[#3a3b3c] scale-[1.02]"
                           : "border-blue-500 bg-blue-50 scale-[1.02]"
                         : tetMode
-                          ? "border-[#4a4b4c] hover:border-[#CB0502] hover:bg-[#3a3b3c]/30"
-                          : "border-gray-300 hover:border-blue-400 hover:bg-blue-50/30",
+                          ? "border-[#5a5b5c] hover:border-[#CB0502] hover:bg-[#3a3b3c]/30 focus:border-[#CB0502] focus:ring-4 focus:ring-red-900/30"
+                          : "border-gray-400 hover:border-blue-400 hover:bg-blue-50/30 focus:border-blue-500 focus:ring-4 focus:ring-blue-100",
                     )}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
+                    onPaste={handlePaste}
+                    onKeyDown={handleKeyDown}
                     onClick={(e) => {
-                      // Only trigger if clicking on the background, not on child elements
-                      if (
-                        e.target === e.currentTarget ||
-                        e.target.closest(".p-4") === null
-                      ) {
-                        handleDragAreaClick();
-                      }
+                      e.currentTarget.focus();
                     }}
                   >
                     {imgFiles.length === 0 ? (
@@ -1664,7 +1804,7 @@ const CreateAuctionForm = ({
                           className={`p-4 rounded-full mb-4 ${tetMode ? "bg-gradient-to-br from-[#CB0502]/30 to-[#ff4444]/30" : "bg-gradient-to-br from-blue-100 to-indigo-100"}`}
                         >
                           <svg
-                            className={`w-12 h-12 ${tetMode ? "text-[#CB0502]" : "text-blue-600"}`}
+                            className={`w-8 h-8 ${tetMode ? "text-[#CB0502]" : "text-blue-600"}`}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 48 48"
@@ -1677,21 +1817,24 @@ const CreateAuctionForm = ({
                             />
                           </svg>
                         </div>
-                        <p
-                          className={`text-base font-semibold mb-1 ${tetMode ? "text-gray-300" : "text-gray-700"}`}
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDragAreaClick();
+                          }}
+                          className={clsx(
+                            "px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm group-hover:shadow-md active:scale-95 mb-3 cursor-pointer",
+                            tetMode
+                              ? "bg-gradient-to-r from-[#CB0502] to-[#ff4444] text-white"
+                              : "bg-gradient-to-r from-blue-500 to-indigo-500 text-white",
+                          )}
                         >
-                          <span
-                            className={
-                              tetMode ? "text-[#CB0502]" : "text-blue-600"
-                            }
-                          >
-                            {t("click_to_select_image")}
-                          </span>
-                        </p>
+                          {t("click_to_select_image")}
+                        </div>
                         <p
-                          className={`text-sm ${tetMode ? "text-gray-500" : "text-gray-500"}`}
+                          className={`text-sm font-medium ${tetMode ? "text-gray-400" : "text-gray-500"}`}
                         >
-                          {t("or_drag_and_drop")}
+                          {t("or_drag_and_drop")} {t("or")} <span className="underline decoration-dotted underline-offset-4">Ctrl + V</span>
                         </p>
                         <p className="text-xs text-red-500 mt-2">
                           {t("minimum_2_images")}
@@ -1712,7 +1855,12 @@ const CreateAuctionForm = ({
                             return (
                               <div
                                 key={key}
-                                className="group relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition-all shadow-sm hover:shadow-md"
+                                className={clsx(
+                                  "group relative aspect-square rounded-lg overflow-hidden border-2 border-dashed transition-all shadow-sm hover:shadow-md",
+                                  tetMode
+                                    ? "border-[#4a4b4c] hover:border-[#CB0502]"
+                                    : "border-gray-300 hover:border-blue-400",
+                                )}
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <img
@@ -1747,25 +1895,53 @@ const CreateAuctionForm = ({
                           })}
                           {/* Add more button */}
                           <div
-                            className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 flex items-center justify-center cursor-pointer transition-all hover:bg-blue-50 group"
+                            className={clsx(
+                              "aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all group/add",
+                              tetMode
+                                ? "border-[#4a4b4c] hover:border-[#CB0502] hover:bg-red-900/10"
+                                : "border-gray-300 hover:border-blue-400 hover:bg-blue-50",
+                            )}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDragAreaClick();
                             }}
                           >
-                            <svg
-                              className="w-8 h-8 text-gray-400 group-hover:text-blue-500 transition-colors"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
+                            <div
+                              className={clsx(
+                                "p-2 rounded-full mb-1 transition-colors",
+                                tetMode
+                                  ? "bg-[#3a3b3c] group-hover/add:bg-[#CB0502]/20"
+                                  : "bg-gray-100 group-hover/add:bg-blue-100",
+                              )}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 4v16m8-8H4"
-                              />
-                            </svg>
+                              <svg
+                                className={clsx(
+                                  "w-6 h-6 transition-colors",
+                                  tetMode
+                                    ? "text-gray-400 group-hover/add:text-[#CB0502]"
+                                    : "text-gray-400 group-hover/add:text-blue-500",
+                                )}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 4v16m8-8H4"
+                                />
+                              </svg>
+                            </div>
+                            <span
+                              className={clsx(
+                                "text-[10px] font-bold uppercase tracking-wider transition-colors",
+                                tetMode
+                                  ? "text-gray-500 group-hover/add:text-[#CB0502]"
+                                  : "text-gray-500 group-hover/add:text-blue-500",
+                              )}
+                            >
+                            </span>
                           </div>
                         </div>
                       </div>

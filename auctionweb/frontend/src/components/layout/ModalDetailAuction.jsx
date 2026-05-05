@@ -27,11 +27,33 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     try {
       const res = await fetch(`/api/v1/download/excel/by-auction/${id}`);
       if (!res.ok) throw new Error("Dowload file fail!");
+      
+      let filename = `auction-${id}`;
+      const disposition = res.headers.get("content-disposition");
+      const contentType = res.headers.get("content-type");
+
+      if (disposition && disposition.indexOf("filename=") !== -1) {
+        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, "");
+        }
+      } else {
+        if (contentType === "application/pdf") {
+          filename += ".pdf";
+        } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
+          filename += ".xlsx";
+        } else if (contentType && (contentType.includes("word") || contentType.includes("document"))) {
+          filename += ".docx";
+        } else {
+          filename += ".bin";
+        }
+      }
+
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `auction-${id}.xlsx`;
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -47,11 +69,33 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
     try {
       const res = await fetch(`/api/v1/download/excel/${id}`);
       if (!res.ok) throw new Error("Dowload file fail!");
+
+      let filename = `bid-${userName}-${id}`;
+      const disposition = res.headers.get("content-disposition");
+      const contentType = res.headers.get("content-type");
+
+      if (disposition && disposition.indexOf("filename=") !== -1) {
+        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, "");
+        }
+      } else {
+        if (contentType === "application/pdf") {
+          filename += ".pdf";
+        } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
+          filename += ".xlsx";
+        } else if (contentType && (contentType.includes("word") || contentType.includes("document"))) {
+          filename += ".docx";
+        } else {
+          filename += ".bin";
+        }
+      }
+
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `bid-${userName}-${id}.xlsx`;
+      a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -119,7 +163,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
-    i18n.changeLanguage(savedLang);
+    if (savedLang) i18n.changeLanguage(savedLang);
   }, [i18n]);
 
   useEffect(() => {
@@ -343,7 +387,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     className={`font-bold text-lg ${tetMode ? "text-[#fbbf24]" : "text-black-600"}`}
                   >
                     {auction.starting_price?.toLocaleString(
-                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      "en-US",
                       {
                         style: "currency",
                         currency: auction.currency === "VND" ? "VND" : "USD",
@@ -364,7 +408,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     className={`font-bold text-lg ${tetMode ? "text-[#fbbf24]" : "text-black-700"}`}
                   >
                     {auction.step_price?.toLocaleString(
-                      auction.currency === "VND" ? "vi-VN" : "en-US",
+                      "en-US",
                       {
                         style: "currency",
                         currency: auction.currency === "VND" ? "VND" : "USD",
@@ -471,7 +515,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   {t("highest_bid")}:{" "}
                 </span>
                 {highestBid?.toLocaleString(
-                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  "en-US",
                   {
                     style: "currency",
                     currency: auction.currency === "VND" ? "VND" : "USD",
@@ -484,7 +528,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                   {t("lowest_bid")}:{" "}
                 </span>
                 {lowestBid?.toLocaleString(
-                  auction.currency === "VND" ? "vi-VN" : "en-US",
+                  "en-US",
                   {
                     style: "currency",
                     currency: auction.currency === "VND" ? "VND" : "USD",
@@ -562,9 +606,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                           <td className="px-4 text-green-500 py-2">
                             {bid.bid_amount != null
                               ? bid.bid_amount.toLocaleString(
-                                  auction.currency === "VND"
-                                    ? "vi-VN"
-                                    : "en-US",
+                                  "en-US",
                                   {
                                     style: "currency",
                                     currency:

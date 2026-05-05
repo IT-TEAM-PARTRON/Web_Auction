@@ -18,7 +18,7 @@ const RenderListAuction = ({ arrAuction, clickCard }) => {
   // Format giá tiền
   const formatPrice = (price, currency) => {
     if (!price) return t("see_file");
-    return price.toLocaleString(currency === "VND" ? "vi-VN" : "en-US", {
+    return price.toLocaleString("en-US", {
       style: "currency",
       currency: currency === "VND" ? "VND" : "USD",
     });
