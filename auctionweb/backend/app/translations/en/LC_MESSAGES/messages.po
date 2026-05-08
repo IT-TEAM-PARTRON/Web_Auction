@@ -294,3 +294,6 @@ msgstr "Invalid file type. Only Excel, PDF and Word are allowed."
 
 msgid "File too large (max 100MB)"
 msgstr "File too large (max 100MB)"
+
+msgid "Key already exists"
+msgstr "Key already exists"

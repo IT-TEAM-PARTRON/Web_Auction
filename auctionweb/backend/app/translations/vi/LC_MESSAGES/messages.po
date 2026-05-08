@@ -291,3 +291,6 @@ msgstr "Loại file không được phép. Chỉ cho phép file Excel, PDF và W
 
 msgid "File too large (max 100MB)"
 msgstr "File quá lớn (tối đa 100MB)"
+
+msgid "Key already exists"
+msgstr "Key đã tồn tại"

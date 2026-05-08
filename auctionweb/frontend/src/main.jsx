@@ -4,15 +4,19 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TetModeProvider } from "./contexts/TetModeContext";
-import "./styles/global.css";
-import './i18n';
+import './styles/global.css';
+import { initI18n } from './i18n';
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-    <BrowserRouter>
-      <AuthProvider>
-        <TetModeProvider>
-          <App />
-        </TetModeProvider>
-      </AuthProvider>
-    </BrowserRouter>
-);
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+initI18n().then(() => {
+    root.render(
+        <BrowserRouter>
+          <AuthProvider>
+            <TetModeProvider>
+              <App />
+            </TetModeProvider>
+          </AuthProvider>
+        </BrowserRouter>
+    );
+});

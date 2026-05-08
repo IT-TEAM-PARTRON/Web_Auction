@@ -51,18 +51,18 @@ function HomePage() {
       <AnimatedText>
         <div className="relative z-10 max-w-3xl mx-auto px-4">
         {/* Subtitle */}
-        <p className="text-white text-sm p-2 tracking-widest mb-3">
+        {/* <p className="text-white text-sm p-2 tracking-widest mb-3">
           {t("probid")}
-        </p>
+        </p> */}
         {/* Title */}
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+        {/* <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
           {t("select")} <span className="italic font-playfair text-[#ffffffa4]">{t("our_product")}</span>
           <br />
           {t("at_our_auction")}
-        </h1>
+        </h1> */}
 
         {/* Features */}
-        <div className="flex justify-center items-center gap-6 mt-6 flex-wrap">
+        {/* <div className="flex justify-center items-center gap-6 mt-6 flex-wrap">
           <div className="flex items-center gap-2 text-white">
             <CheckCircle className="text-green-500 w-5 h-5" />
             <span>{t("auction_excellence")}</span>
@@ -75,7 +75,7 @@ function HomePage() {
             <CheckCircle className="text-green-500 w-5 h-5" />
             <span>{t("support_24_7")}</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Buttons */}
         <div className="mt-8 flex justify-center gap-4 flex-wrap">
