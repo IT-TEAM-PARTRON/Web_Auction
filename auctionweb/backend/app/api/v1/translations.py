@@ -21,6 +21,12 @@ class TranslationOut(BaseModel):
     key: str
     value: Optional[str]
 
+class TranslationOutList(BaseModel):
+    id: int
+    key: str
+    vi: Optional[str]
+    en: Optional[str]
+    kr: Optional[str]
 def get_current_user(
     request: Request,
     db: Session = Depends(get_db),
@@ -47,6 +53,26 @@ def get_translations(
     return {
         "data": result
     }
+
+@router.get("/translations/list", response_model=list[TranslationOutList])
+def get_translations_list(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    translations = db.query(Translation).all()
+    result = []
+    for t in translations:
+        result.append(
+            TranslationOutList(
+                id=t.id,
+                key=t.key,
+                vi=t.vi,
+                en=t.en,
+                kr=t.kr
+            )
+        )
+
+    return result
 
 @router.post("/translations/create", response_model=TranslationOut)
 def create_translation(
