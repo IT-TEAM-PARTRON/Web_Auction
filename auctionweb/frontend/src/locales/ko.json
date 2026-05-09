@@ -46,37 +46,37 @@
   "password_min": "비밀번호는 최소 8자 이상이어야 합니다",
   "password_max": "비밀번호는 30자를 초과할 수 없습니다",
   "password_regex": "비밀번호는 숫자, 소문자, 대문자, 특수문자를 모두 포함해야 합니다",
-  "addresses": [
-    "베트남 푸토성 빈푹군 까이꽝 산업단지 11번 부지",
-    "베트남 푸토성 빈뜨엉면 동속 산업단지 CN03-03 부지"
-  ],
+  "addresses": {
+      "khai_quang": "베트남 푸토성 빈푹군 까이꽝 산업단지 11번 부지",
+      "dong_soc": "베트남 푸토성 빈뜨엉면 동속 산업단지 CN03-03 부지"
+    },
   "home": "홈페이지",
   "tet_mode_on": "설날",
   "tet_mode_off": "끄기",
   "tet_mode_turn_off": "설날 모드 끄기",
   "tet_mode_turn_on": "설날 모드 켜기",
-  "tet_greetings": [
-    "새해 복 많이 받으세요! 평안과 번영을!",
-    "만사형통, 재물이 가득하길!",
-    "복록수가 가득하고 행복이 넘치길!",
-    "봄이 오면 모든 일이 잘 되길!",
-    "새해 재물과 행운이 가득하길!",
-    "새해 복 많이 받으세요!",
-    "가족과 함께 행복한 한 해 되세요!",
-    "건강하고 부유한 한 해 되세요!",
-    "사업 번창하고 큰 성공 이루세요!",
-    "안전하고 행운 가득한 새해 되세요!"
-  ],
-  "tet_off_greetings": [
-    "다음 설날에 다시 만나요!",
-    "좋은 하루 되세요!",
-    "설날 테마를 즐겨주셔서 감사합니다!",
-    "생산적인 하루 되세요!",
-    "곧 다시 뵙길 바랍니다!",
-    "즐거운 업무 시간 되세요!",
-    "항상 행복하세요!",
-    "모든 목표를 달성하시길!"
-  ],
+"tet_greetings": {
+    "congratulation": "새해 복 많이 받으세요! 평안과 번영을!",
+    "prosperity": "만사형통, 재물이 가득하길!",
+    "blessing": "복록수가 가득하고 행복이 넘치길!",
+    "spring_wish": "봄이 오면 모든 일이 잘 되길!",
+    "fortune": "새해 재물과 행운이 가득하길!",
+    "new_year_wish": "새해 복 많이 받으세요!",
+    "family": "가족과 함께 행복한 한 해 되세요!",
+    "health": "건강하고 부유한 한 해 되세요!",
+    "career": "사업 번창하고 큰 성공 이루세요!",
+    "peace": "안전하고 행운 가득한 새해 되세요!"
+  },
+  "tet_off_greetings": {
+    "see_you": "다음 설날에 다시 만나요!",
+    "good_day": "좋은 하루 되세요!",
+    "thanks": "설날 테마를 즐겨주셔서 감사합니다!",
+    "work_efficiently": "생산적인 하루 되세요!",
+    "see_you_soon": "곧 다시 뵙길 바랍니다!",
+    "happy_workday": "즐거운 업무 시간 되세요!",
+    "stay_happy": "항상 행복하세요!",
+    "goal_achievement": "모든 목표를 달성하시길!"
+  },
   "auction": "입찰",
   "information": "정보",
   "history": "이력",
@@ -208,20 +208,20 @@
   "history_milestone_2024_title": "2024",
   "history_milestone_2024_desc": "생산 규모를 지속적으로 확장하며 총 투자금액이 2억 6,940만 달러에 도달하였고, 첨단 전자 시장의 수요에 효과적으로 대응하고 있습니다.",
   "history_scope_title": "사업 분야",
-  "history_scope_list": [
-    "이미지 센서 모듈(ISM)",
-    "진동 모터(Motor)",
-    "휴대폰 안테나(Intenna)",
-    "무선 충전기, 블루투스 이어폰",
-    "기타 전자 부품"
-  ],
+"history_scope": {
+    "ism": "이미지 센서 모듈(ISM)",
+    "motor": "진동 모터(Motor)",
+    "antenna": "휴대폰 안테나(Intenna)",
+    "wireless_audio": "무선 충전기, 블루투스 이어폰",
+    "other_components": "기타 전자 부품"
+  },
   "history_scope_desc": "파트론비나는 삼성전자 베트남의 주요 협력업체이며, Amazon 등 글로벌 기업에 부품을 공급함. 제품은 한국, EU, 브라질, 인도 등지에 유통됨.",
   "history_contribution_title": "인력 구성 및 기여도",
-  "history_contribution_list": [
-    "활동적인 외국 전문가들과 전문적인 관리진 보유",
-    "빈푹 성 내외 수천 명의 일자리 창출",
-    "지역 경제 및 베트남 전자 부품 산업 발전에 기여"
-  ],
+"history_contribution": {
+    "experts": "활동적인 외국 전문가들과 전문적인 관리진 보유",
+    "employment": "빈푹 성 내외 수천 명의 일자리 창출",
+    "economic_impact": "지역 경제 및 베트남 전자 부품 산업 발전에 기여"
+  },
   "auction_guide_title": "입찰 참여 안내",
   "auction_guide_step_1_title": "1단계: 계정 등록",
   "auction_guide_step_1_content_1": " 이메일, 사용자명, 비밀번호 등 기본 정보 입력",
@@ -422,5 +422,10 @@
   "remember_password": "비밀번호가 기억나시나요?",
   "ongoing": "진행 중",
   "upcoming": "예정",
-  "ended": "종료됨"
+  "ended": "종료됨",
+  "search_translation_placeholder": "메시지 ID, EN, VI, KO 검색...",
+  "update_translation_success": "업데이트 성공!",
+  "update_translation_fail": "업데이트 실패!",
+  "field_required": "비워둘 수 없습니다",
+  "select_row_to_view_detail": "세부 정보를 보려면 행을 선택하세요"
 }

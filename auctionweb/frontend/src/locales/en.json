@@ -53,28 +53,28 @@
   "tet_mode_off": "Off",
   "tet_mode_turn_off": "Turn off Tet mode",
   "tet_mode_turn_on": "Turn on Tet mode",
-  "tet_greetings": [
-    "Happy Lunar New Year! Peace and Prosperity!",
-    "May all your wishes come true with abundant fortune!",
-    "Blessings of health, wealth and happiness!",
-    "Spring brings good luck and prosperity!",
-    "Wishing you success and prosperity!",
-    "Happy New Year! May everything go well!",
-    "Family reunion, happiness together!",
-    "Good health and overflowing wealth!",
-    "Career advancement and great achievements!",
-    "Safe and lucky new year ahead!"
-  ],
-  "tet_off_greetings": [
-    "See you next Tet celebration!",
-    "Have a wonderful day!",
-    "Thank you for enjoying the Tet theme!",
-    "Wishing you a productive day!",
-    "Hope to see you again soon!",
-    "Have a great working day!",
-    "Stay happy and cheerful!",
-    "May you achieve all your goals!"
-  ],
+"tet_greetings": {
+    "congratulation": "Happy Lunar New Year! Peace and Prosperity!",
+    "prosperity": "May all your wishes come true with abundant fortune!",
+    "blessing": "Blessings of health, wealth and happiness!",
+    "spring_wish": "Spring brings good luck and prosperity!",
+    "fortune": "Wishing you success and prosperity!",
+    "new_year_wish": "Happy New Year! May everything go well!",
+    "family": "Family reunion, happiness together!",
+    "health": "Good health and overflowing wealth!",
+    "career": "Career advancement and great achievements!",
+    "peace": "Safe and lucky new year ahead!"
+  },
+"tet_off_greetings": {
+    "see_you": "See you next Tet celebration!",
+    "good_day": "Have a wonderful day!",
+    "thanks": "Thank you for enjoying the Tet theme!",
+    "work_efficiently": "Wishing you a productive day!",
+    "see_you_soon": "Hope to see you again soon!",
+    "happy_workday": "Have a great working day!",
+    "stay_happy": "Stay happy and cheerful!",
+    "goal_achievement": "May you achieve all your goals!"
+  },
   "auction": "Auction",
   "information": "Information",
   "history": "History",
@@ -217,21 +217,21 @@
   "history_milestone_2024_desc": "Continued to expand production scale with total investment reaching 269.4 million USD to meet the demand of the advanced electronics market.",
 
   "history_scope_title": "Scope of Business",
-  "history_scope_list": [
-    "Image Sensor Module (ISM)",
-    "Vibration Motor",
-    "Phone Antenna (Intenna)",
-    "Wireless charger, Bluetooth headset",
-    "Other electronic components"
-  ],
+"history_scope": {
+    "ism": "Image Sensor Module (ISM)",
+    "motor": "Vibration Motor",
+    "antenna": "Phone Antenna (Intenna)",
+    "wireless_audio": "Wireless charger, Bluetooth headset",
+    "other_components": "Other electronic components"
+  },
   "history_scope_desc": "Partron Vina is a leading satellite supplier of Samsung Electronics Vietnam and also manufactures components for major brands like Amazon. Products are available in Korea, EU, Brazil, India...",
 
   "history_contribution_title": "Team & Contributions",
-  "history_contribution_list": [
-    "Dynamic foreign experts and professional management",
-    "Creating jobs for thousands of workers inside and outside Vinh Phuc province",
-    "Contributing to local economic development and Vietnam's supporting electronics industry"
-  ],
+"history_contribution": {
+    "experts": "Dynamic foreign experts and professional management",
+    "employment": "Creating jobs for thousands of workers inside and outside Vinh Phuc province",
+    "economic_impact": "Contributing to local economic development and Vietnam's supporting electronics industry"
+  },
   "auction_guide_title": "Instructions for Participating in the Auction",
 
   "auction_guide_step_1_title": "Step 1: Register an account",
@@ -352,10 +352,10 @@
     "bid_amount_decimal": "Only allow up to 2 decimal places",
     "note_max": "Notes must not exceed 1000 characters."
   },
-  "addresses": [
-    "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
-    "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam"
-  ],
+"addresses": {
+    "khai_quang": "Lot 11, Khai Quang Industrial Park, Vinh Phuc Ward, Phu Tho Province, Vietnam",
+    "dong_soc": "Lot CN03-03, Dong Soc Industrial Cluster, Vinh Tuong Commune, Phu Tho Province, Vietnam"
+  },
   "account_info": "Account Infomation",
   "Ongoing": "Ongoing",
   "Upcoming": "Upcoming",
@@ -433,5 +433,10 @@
   "void_bid_warning_count": "{{count}} bid(s) have been voided",
   "void_bid_warning_single": "Your bid has been invalidated",
   "void_bid_acknowledge": "I Understand",
-  "view_auction_detail": "View Auction"
+  "view_auction_detail": "View Auction",
+  "search_translation_placeholder": "Search message ID, EN, VI, KO...",
+  "update_translation_success": "Update successful!",
+  "update_translation_fail": "Update failed!",
+  "field_required": "Cannot be empty",
+  "select_row_to_view_detail": "Select a row to view details"
 }

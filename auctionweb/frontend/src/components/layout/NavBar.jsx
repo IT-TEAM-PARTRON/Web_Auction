@@ -35,23 +35,31 @@ function NavBar() {
 
   // Function to show random Tet greeting
   const showTetGreetings = (isActivating) => {
-    const greetingsList = isActivating
+    // Lấy object từ i18n
+    const greetingsObj = isActivating
       ? t("tet_greetings", { returnObjects: true })
       : t("tet_off_greetings", { returnObjects: true });
 
-    // Random 1 greeting from the list
-    const randomIndex = Math.floor(Math.random() * greetingsList.length);
-    const randomGreeting = greetingsList[randomIndex];
+    // Chuyển Object thành Array các câu chúc
+    const greetingsList =
+      greetingsObj && typeof greetingsObj === "object"
+        ? Object.values(greetingsObj)
+        : [];
 
-    toast.success(randomGreeting, {
-      duration: 3000,
-      position: "top-center",
-      style: {
-        background: isActivating ? "#CB0502" : "#4b5563",
-        color: "#fff",
-        fontWeight: "bold",
-      },
-    });
+    if (greetingsList.length > 0) {
+      const randomIndex = Math.floor(Math.random() * greetingsList.length);
+      const randomGreeting = greetingsList[randomIndex];
+
+      toast.success(randomGreeting, {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: isActivating ? "#CB0502" : "#4b5563",
+          color: "#fff",
+          fontWeight: "bold",
+        },
+      });
+    }
   };
 
   // Handle Tet mode toggle with greetings
@@ -67,10 +75,16 @@ function NavBar() {
     window.addEventListener("resize", handleResize);
 
     const handleClickOutside = (event) => {
-      if (langRefDesktop.current && !langRefDesktop.current.contains(event.target)) {
+      if (
+        langRefDesktop.current &&
+        !langRefDesktop.current.contains(event.target)
+      ) {
         setLangOpenDesktop(false);
       }
-      if (langRefMobile.current && !langRefMobile.current.contains(event.target)) {
+      if (
+        langRefMobile.current &&
+        !langRefMobile.current.contains(event.target)
+      ) {
         setLangOpenMobile(false);
       }
     };
@@ -124,15 +138,31 @@ function NavBar() {
   return (
     <>
       {/* Mobile Header Bar */}
-      <div className="mobile-header" style={{ backgroundColor: tetMode ? '#CB0502' : '#fff', borderBottomColor: tetMode ? '#CB0502' : '#eee', transition: 'all 0.3s' }}>
+      <div
+        className="mobile-header"
+        style={{
+          backgroundColor: tetMode ? "#CB0502" : "#fff",
+          borderBottomColor: tetMode ? "#CB0502" : "#eee",
+          transition: "all 0.3s",
+        }}
+      >
         <button
           className="hamburger-btn"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          <span className="hamburger-line" style={{ backgroundColor: tetMode ? '#fff' : '#333' }}></span>
-          <span className="hamburger-line" style={{ backgroundColor: tetMode ? '#fff' : '#333' }}></span>
-          <span className="hamburger-line" style={{ backgroundColor: tetMode ? '#fff' : '#333' }}></span>
+          <span
+            className="hamburger-line"
+            style={{ backgroundColor: tetMode ? "#fff" : "#333" }}
+          ></span>
+          <span
+            className="hamburger-line"
+            style={{ backgroundColor: tetMode ? "#fff" : "#333" }}
+          ></span>
+          <span
+            className="hamburger-line"
+            style={{ backgroundColor: tetMode ? "#fff" : "#333" }}
+          ></span>
         </button>
         <div className="mobile-header-right">
           {/* Tet Mode Switch Mobile */}
@@ -141,10 +171,10 @@ function NavBar() {
             className={`flex items-center justify-center p-1.5 mr-1 sm:mr-2 rounded-full transition-all duration-300 ${tetMode ? "bg-yellow-400 text-red-600 shadow-sm" : "bg-gray-100/80 text-gray-500"}`}
             title={tetMode ? t("tet_mode_turn_off") : t("tet_mode_turn_on")}
           >
-            <img 
-              src={tetIconCoin} 
-              alt="Tet" 
-              className={`w-4 h-4 transition-transform duration-300 ${tetMode ? "rotate-0" : "rotate-180 grayscale"}`} 
+            <img
+              src={tetIconCoin}
+              alt="Tet"
+              className={`w-4 h-4 transition-transform duration-300 ${tetMode ? "rotate-0" : "rotate-180 grayscale"}`}
             />
           </button>
           {user ? (
@@ -153,7 +183,10 @@ function NavBar() {
               <span
                 className="nav-link font-medium"
                 onClick={() => setShowAccountInfo(true)}
-                style={{ cursor: "pointer", color: tetMode ? "#fbbf24" : "inherit" }}
+                style={{
+                  cursor: "pointer",
+                  color: tetMode ? "#fbbf24" : "inherit",
+                }}
               >
                 {t("account_info")}
               </span>
@@ -162,15 +195,15 @@ function NavBar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => openAuthModal("login")}
-                className={`mobile-auth-btn ${tetMode ? 'bg-[#ff4444] text-white' : 'mobile-auth-filled'}`}
-                style={tetMode ? { background: '#ff4444', border: 'none' } : {}}
+                className={`mobile-auth-btn ${tetMode ? "bg-[#ff4444] text-white" : "mobile-auth-filled"}`}
+                style={tetMode ? { background: "#ff4444", border: "none" } : {}}
               >
                 {t("login", "Đăng nhập")}
               </button>
               <button
                 onClick={() => openAuthModal("register")}
-                className={`mobile-auth-btn ${tetMode ? 'bg-yellow-400 text-[#CB0502]' : 'mobile-auth-outline'}`}
-                style={tetMode ? { border: 'none', background: '#fbbf24' } : {}}
+                className={`mobile-auth-btn ${tetMode ? "bg-yellow-400 text-[#CB0502]" : "mobile-auth-outline"}`}
+                style={tetMode ? { border: "none", background: "#fbbf24" } : {}}
               >
                 {t("register", "Đăng ký")}
               </button>
@@ -184,7 +217,10 @@ function NavBar() {
         <div className="mobile-menu-backdrop" onClick={closeMobileMenu}></div>
       )}
       <div className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
-        <div className="mobile-menu-header" style={tetMode ? { background: '#CB0502' } : {}}>
+        <div
+          className="mobile-menu-header"
+          style={tetMode ? { background: "#CB0502" } : {}}
+        >
           <img src={logo} alt="Logo" className="mobile-menu-logo" />
           <button className="mobile-menu-close" onClick={closeMobileMenu}>
             ×
@@ -280,28 +316,49 @@ function NavBar() {
           )}
 
           {/* Smooth custom mobile language accordion */}
-          <div className="px-5 py-3 border-t border-gray-100 mt-2" ref={langRefMobile}>
+          <div
+            className="px-5 py-3 border-t border-gray-100 mt-2"
+            ref={langRefMobile}
+          >
             <button
               onClick={() => setLangOpenMobile(!langOpenMobile)}
               className="w-full flex items-center justify-between text-gray-700 font-medium text-sm py-1 outline-none"
             >
-              <span>{t("language", "Language")}: {i18n.language === "vi" ? "Tiếng Việt" : i18n.language === "en" ? "English" : "한국어"}</span>
-              <svg 
+              <span>
+                {t("language", "Language")}:{" "}
+                {i18n.language === "vi"
+                  ? "Tiếng Việt"
+                  : i18n.language === "en"
+                    ? "English"
+                    : "한국어"}
+              </span>
+              <svg
                 className={`w-4 h-4 transition-transform duration-300 ${langOpenMobile ? "rotate-180 text-blue-500" : "text-gray-400"}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
-            <div 
+            <div
               className="overflow-hidden transition-all duration-300 ease-in-out"
-              style={{ maxHeight: langOpenMobile ? "200px" : "0px", opacity: langOpenMobile ? 1 : 0, marginTop: langOpenMobile ? "8px" : "0px" }}
+              style={{
+                maxHeight: langOpenMobile ? "200px" : "0px",
+                opacity: langOpenMobile ? 1 : 0,
+                marginTop: langOpenMobile ? "8px" : "0px",
+              }}
             >
               {[
                 { code: "vi", label: "Tiếng Việt" },
                 { code: "en", label: "English" },
-                { code: "ko", label: "한국어" }
-              ].map(lang => (
+                { code: "ko", label: "한국어" },
+              ].map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => {
@@ -391,7 +448,10 @@ function NavBar() {
           )}
 
           {/* Smooth Custom Language Selector Desktop */}
-          <div className="hidden md:flex items-center mx-1 relative" ref={langRefDesktop}>
+          <div
+            className="hidden md:flex items-center mx-1 relative"
+            ref={langRefDesktop}
+          >
             <button
               type="button"
               onClick={() => setLangOpenDesktop(!langOpenDesktop)}
@@ -402,34 +462,49 @@ function NavBar() {
               }`}
             >
               <span className="text-center min-w-[24px]">
-                {i18n.language === "vi" ? "VN" : i18n.language === "en" ? "EN" : "KR"}
+                {i18n.language === "vi"
+                  ? "VN"
+                  : i18n.language === "en"
+                    ? "EN"
+                    : "KR"}
               </span>
-              <svg 
+              <svg
                 className={`w-3.5 h-3.5 transition-transform duration-300 ${langOpenDesktop ? "rotate-180" : ""}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
-            
+
             {/* Dropdown Menu Overlay */}
-            <div 
+            <div
               className={`absolute top-[calc(100%+8px)] right-0 w-[140px] rounded-2xl shadow-xl overflow-hidden transition-all duration-300 origin-top transform z-50 ${
-                tetMode ? "bg-[#242526] border border-[#3a3b3c]" : "bg-white border border-gray-100"
+                tetMode
+                  ? "bg-[#242526] border border-[#3a3b3c]"
+                  : "bg-white border border-gray-100"
               }`}
               style={{
                 opacity: langOpenDesktop ? 1 : 0,
                 visibility: langOpenDesktop ? "visible" : "hidden",
-                transform: langOpenDesktop ? "scale(1) translateY(0)" : "scale(0.95) translateY(-8px)",
-                pointerEvents: langOpenDesktop ? "auto" : "none"
+                transform: langOpenDesktop
+                  ? "scale(1) translateY(0)"
+                  : "scale(0.95) translateY(-8px)",
+                pointerEvents: langOpenDesktop ? "auto" : "none",
               }}
             >
               <div className="p-1.5 flex flex-col gap-1">
                 {[
                   { code: "vi", label: "Tiếng Việt" },
                   { code: "en", label: "English" },
-                  { code: "ko", label: "한국어" }
-                ].map(lang => (
+                  { code: "ko", label: "한국어" },
+                ].map((lang) => (
                   <button
                     key={lang.code}
                     type="button"
@@ -440,14 +515,28 @@ function NavBar() {
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-xl transition-colors ${
                       i18n.language === lang.code
-                        ? (tetMode ? "bg-[#CB0502]/20 text-[#CB0502]" : "bg-blue-50 text-blue-600")
-                        : (tetMode ? "text-gray-300 hover:bg-[#3a3b3c]" : "text-gray-600 hover:bg-gray-100")
+                        ? tetMode
+                          ? "bg-[#CB0502]/20 text-[#CB0502]"
+                          : "bg-blue-50 text-blue-600"
+                        : tetMode
+                          ? "text-gray-300 hover:bg-[#3a3b3c]"
+                          : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
                     <span>{lang.label}</span>
                     {i18n.language === lang.code && (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     )}
                   </button>

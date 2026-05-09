@@ -13,10 +13,18 @@ function History() {
       i18n.changeLanguage(savedLang);
     }
   }, [i18n]);
-  const scopeList = t("history_scope_list", { returnObjects: true });
-  const contributionList = t("history_contribution_list", {
-    returnObjects: true,
-  });
+  const scopeData = t("history_scope", { returnObjects: true });
+  const contributionData = t("history_contribution", { returnObjects: true });
+
+  // Chuyển đổi an toàn từ Object sang Array để có thể dùng .map()
+  const scopeList =
+    scopeData && typeof scopeData === "object" ? Object.values(scopeData) : [];
+
+  const contributionList =
+    contributionData && typeof contributionData === "object"
+      ? Object.values(contributionData)
+      : [];
+
   return (
     <AnimatedContent>
       <main className="history-content mt-[160px] sm:mt-[200px] md:mt-[220px] lg:mt-[150px] xl:mt-[100px]">
@@ -27,7 +35,9 @@ function History() {
             padding: "40px",
             maxWidth: "1200px",
             margin: "0px auto",
-            boxShadow: tetMode ? "0 4px 24px rgba(0,0,0,0.5)" : "0 4px 24px rgba(0,0,0,0.30)",
+            boxShadow: tetMode
+              ? "0 4px 24px rgba(0,0,0,0.5)"
+              : "0 4px 24px rgba(0,0,0,0.30)",
             border: tetMode ? "1px solid #3a3b3c" : "none",
           }}
         >
@@ -43,25 +53,37 @@ function History() {
           >
             {t("history_title").toUpperCase()}
           </h2>
-          <div style={{ fontSize: "18px", color: tetMode ? "#e4e6eb" : "#222", lineHeight: "2" }}>
+          <div
+            style={{
+              fontSize: "18px",
+              color: tetMode ? "#e4e6eb" : "#222",
+              lineHeight: "2",
+            }}
+          >
             <div
               style={{
                 borderLeft: tetMode ? "4px solid #CB0502" : "4px solid #667eea",
                 paddingLeft: "24px",
                 marginBottom: "24px",
-                background: tetMode ? "linear-gradient(90deg, #18191a 80%, transparent)" : "linear-gradient(90deg, #f6f8fa 80%, transparent)",
+                background: tetMode
+                  ? "linear-gradient(90deg, #18191a 80%, transparent)"
+                  : "linear-gradient(90deg, #f6f8fa 80%, transparent)",
                 borderRadius: "6px",
               }}
             >
               {[2008, 2015, 2024].map((year) => (
                 <div key={year}>
-                  <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t(`history_milestone_${year}_title`)}:</strong>{" "}
+                  <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>
+                    {t(`history_milestone_${year}_title`)}:
+                  </strong>{" "}
                   {t(`history_milestone_${year}_desc`)}
                 </div>
               ))}
             </div>
             <div style={{ marginBottom: "24px" }}>
-              <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("history_scope_title")}:</strong>
+              <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>
+                {t("history_scope_title")}:
+              </strong>
               <ul style={{ margin: "8px 0 0 24px", padding: 0 }}>
                 {scopeList.map((item, idx) => (
                   <li key={idx}>{item}</li>
@@ -70,7 +92,9 @@ function History() {
               <span>{t("history_scope_desc")}</span>
             </div>
             <div>
-              <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>{t("history_contribution_title")}:</strong>
+              <strong style={{ color: tetMode ? "#fbbf24" : "inherit" }}>
+                {t("history_contribution_title")}:
+              </strong>
               <ul style={{ margin: "8px 0 0 24px", padding: 0 }}>
                 {contributionList.map((item, idx) => (
                   <li key={idx}>{item}</li>

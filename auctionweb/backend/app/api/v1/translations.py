@@ -12,9 +12,9 @@ router = APIRouter()
 
 class TranslationIn(BaseModel):
     key: str
-    vi: Optional[str]
-    en: Optional[str]
-    kr: Optional[str]
+    vi: str
+    en: str
+    kr: str
     event_user: str
 class TranslationOut(BaseModel):
     id: str
@@ -104,25 +104,35 @@ def create_translation(
     db.refresh(translation)
     return translation
 
-@router.put("/translations/update", response_model=TranslationOut)
+@router.put("/translations/update")
 def update_translation(
     request: Request,
     data: TranslationIn,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    # log data FE send to BE
+    print("Update translation data:", data)
+    try:
+        if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+            raise HTTPException(
+                status_code=403,
+                detail=_("You don't have permison update translations!", request)
+            )
+        translation = db.query(Translation).filter(Translation.key == data.key).first()
+        if not translation:
+            raise HTTPException(status_code=404, detail=_("Translation not found", request))
+        translation.vi = data.vi
+        translation.en = data.en
+        translation.kr = data.kr
+        translation.event_user = data.event_user
+        db.commit()
+        db.refresh(translation)
+        return translation
+
+    except Exception as e:
+        db.rollback()
         raise HTTPException(
-            status_code=403,
-            detail=_("You don't have permison update translations!", request)
+            status_code=500,
+            detail=_("Error while creating auction: {error}", request).format(error=str(e))
         )
-    translation = db.query(Translation).filter(Translation.key == data.key).first()
-    if not translation:
-        raise HTTPException(status_code=404, detail=_("Translation not found", request))
-    translation.vi = data.vi
-    translation.en = data.en
-    translation.kr = data.kr
-    translation.event_user = data.event_user
-    db.commit()
-    db.refresh(translation)
-    return translation

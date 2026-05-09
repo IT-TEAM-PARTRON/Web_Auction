@@ -14,7 +14,7 @@ export const Footer = () => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const { tetMode } = useTetMode();
-  const addresses = t("addresses", { returnObjects: true });
+  const addressesObj = t("addresses", { returnObjects: true });
   // Khi load trang, ưu tiên lấy ngôn ngữ từ sessionStorage nếu có
   useEffect(() => {
     const savedLang = sessionStorage.getItem("lang");
@@ -47,14 +47,16 @@ export const Footer = () => {
   }, [i18n]);
 
   return (
-    <footer 
-      className={`footer transition-colors duration-500 ${tetMode ? 'tet-footer' : ''}`}
-      style={tetMode ? { backgroundColor: '#18191a', color: '#ffffff' } : {}}
+    <footer
+      className={`footer transition-colors duration-500 ${tetMode ? "tet-footer" : ""}`}
+      style={tetMode ? { backgroundColor: "#18191a", color: "#ffffff" } : {}}
     >
       <div className="footer__container">
         <div className="footer__section footer__company">
-          <h2 className={`footer__title ${tetMode ? '!text-white' : ''}`}>{companyInfo.name}</h2>
-          <ul className={`footer__list ${tetMode ? 'text-gray-200' : ''}`}>
+          <h2 className={`footer__title ${tetMode ? "!text-white" : ""}`}>
+            {companyInfo.name}
+          </h2>
+          <ul className={`footer__list ${tetMode ? "text-gray-200" : ""}`}>
             <li>
               <FontAwesomeIcon icon={faPhone} style={{ marginRight: 8 }} />
               <span className="footer__label">{t("phone")}:</span>{" "}
@@ -72,22 +74,33 @@ export const Footer = () => {
               />
               <span className="footer__label">{t("address")}:</span>
               <ul className="footer__address-list">
-                {addresses.map((addr, index) => (
-                  <li key={index} className="footer__address-item">
-                    {"- " + addr}
+                {addressesObj && typeof addressesObj === "object" ? (
+                  Object.values(addressesObj).map((addr, index) => (
+                    <li key={index} className="footer__address-item">
+                      {"- " + addr}
+                    </li>
+                  ))
+                ) : (
+                  <li className="footer__address-item">
+                    - {t("address_loading")}
                   </li>
-                ))}
+                )}
               </ul>
             </li>
           </ul>
         </div>
 
         <div className="footer__section footer__help">
-          <h2 className={`footer__title ${tetMode ? '!text-white' : ''}`}>{t("auctioneer_assistance")}</h2>
+          <h2 className={`footer__title ${tetMode ? "!text-white" : ""}`}>
+            {t("auctioneer_assistance")}
+          </h2>
           <ul className="footer__list footer__list--inline">
             {helpLinks.map((link, idx) => (
               <li key={idx} className="footer__item">
-                <Link to={link.to} className={`footer__link ${tetMode ? '!text-gray-200 hover:!text-yellow-300' : ''}`}>
+                <Link
+                  to={link.to}
+                  className={`footer__link ${tetMode ? "!text-gray-200 hover:!text-yellow-300" : ""}`}
+                >
                   {link.label}
                 </Link>
               </li>

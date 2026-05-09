@@ -10,19 +10,20 @@ import Tutorial from "./components/layout/Tutorial.jsx";
 import Contact from "./components/layout/Contact.jsx";
 import History from "./components/layout/History.jsx";
 import Information from "./components/layout/Information.jsx";
+import MultiLanguageDef from "./components/layout/Translate.jsx";
 import PrivateRoute from "./components/layout/PrivateRoute.jsx";
 import { Toaster } from "react-hot-toast";
 import ResetPassword from "./components/layout/ResetPassword.jsx";
 import React, { useState, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 function App() {
   const { t, i18n } = useTranslation();
   useEffect(() => {
-  const savedLang = sessionStorage.getItem("lang") || "en";
-  if (savedLang !== i18n.language) {
-    i18n.changeLanguage(savedLang);
-  }
-}, []);
+    const savedLang = sessionStorage.getItem("lang") || "en";
+    if (savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, []);
 
   return (
     <>
@@ -37,18 +38,16 @@ function App() {
           </Route>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<Information />} />
+          <Route path="/translate" element={<MultiLanguageDef />} />
           <Route path="/history" element={<History />} />
           <Route path="/policy" element={<Rule />} />
           <Route path="/guide" element={<Tutorial />} />
           <Route path="/contact" element={<Contact />} />
-          
         </Route>
         {/* Not use layout */}
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
-      
     </>
-    
   );
 }
 
