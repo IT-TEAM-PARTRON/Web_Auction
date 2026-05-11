@@ -781,25 +781,24 @@ const OverViewAdmin = () => {
             </div>
           </div>
 
-          <div className={`overflow-x-auto border rounded ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-300'}`}>
+          <div className={`overflow-x-auto border-t border-l rounded ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-300'}`}>
             <div className="text-center ">
               {isLoadingSearch && <div className="loader" />}
             </div>
-            <table className="min-w-full border-collapse">
-              <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
-                <tr>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>#</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("name")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("email")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>
+            <table className="min-w-full border-separate border-spacing-0">
+              <thead>
+                <tr className="z-10">
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>#</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("name")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("email")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>
                     {t("contact_phone_label").split(":")}
                   </th>
-                  {/* <th className="border px-2 py-1">{t("created_at")}</th> */}
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("role")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("bid_count")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("company")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("status")}</th>
-                  <th className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''} uppercase`}>{t("action")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("role")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("bid_count")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("company")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("status")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -808,9 +807,9 @@ const OverViewAdmin = () => {
                     key={user.id || idx}
                     className={`transition ${tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white'}`}
                   >
-                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{currentIndexPageUser * Number(import.meta.env.VITE_PAGE_SIZE) + idx + 1}</td>
+                    <td className={`border-b border-r px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>{currentIndexPageUser * Number(import.meta.env.VITE_PAGE_SIZE) + idx + 1}</td>
                     {/* Name */}
-                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                    <td className={`border-b border-r px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                       {currentEditing === idx ? (
                         <input
                           type="text"
@@ -824,9 +823,9 @@ const OverViewAdmin = () => {
                       )}
                     </td>
                     {/* Email */}
-                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{user.email}</td>
+                    <td className={`border-b border-r px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>{user.email}</td>
                     {/* Phone Number */}
-                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                    <td className={`border-b border-r px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                       {currentEditing === idx ? (
                         <input
                           type="text"
@@ -841,7 +840,7 @@ const OverViewAdmin = () => {
                     </td>
                     {/* Role */}
                     <td
-                      className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''} ${
+                      className={`border-b border-r px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'} ${
                         user.role === "ADMIN"
                           ? " text-red-500"
                           : user.role === "SUPER_ADMIN"
@@ -852,9 +851,9 @@ const OverViewAdmin = () => {
                       {user.role}
                     </td>
                     {/* Count Bid */}
-                    <td className={`border px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>{user.bid_count}</td>
+                    <td className={`border-b border-r px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>{user.bid_count}</td>
                     {/* Company */}
-                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                    <td className={`border-b border-r px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                       {currentEditing === idx ? (
                         <input
                           type="text"
@@ -868,7 +867,7 @@ const OverViewAdmin = () => {
                       )}
                       </td>
                     {/* Status */}
-                    <td className={`border px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                    <td className={`border-b border-r px-2 py-1 ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                       <div className="flex justify-center">
                         {user.status ? (
                           <button
@@ -888,7 +887,7 @@ const OverViewAdmin = () => {
                       </div>
                     </td>
                     {/* Action */}
-                    <td className={`border px-2 py-1 space-x-1 text-center max-sm:flex whitespace-nowrap ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                    <td className={`border-b border-r px-2 py-1 space-x-1 text-center max-sm:flex whitespace-nowrap ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                       {currentEditing === idx ? (
                         <>
                           <button
@@ -1048,23 +1047,23 @@ const OverViewAdmin = () => {
               </div>
             </div>
           </div>
-          <div className={`overflow-x-auto border rounded ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-300'}`}>
+          <div className={`overflow-x-auto border-t border-l rounded ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-300'}`}>
             <div className="text-center ">
               {isLoadingSearch && <div className="loader" />}
             </div>
-            <table className="min-w-full border-collapse">
-              <thead className={tetMode ? 'bg-[#3a3b3c]' : 'bg-gray-200'}>
-                <tr>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("title")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("type")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("auction_type")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("start_time")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("end_time")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("starting_price")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("highest_price")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>{t("status")}</th>
-                  <th className={`border uppercase px-2 py-1 ${tetMode ? 'border-[#4a4b4c] text-gray-200' : ''}`}>#</th>
+            <table className="min-w-full border-separate border-spacing-0">
+              <thead>
+                <tr className="z-10">
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>#</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("title")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("type")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("auction_type")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("start_time")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("end_time")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("starting_price")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("highest_price")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("status")}</th>
+                  <th className={`sticky top-0 z-10 border-b border-r uppercase px-2 py-1 ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>#</th>
                 </tr>
               </thead>
               <tbody>
@@ -1089,25 +1088,25 @@ const OverViewAdmin = () => {
                           : undefined
                       }
                     >
-                      <td className={`border px-2 py-1 max-w-96 text-center break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 text-center break-words ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {currentIndexPageAuction * Number(import.meta.env.VITE_PAGE_SIZE) + idx + 1}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`} title={auction.title}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`} title={auction.title}>
                         {auction.title.length > 70 ? auction.title.slice(0, 70) + "..." : auction.title}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {auction.category.category_name || "N/A"}
                       </td>
-                      <td className={`border text-center px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r text-center px-2 py-1 max-w-96 break-words ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {auction.auction_type === "BUY" ? t("buy") : t("sell")}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {dayjs(auction.start_time).format("MM/DD/YYYY HH:mm")}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {dayjs(auction.end_time).format("MM/DD/YYYY HH:mm")}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {auction.starting_price?.toLocaleString(
                           "en-US",
                           {
@@ -1116,7 +1115,7 @@ const OverViewAdmin = () => {
                           }
                         )}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {auction.highest_amount?.toLocaleString(
                           "en-US",
                           {
@@ -1125,7 +1124,7 @@ const OverViewAdmin = () => {
                           }
                         ) || "N/A"}
                       </td>
-                      <td className={`border px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : ''}`}>
+                      <td className={`border-b border-r px-2 py-1 max-w-96 break-words text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                         {statusText}
                       </td>
                       <td
@@ -1133,7 +1132,7 @@ const OverViewAdmin = () => {
                           e.stopPropagation();
                           openDetailBid(auction.id);
                         }}
-                        className={`border text-center px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'text-blue-500'}`}
+                        className={`border-b border-r text-center px-2 py-1 max-w-96 underline cursor-pointer break-words ${tetMode ? 'border-[#4a4b4c] text-[#ff6666]' : 'border-gray-200 text-blue-500'}`}
                       >
                         {t("view")}
                       </td>

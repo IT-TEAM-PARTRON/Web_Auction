@@ -7,10 +7,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 import { forceReloadI18n } from "../../i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFileImport,
-  faFileExport,
-} from "@fortawesome/free-solid-svg-icons";
+import { faFileImport, faFileExport } from "@fortawesome/free-solid-svg-icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -48,10 +45,10 @@ export default function MultiLanguageDef() {
 
   const filteredRows = rows.filter(
     (r) =>
-      r.messageId.toLowerCase().includes(search.toLowerCase()) ||
-      r.en.toLowerCase().includes(search.toLowerCase()) ||
-      r.vi.toLowerCase().includes(search.toLowerCase()) ||
-      r.ko.toLowerCase().includes(search.toLowerCase()),
+      r.messageId.toLowerCase().includes(search.trim().toLowerCase()) ||
+      r.en.toLowerCase().includes(search.trim().toLowerCase()) ||
+      r.vi.toLowerCase().includes(search.trim().toLowerCase()) ||
+      r.ko.toLowerCase().includes(search.trim().toLowerCase()),
   );
 
   function handleSelect(row) {
@@ -109,21 +106,26 @@ export default function MultiLanguageDef() {
   }
 
   const handleExport = () => {
-    const data = rows.map(row => ({
+    const data = rows.map((row) => ({
       id: row.id || "",
       description: row.messageId || "",
       vi: row.vi || "",
       en: row.en || "",
-      kr: row.ko || ""
+      kr: row.ko || "",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Translations");
-    
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
-    
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const dataBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+
     saveAs(dataBlob, "translations.xlsx");
   };
 
@@ -132,98 +134,121 @@ export default function MultiLanguageDef() {
     if (!file) return;
     const validExtensions = [".xlsx", ".xls", ".csv"];
     const fileExtension = file.name
-    .substring(file.name.lastIndexOf("."))
-    .toLowerCase();
-  const validMimeTypes = [
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "application/vnd.ms-excel",
-    "text/csv",
-  ];
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+    const validMimeTypes = [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+      "text/csv",
+    ];
 
-  if (
-    !validExtensions.includes(fileExtension) ||
-    !validMimeTypes.includes(file.type)
-  ) {
-    toast.error(
-      t(
-        "invalid_file_type",
-        "Only .xlsx, .xls, .csv Excel files are allowed."
-      )
-    );
+    if (
+      !validExtensions.includes(fileExtension) ||
+      !validMimeTypes.includes(file.type)
+    ) {
+      toast.error(
+        t(
+          "invalid_file_type",
+          "Only .xlsx, .xls, .csv Excel files are allowed.",
+        ),
+      );
 
-    e.target.value = null;
-    return;
-  }
+      e.target.value = null;
+      return;
+    }
     try {
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            try {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
-                if (!json || json.length === 0) {
-                    toast.error(t("invalid_excel", "Invalid Excel file or empty data."));
-                    e.target.value = null;
-                    return;
-                }
-                const normalizedJson = json.map(row => {
-                    const normalized = {};
-                    for (const key in row) {
-                        normalized[key.trim().toLowerCase()] = row[key];
-                    }
-                    return normalized;
-                });
-
-                const firstRow = normalizedJson[0];
-                if (!("id" in firstRow) || !("description" in firstRow) || !("vi" in firstRow) || !("en" in firstRow) || !("kr" in firstRow)) {
-                    toast.error(t("invalid_excel_format", "Excel format is invalid. Required columns: id, description, vi, en, kr"));
-                    e.target.value = null;
-                    return;
-                }
-
-                const translationsPayload = [];
-                for (const row of normalizedJson) {
-                    const description = row.description?.toString().trim();
-                    if (!description) continue;
-
-                    translationsPayload.push({
-                        description: description,
-                        vi: row.vi?.toString() || "",
-                        en: row.en?.toString() || "",
-                        kr: row.kr?.toString() || "",
-                        event_user: user?.username || "admin"
-                    });
-                }
-
-                if (translationsPayload.length === 0) {
-                    toast.error(t("no_valid_data", "No valid data found to import."));
-                    e.target.value = null;
-                    return;
-                }
-                try {
-                    const payload = { translations: translationsPayload };
-                    const res = await updateApi("translations", "bulk-update", payload, true);
-                    toast.success(res?.data?.message || t("import_success", "Import successful!"));
-                    fetchData();
-                    await forceReloadI18n();
-                } catch (apiError) {
-                    console.error("Bulk update error:", apiError);
-                    toast.error(apiError?.response?.data?.detail || t("import_fail", "Import failed!"));
-                }
-            } catch (err) {
-                console.error("Excel parse error:", err);
-                toast.error(t("parse_error", "Error parsing Excel file."));
-            }
+          if (!json || json.length === 0) {
+            toast.error(
+              t("invalid_excel", "Invalid Excel file or empty data."),
+            );
             e.target.value = null;
-        };
-        reader.readAsArrayBuffer(file);
-    } catch (err) {
-        console.error("File read error:", err);
-        toast.error(t("read_error", "Error reading file."));
+            return;
+          }
+          const normalizedJson = json.map((row) => {
+            const normalized = {};
+            for (const key in row) {
+              normalized[key.trim().toLowerCase()] = row[key];
+            }
+            return normalized;
+          });
+
+          const firstRow = normalizedJson[0];
+          if (
+            !("id" in firstRow) ||
+            !("description" in firstRow) ||
+            !("vi" in firstRow) ||
+            !("en" in firstRow) ||
+            !("kr" in firstRow)
+          ) {
+            toast.error(
+              t(
+                "invalid_excel_format",
+                "Excel format is invalid. Required columns: id, description, vi, en, kr",
+              ),
+            );
+            e.target.value = null;
+            return;
+          }
+
+          const translationsPayload = [];
+          for (const row of normalizedJson) {
+            const description = row.description?.toString().trim();
+            if (!description) continue;
+
+            translationsPayload.push({
+              description: description,
+              vi: row.vi?.toString() || "",
+              en: row.en?.toString() || "",
+              kr: row.kr?.toString() || "",
+              event_user: user?.username || "admin",
+            });
+          }
+
+          if (translationsPayload.length === 0) {
+            toast.error(t("no_valid_data", "No valid data found to import."));
+            e.target.value = null;
+            return;
+          }
+          try {
+            const payload = { translations: translationsPayload };
+            const res = await updateApi(
+              "translations",
+              "bulk-update",
+              payload,
+              true,
+            );
+            toast.success(
+              res?.data?.message || t("import_success", "Import successful!"),
+            );
+            fetchData();
+            await forceReloadI18n();
+          } catch (apiError) {
+            console.error("Bulk update error:", apiError);
+            toast.error(
+              apiError?.response?.data?.detail ||
+                t("import_fail", "Import failed!"),
+            );
+          }
+        } catch (err) {
+          console.error("Excel parse error:", err);
+          toast.error(t("parse_error", "Error parsing Excel file."));
+        }
         e.target.value = null;
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (err) {
+      console.error("File read error:", err);
+      toast.error(t("read_error", "Error reading file."));
+      e.target.value = null;
     }
   };
 
@@ -324,35 +349,53 @@ export default function MultiLanguageDef() {
 
             {/* Table */}
             <div className="overflow-auto flex-1">
-              <table className="w-full text-xs border-collapse">
+              <table className="w-full text-xs border-separate border-spacing-0">
                 <thead>
-                  <tr
-                    className={`sticky top-0 z-10 border-b-2 ${tetMode ? "bg-[#3a3b3c] border-[#4a4b4c]" : "bg-gray-200 border-gray-200"}`}
-                  >
+                  <tr className="z-10">
                     <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-wide border-r w-12 ${tetMode ? "text-gray-200 border-[#4a4b4c]" : "border-gray-200"}`}
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b w-12 ${
+                        tetMode
+                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
                     >
                       {t("number_col", "#")}
                     </th>
                     <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-wide border-r ${tetMode ? "text-gray-200 border-[#4a4b4c]" : "border-gray-200"}`}
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                        tetMode
+                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
                     >
                       {t("description_col", "Description")}
                     </th>
                     <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-wide border-r ${tetMode ? "text-gray-200 border-[#4a4b4c]" : "border-gray-200"}`}
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                        tetMode
+                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
                     >
-                     {t("en_col", "EN")}
+                      {t("en_col", "EN")}
                     </th>
                     <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-wide border-r ${tetMode ? "text-gray-200 border-[#4a4b4c]" : "border-gray-200"}`}
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                        tetMode
+                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
                     >
-                     {t("vi_col", "VI")}
+                      {t("vi_col", "VI")}
                     </th>
                     <th
-                      className={`px-4 py-3 text-center font-bold uppercase tracking-wide border-r ${tetMode ? "text-gray-200 border-[#4a4b4c]" : "border-gray-200"}`}
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                        tetMode
+                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
                     >
-                     {t("ko_col", "KO")}
+                      {t("ko_col", "KR")}
                     </th>
                   </tr>
                 </thead>

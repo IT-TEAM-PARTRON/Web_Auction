@@ -4,6 +4,7 @@ import {
   faLock,
   faEye,
   faEyeSlash,
+  faGlobe,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +12,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useTetMode } from "../../contexts/TetModeContext";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import CustomSelect from "../ui/CustomSelect";
 
 function LoginModal() {
   const { login, closeAuthModal, switchAuthModal } = useAuth();
@@ -21,7 +23,18 @@ function LoginModal() {
   const [remember, setRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const languageOptions = [
+    { value: "en", label: "English" },
+    { value: "vi", label: "Tiếng Việt" },
+    { value: "ko", label: "한국어" },
+  ];
+
+  const handleLanguageChange = (lang) => {
+    i18n.changeLanguage(lang);
+    sessionStorage.setItem("lang", lang);
+  };
 
   const inputClass = tetMode
     ? "w-full pl-11 pr-4 py-3 rounded-lg bg-[#3a3b3c] border border-[#4a4b4c] text-white placeholder-gray-500 text-sm outline-none transition-all duration-300 focus:border-red-500 focus:ring-2 focus:ring-red-900/30 focus:bg-[#3a3b3c]"
@@ -110,9 +123,21 @@ function LoginModal() {
       >
         {t("login", "Login")}
       </h1>
-      <p className={`text-center mb-5 text-sm ${tetMode ? "text-gray-400" : "text-gray-500"}`}>
+      <p className={`text-center mb-4 text-sm ${tetMode ? "text-gray-400" : "text-gray-500"}`}>
         {t("login_des")}
       </p>
+
+      {/* Language Selector */}
+      <div className="flex justify-center mb-6">
+        <div className="w-full max-w-[200px]">
+          <CustomSelect
+            value={i18n.language}
+            onChange={handleLanguageChange}
+            options={languageOptions}
+            icon={<FontAwesomeIcon icon={faGlobe} />}
+          />
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}
