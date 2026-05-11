@@ -453,7 +453,7 @@
   "read_error": "Lỗi khi đọc file.",
   "import_btn": "Import",
   "export_btn": "Export",
-  "number_col": "STT",
+  "number_col": "#",
   "description_col": "Mô tả",
   "en_col": "EN",
   "vi_col": "VI",

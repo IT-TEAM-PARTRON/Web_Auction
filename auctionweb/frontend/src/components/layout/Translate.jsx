@@ -501,8 +501,8 @@ export default function MultiLanguageDef() {
                       ${
                         canEdit
                           ? tetMode
-                            ? "bg-[#CB0502] text-white hover:bg-red-700"
-                            : "bg-blue-600 text-white hover:bg-blue-700"
+                            ? "bg-gradient-to-r text-white text-sm font-semibold from-[#CB0502] to-[#ff4444]"
+                            : "bg-gradient-to-r text-white text-sm font-semibold from-blue-500 to-indigo-500"
                           : tetMode
                             ? "bg-[#3a3b3c] text-gray-500 cursor-not-allowed"
                             : "bg-gray-100 text-gray-400 cursor-not-allowed"
