@@ -300,3 +300,12 @@ msgstr "파일이 너무 큽니다 (최대 100MB)"
 
 msgid "Key already exists"
 msgstr "이미 존재하는 키입니다"
+
+msgid "You don't have permission update translations!"
+msgstr "다국어를 수정할 권한이 없습니다!"
+
+msgid "Update success"
+msgstr "수정 성공"
+
+msgid "Error while updating translations: {error}"
+msgstr "다국어를 수정하는 중 오류가 발생했습니다: {error}"

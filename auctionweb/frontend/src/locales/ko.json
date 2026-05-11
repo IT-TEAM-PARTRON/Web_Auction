@@ -1,4 +1,5 @@
 {
+  "translate": "다국어",
   "login": "로그인",
   "no_changes_update": "수정할 변경 사항이 없습니다.",
   "email": "이메일",
@@ -23,6 +24,7 @@
   "invalid_reset_token": "유효하지 않거나 만료된 재설정 토큰입니다.",
   "password_mismatch": "비밀번호가 일치하지 않습니다.",
   "sign_in": "로그인",
+  "list_translations": "번역 목록",
   "or": "또는",
   "no_account": "계정이 없으신가요?",
   "sign_up": "회원가입",
@@ -427,5 +429,21 @@
   "update_translation_success": "업데이트 성공!",
   "update_translation_fail": "업데이트 실패!",
   "field_required": "비워둘 수 없습니다",
-  "select_row_to_view_detail": "세부 정보를 보려면 행을 선택하세요"
+  "select_row_to_view_detail": "세부 정보를 보려면 행을 선택하세요",
+  "invalid_file_type": "Excel 파일(.xlsx, .xls, .csv)만 허용됩니다.",
+  "invalid_excel": "잘못된 Excel 파일이거나 데이터가 없습니다.",
+  "invalid_excel_format": "잘못된 Excel 형식입니다. 필수 열: id, description, vi, en, kr",
+  "no_valid_data": "가져올 유효한 데이터를 찾을 수 없습니다.",
+  "import_success": "가져오기 성공!",
+  "import_fail": "가져오기 실패!",
+  "parse_error": "Excel 파일 구문 분석 오류입니다.",
+  "read_error": "파일 읽기 오류입니다.",
+  "import_btn": "가져오기",
+  "export_btn": "내보내기",
+  "number_col": "번호",
+  "description_col": "설명",
+  "en_col": "EN",
+  "vi_col": "VI",
+  "ko_col": "KO",
+  "importing": "데이터를 가져오는 중..."
 }

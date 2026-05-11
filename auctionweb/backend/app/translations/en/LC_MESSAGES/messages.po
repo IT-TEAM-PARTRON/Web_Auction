@@ -297,3 +297,14 @@ msgstr "File too large (max 100MB)"
 
 msgid "Key already exists"
 msgstr "Key already exists"
+
+msgid "You don't have permission update translations!"
+msgstr "You don't have permission update translations!"
+
+msgid "Update success"
+msgstr "Update success"
+
+msgid "Error while updating translations: {error}"
+msgstr "Error while updating translations: {error}"
+
+

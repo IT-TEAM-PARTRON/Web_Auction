@@ -294,3 +294,12 @@ msgstr "File quá lớn (tối đa 100MB)"
 
 msgid "Key already exists"
 msgstr "Key đã tồn tại"
+
+msgid "You don't have permission update translations!"
+msgstr "Bạn không có quyền cập nhật đa ngôn ngữ!"
+
+msgid "Update success"
+msgstr "Cập nhật thành công"
+
+msgid "Error while updating translations: {error}"
+msgstr "Lỗi khi cập nhật đa ngôn ngữ: {error}"

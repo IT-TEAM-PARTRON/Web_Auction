@@ -35,16 +35,32 @@ function NavBar() {
 
   // Function to show random Tet greeting
   const showTetGreetings = (isActivating) => {
-    // Lấy object từ i18n
-    const greetingsObj = isActivating
-      ? t("tet_greetings", { returnObjects: true })
-      : t("tet_off_greetings", { returnObjects: true });
+    const tetGreetingsKeys = [
+      "tet_greetings.congratulation",
+      "tet_greetings.prosperity",
+      "tet_greetings.blessing",
+      "tet_greetings.spring_wish",
+      "tet_greetings.fortune",
+      "tet_greetings.new_year_wish",
+      "tet_greetings.family",
+      "tet_greetings.health",
+      "tet_greetings.career",
+      "tet_greetings.peace"
+    ];
+    
+    const tetOffGreetingsKeys = [
+      "tet_off_greetings.see_you",
+      "tet_off_greetings.good_day",
+      "tet_off_greetings.thanks",
+      "tet_off_greetings.work_efficiently",
+      "tet_off_greetings.see_you_soon",
+      "tet_off_greetings.happy_workday",
+      "tet_off_greetings.stay_happy",
+      "tet_off_greetings.goal_achievement"
+    ];
 
-    // Chuyển Object thành Array các câu chúc
-    const greetingsList =
-      greetingsObj && typeof greetingsObj === "object"
-        ? Object.values(greetingsObj)
-        : [];
+    const keysToUse = isActivating ? tetGreetingsKeys : tetOffGreetingsKeys;
+    const greetingsList = keysToUse.map(key => t(key));
 
     if (greetingsList.length > 0) {
       const randomIndex = Math.floor(Math.random() * greetingsList.length);
@@ -280,6 +296,16 @@ function NavBar() {
             >
               {t("dashboard", "Dashboard")}
             </NavLink>
+
+          )}
+          {user?.role === "super_admin" && (
+            <NavLink
+              to="/translate"
+              className="mobile-nav-link"
+              onClick={closeMobileMenu}
+            >
+              {t("translate", "Translate")}
+            </NavLink>
           )}
           {user && (
             <>
@@ -434,6 +460,14 @@ function NavBar() {
               className={`nav-link ${tetMode ? "!text-white hover:!text-yellow-300" : ""}`}
             >
               {t("dashboard", "Dashboard")}
+            </NavLink>
+          )}
+          {user?.role === "super_admin" && (
+            <NavLink
+              to="/translate"
+              className={`nav-link ${tetMode ? "!text-white hover:!text-yellow-300" : ""}`}
+            >
+              {t("translate", "Translate")}
             </NavLink>
           )}
         </div>

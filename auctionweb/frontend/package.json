@@ -17,6 +17,7 @@
     "axios": "^1.10.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "file-saver": "^2.0.5",
     "flatpickr": "^4.6.13",
     "gsap": "^3.13.0",
     "i18next": "^25.3.2",
@@ -32,6 +33,7 @@
     "react-router-dom": "^7.6.2",
     "styled-components": "^6.1.19",
     "tailwind-scrollbar-hide": "^4.0.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.76"
   },
   "devDependencies": {

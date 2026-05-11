@@ -107,5 +107,14 @@ const initI18n = async () => {
     });
 };
 
+export const forceReloadI18n = async () => {
+    const currentLang = i18n.language;
+    const dbTranslations = await fetchDBTranslations(currentLang, true);
+    if (Object.keys(dbTranslations).length > 0) {
+        i18n.addResourceBundle(currentLang, 'translation', dbTranslations, true, true);
+        i18n.emit('languageChanged', currentLang);
+    }
+};
+
 export { initI18n };
 export default i18n;
