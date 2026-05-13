@@ -577,7 +577,7 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
                     </th>
                     {auction.status == 0 && (
                       <th className="px-4 py-2 font-semibold uppercase text-center w-[150px]">
-                        {t("actions")}
+                        {t("action")}
                       </th>
                     )}
                   </tr>

@@ -488,8 +488,9 @@ function NavBar() {
           >
             <button
               type="button"
+              disabled
               onClick={() => setLangOpenDesktop(!langOpenDesktop)}
-              className={`flex items-center gap-2 px-3 rounded transition-colors duration-200 font-semibold text-sm outline-none ${
+              className={`flex cursor-not-allowed items-center gap-2 px-3 rounded transition-colors duration-200 font-semibold text-sm outline-none ${
                 tetMode
                   ? "text-white hover:text-yellow-300"
                   : "text-gray-700 hover:text-blue-600 hover:bg-gray-100/80"

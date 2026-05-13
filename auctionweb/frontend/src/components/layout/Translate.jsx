@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 import { forceReloadI18n } from "../../i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileImport, faFileExport } from "@fortawesome/free-solid-svg-icons";
+import { faUpload, faDownload } from "@fortawesome/free-solid-svg-icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
@@ -19,7 +19,7 @@ export default function MultiLanguageDef() {
   const { t } = useTranslation();
   const [rows, setRows] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  const [form, setForm] = useState(null);
+  const [form, setForm] = useState({ messageId: "", en: "", vi: "", ko: "" });
   const [errors, setErrors] = useState({});
   const [search, setSearch] = useState("");
 
@@ -330,7 +330,7 @@ export default function MultiLanguageDef() {
                       : "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 shadow-sm"
                   }`}
                 >
-                  <FontAwesomeIcon icon={faFileImport} />
+                  <FontAwesomeIcon icon={faUpload} />
                   {t("import_btn", "Import")}
                 </button>
                 <button
@@ -341,7 +341,7 @@ export default function MultiLanguageDef() {
                       : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
                 >
-                  <FontAwesomeIcon icon={faFileExport} />
+                  <FontAwesomeIcon icon={faDownload} />
                   {t("export_btn", "Export")}
                 </button>
               </div>
@@ -353,7 +353,7 @@ export default function MultiLanguageDef() {
                 <thead>
                   <tr className="z-10">
                     <th
-                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b w-12 ${
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-l border-r border-t border-b w-12 ${
                         tetMode
                           ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
                           : "bg-gray-200 text-gray-700 border-gray-300"
@@ -362,7 +362,7 @@ export default function MultiLanguageDef() {
                       {t("number_col", "#")}
                     </th>
                     <th
-                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
                         tetMode
                           ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
                           : "bg-gray-200 text-gray-700 border-gray-300"
@@ -371,7 +371,7 @@ export default function MultiLanguageDef() {
                       {t("description_col", "Description")}
                     </th>
                     <th
-                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
                         tetMode
                           ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
                           : "bg-gray-200 text-gray-700 border-gray-300"
@@ -380,7 +380,7 @@ export default function MultiLanguageDef() {
                       {t("en_col", "EN")}
                     </th>
                     <th
-                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
                         tetMode
                           ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
                           : "bg-gray-200 text-gray-700 border-gray-300"
@@ -389,7 +389,7 @@ export default function MultiLanguageDef() {
                       {t("vi_col", "VI")}
                     </th>
                     <th
-                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-b ${
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
                         tetMode
                           ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
                           : "bg-gray-200 text-gray-700 border-gray-300"
@@ -419,27 +419,27 @@ export default function MultiLanguageDef() {
                         }`}
                       >
                         <td
-                          className={`px-4 py-3 text-center border-r ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
+                          className={`px-4 py-3 text-center border-l border-r border-b ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
                         >
-                          {idx + 1}
+                          {row.id}
                         </td>
                         <td
-                          className={`px-4 py-3 font-medium border-r ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
+                          className={`px-4 py-3 font-medium border-r border-b ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
                         >
                           {row.messageId}
                         </td>
                         <td
-                          className={`px-4 py-3 border-r ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
+                          className={`px-4 py-3 border-r border-b ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
                         >
                           {row.en}
                         </td>
                         <td
-                          className={`px-4 py-3 border-r ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
+                          className={`px-4 py-3 border-r border-b ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
                         >
                           {row.vi}
                         </td>
                         <td
-                          className={`px-4 py-3 border-r ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
+                          className={`px-4 py-3 border-r border-b ${tetMode ? "border-[#4a4b4c]" : "border-gray-200"}`}
                         >
                           {row.ko}
                         </td>
@@ -480,81 +480,58 @@ export default function MultiLanguageDef() {
 
             {/* Form body */}
             <div className="flex-1 overflow-auto px-4 py-4">
-              {form === null ? (
-                <div
-                  className={`flex flex-col items-center justify-center h-full gap-3 ${tetMode ? "text-gray-500" : "text-gray-300"}`}
-                >
-                  <svg
-                    className="w-12 h-12"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  <p className="text-xs italic">
-                    {t("select_row_to_view_detail")}
-                  </p>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {/* Message ID — không cho sửa */}
-                  <FormField
-                    label={t("description_col", "Description")}
-                    value={form?.messageId || ""}
-                    disabled
-                    required
-                    tetMode={tetMode}
-                  />
-                  <FormField
-                    label={t("en_col", "EN")}
-                    value={form?.en || ""}
-                    onChange={(v) => handleFormChange("en", v)}
-                    error={errors.en}
-                    required
-                    tetMode={tetMode}
-                  />
-                  <FormField
-                    label={t("vi_col", "VI")}
-                    value={form?.vi || ""}
-                    onChange={(v) => handleFormChange("vi", v)}
-                    error={errors.vi}
-                    required
-                    tetMode={tetMode}
-                  />
-                  <FormField
-                    label={t("ko_col", "KO")}
-                    value={form?.ko || ""}
-                    onChange={(v) => handleFormChange("ko", v)}
-                    error={errors.ko}
-                    required
-                    tetMode={tetMode}
-                  />
+              <div className="flex flex-col gap-4">
+                {/* Message ID — không cho sửa */}
+                <FormField
+                  label={t("description_col", "Description")}
+                  value={form?.messageId || ""}
+                  disabled
+                  required
+                  tetMode={tetMode}
+                />
+                <FormField
+                  label={t("en_col", "EN")}
+                  value={form?.en || ""}
+                  onChange={(v) => handleFormChange("en", v)}
+                  error={errors.en}
+                  required
+                  tetMode={tetMode}
+                />
+                <FormField
+                  label={t("vi_col", "VI")}
+                  value={form?.vi || ""}
+                  onChange={(v) => handleFormChange("vi", v)}
+                  error={errors.vi}
+                  required
+                  tetMode={tetMode}
+                />
+                <FormField
+                  label={t("ko_col", "KO")}
+                  value={form?.ko || ""}
+                  onChange={(v) => handleFormChange("ko", v)}
+                  error={errors.ko}
+                  required
+                  tetMode={tetMode}
+                />
 
-                  {/* Nút Edit / cập nhật */}
-                  <button
-                    onClick={handleEdit}
-                    disabled={!canEdit}
-                    className={`mt-2 flex items-center justify-center gap-1.5 w-full py-2 rounded text-xs font-semibold transition
-                      ${
-                        canEdit
-                          ? tetMode
-                            ? "bg-gradient-to-r text-white text-sm font-semibold from-[#CB0502] to-[#ff4444]"
-                            : "bg-gradient-to-r text-white text-sm font-semibold from-blue-500 to-indigo-500"
-                          : tetMode
-                            ? "bg-[#3a3b3c] text-gray-500 cursor-not-allowed"
-                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      }`}
-                  >
-                    {t("edit")}
-                  </button>
-                </div>
-              )}
+                {/* Nút Edit / cập nhật */}
+                <button
+                  onClick={handleEdit}
+                  disabled={!canEdit}
+                  className={`mt-2 flex items-center justify-center gap-1.5 w-full py-2 rounded text-xs font-semibold transition
+                    ${
+                      canEdit
+                        ? tetMode
+                          ? "bg-gradient-to-r text-white text-sm font-semibold from-[#CB0502] to-[#ff4444]"
+                          : "bg-gradient-to-r text-white text-sm font-semibold from-blue-500 to-indigo-500"
+                        : tetMode
+                          ? "bg-[#3a3b3c] text-gray-500 cursor-not-allowed"
+                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    }`}
+                >
+                  {t("edit")}
+                </button>
+              </div>
             </div>
           </div>
         </div>

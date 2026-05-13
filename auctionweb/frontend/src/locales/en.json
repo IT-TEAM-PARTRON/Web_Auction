@@ -1,5 +1,5 @@
 {
-  "translate": "Multi language",
+  "translate": "Language management",
   "vision_title": "Vision & Development Orientation",
   "no_changes_update": "No changes detected to update.",
   "login": "Login",
@@ -113,7 +113,6 @@
   "disactive": "Inactive",
   "view": "View",
   "action": "Action",
-  "actions": "Actions",
   "deadline": "Deadline",
   "add": "Add",
   "starting_price": "Starting Price",
@@ -378,7 +377,6 @@
   "than_last_month": "that last month",
   "phone_require": "Phone number requires 10 characters",
   "phone_regex": "Phone number requires number",
-  "cancle":"Cancel",
   "winner": "Winner",
   "participated": "Participated",
   "winning": "Winning",
