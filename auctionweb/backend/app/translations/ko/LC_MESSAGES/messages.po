@@ -292,9 +292,6 @@ msgstr "start_time은 end_time보다 빨라야 합니다"
 msgid "Email already exists"
 msgstr "이메일이 이미 존재합니다."
 
-msgid "Invalid file type. Only Excel and PDF are allowed."
-msgstr "잘못된 파일 형식입니다. 엑셀 및 PDF 파일만 허용됩니다."
-
 msgid "File too large (max 100MB)"
 msgstr "파일이 너무 큽니다 (최대 100MB)"
 

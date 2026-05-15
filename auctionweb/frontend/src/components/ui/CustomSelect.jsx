@@ -35,7 +35,7 @@ const CustomSelect = ({ value, onChange, options, placeholder, icon }) => {
       case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prev) =>
-          prev < options.length - 1 ? prev + 1 : prev
+          prev < options.length - 1 ? prev + 1 : prev,
         );
         break;
       case "ArrowUp":
@@ -81,8 +81,14 @@ const CustomSelect = ({ value, onChange, options, placeholder, icon }) => {
           focus:outline-none focus:ring-2 ${tetMode ? "focus:ring-red-500" : "focus:ring-blue-400"}
         `}
       >
-        <span className={`flex items-center gap-2 ${!selectedOption ? (tetMode ? "text-gray-400" : "text-gray-500") : ""}`}>
-          {icon && <span className={tetMode ? "text-gray-400" : "text-gray-500"}>{icon}</span>}
+        <span
+          className={`flex items-center gap-2 ${!selectedOption ? (tetMode ? "text-gray-400" : "text-gray-500") : ""}`}
+        >
+          {icon && (
+            <span className={tetMode ? "text-gray-400" : "text-gray-500"}>
+              {icon}
+            </span>
+          )}
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown
@@ -95,6 +101,12 @@ const CustomSelect = ({ value, onChange, options, placeholder, icon }) => {
 
       {/* Dropdown Menu */}
       <div
+        style={{
+          WebkitTransform: "translateZ(0)",
+          transform: "translateZ(0)",
+          WebkitBackfaceVisibility: "hidden",
+          backfaceVisibility: "hidden",
+        }}
         className={`
           absolute z-50 w-full mt-1 rounded-lg shadow-lg overflow-hidden
           transition-all duration-300 ease-in-out origin-top
@@ -125,12 +137,12 @@ const CustomSelect = ({ value, onChange, options, placeholder, icon }) => {
                       ? "bg-red-600 text-white font-medium"
                       : "bg-blue-500 text-white font-medium"
                     : highlightedIndex === index
-                    ? tetMode
-                      ? "bg-[#3a3b3c] text-white"
-                      : "bg-gray-100 text-gray-900"
-                    : tetMode
-                    ? "text-gray-300 hover:bg-[#3a3b3c]"
-                    : "text-gray-700 hover:bg-gray-50"
+                      ? tetMode
+                        ? "bg-[#3a3b3c] text-white"
+                        : "bg-gray-100 text-gray-900"
+                      : tetMode
+                        ? "text-gray-300 hover:bg-[#3a3b3c]"
+                        : "text-gray-700 hover:bg-gray-50"
                 }
               `}
             >
