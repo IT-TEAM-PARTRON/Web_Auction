@@ -22,7 +22,7 @@ function HomePage() {
       {/* Falling Flowers Effect for Tet Mode */}
       {tetMode && <FallingFlowers />}
       
-      <section className="relative w-full  h-[630px] flex items-center justify-center text-center mb-[35px]">
+      <section className="relative w-full h-[630px] flex justify-center text-center mb-[35px]">
       {/* Background Image */}
       <img
         src={register}
@@ -49,7 +49,7 @@ function HomePage() {
 
       {/* Content */}
       <AnimatedText>
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 h-full flex flex-col justify-end pb-6">
         {/* Subtitle */}
         {/* <p className="text-white text-sm p-2 tracking-widest mb-3">
           {t("probid")}
@@ -78,7 +78,7 @@ function HomePage() {
         </div> */}
 
         {/* Buttons */}
-        <div className="mt-8 flex justify-center gap-4 flex-wrap">
+        <div className="flex justify-center gap-4 flex-wrap mb-2">
           <Link to="/guide" className="relative group">
             {tetMode && (
               <>

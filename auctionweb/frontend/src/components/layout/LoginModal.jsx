@@ -127,18 +127,6 @@ function LoginModal() {
         {t("login_des")}
       </p>
 
-      {/* Language Selector */}
-      <div className="flex justify-center mb-6">
-        <div className="w-full max-w-[200px]">
-          <CustomSelect
-            value={i18n.language}
-            onChange={handleLanguageChange}
-            options={languageOptions}
-            icon={<FontAwesomeIcon icon={faGlobe} />}
-          />
-        </div>
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}
         <div className="relative">
@@ -197,7 +185,17 @@ function LoginModal() {
             {t("forget_password", "Forget password")}
           </button>
         </div>
-
+        {/* Language Selector */}
+      <div className="flex justify-center mb-6">
+        <div className="w-full">
+          <CustomSelect
+            value={i18n.language}
+            onChange={handleLanguageChange}
+            options={languageOptions}
+            icon={<FontAwesomeIcon icon={faGlobe} />}
+          />
+        </div>
+      </div>
         {/* Submit */}
         <button
           type="submit"

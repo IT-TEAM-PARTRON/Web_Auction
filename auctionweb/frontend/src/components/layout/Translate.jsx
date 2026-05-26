@@ -91,6 +91,8 @@ export default function MultiLanguageDef() {
       setRows((prev) => prev.map((r) => (r.id === form.id ? { ...form } : r)));
       await forceReloadI18n();
       toast.success(t("update_translation_success"));
+      //reset form
+      setForm({ messageId: "", en: "", vi: "", ko: "" });
     } catch (error) {
       console.error("Failed to update translation:", error);
       toast.error(t("update_translation_fail"));
@@ -194,6 +196,25 @@ export default function MultiLanguageDef() {
                 "invalid_excel_format",
                 "Excel format is invalid. Required columns: id, description, vi, en, kr",
               ),
+            );
+            e.target.value = null;
+            return;
+          }
+
+          //check duplidate column description
+          const duplicateDescriptions = normalizedJson.filter(
+            (row, index) =>
+              normalizedJson.findIndex(
+                (r) => r.description === row.description,
+              ) !== index,
+          );
+          // get list number rows duplicate description
+          const duplicateDescriptionNumbers = duplicateDescriptions.map(
+            (row) => normalizedJson.indexOf(row) + 1,
+          );
+          if (duplicateDescriptions.length > 0) {
+            toast.error(
+              t("duplicate_description") + ": " + duplicateDescriptionNumbers.join(", "),
             );
             e.target.value = null;
             return;
