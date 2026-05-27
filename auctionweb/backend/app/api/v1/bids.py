@@ -93,7 +93,7 @@ def create_bid(
         if not user:
             raise HTTPException(status_code=403, detail=_("User not allowed to bid", request))
                  
-        if user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN:
+        if user.role == UserRole.ADMIN or user.role == UserRole.MANAGER:
             raise HTTPException(status_code=403, detail=_("Admin or Super Admin not allowed to bid", request))
         
         if float(bid_in.bid_amount) < float(auction.starting_price):
@@ -225,7 +225,7 @@ def void_bid(
             raise HTTPException(status_code=404, detail=_("Bid not found", request))
         
         user = db.query(User).filter(User.id == user_id).first()
-        if not user or user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        if not user or user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
             raise HTTPException(status_code=403, detail=_("Only Admin or Super Admin can void bids", request))
         
         bid.status = BidStatus.INVALID.value

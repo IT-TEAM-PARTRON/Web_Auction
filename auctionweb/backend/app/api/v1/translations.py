@@ -84,7 +84,7 @@ def create_translation(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(
             status_code=403,
             detail=_("You don't have permison create translations!", request)
@@ -117,7 +117,7 @@ def update_translation(
     # log data FE send to BE
     print("Update translation data:", data)
     try:
-        if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
             raise HTTPException(
                 status_code=403,
                 detail=_("You don't have permison update translations!", request)
@@ -149,7 +149,7 @@ def bulk_update_translation(
 ):
     try:
 
-        if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+        if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
             raise HTTPException(
                 status_code=403,
                 detail=_("You don't have permission update translations!", request)

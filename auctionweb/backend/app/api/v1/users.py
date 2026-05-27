@@ -83,11 +83,11 @@ def get_users(
     search_text: Optional[str] = Query(None, description="Tìm kiếm theo username hoặc email"),
     sort_by: Optional[str] = Query("created_at", description="Sắp xếp theo: username, email, created_at, bid_count"),
     sort_order: Optional[str] = Query("desc", description="Thứ tự sắp xếp: asc, desc"),
-    role: Optional[str] = Query(None, description="Lọc theo role: USER, ADMIN, SUPER_ADMIN"),
+    role: Optional[str] = Query(None, description="Lọc theo role: USER, ADMIN, MANAGER"),
     page: int = Query(1, ge=1, description="Số trang"),
     page_size: int = Query(8, ge=1, le=100, description="Số user mỗi trang")
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(
             status_code=403,
             detail=_("You don't have permison watch users!", request)
@@ -176,7 +176,7 @@ def create_user(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     
     # Check email already exists
@@ -218,14 +218,11 @@ def set_user_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
-
-    if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
-        raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin, Admin information", request))
     
-    if current_user.role == UserRole.SUPER_ADMIN and user.role == UserRole.SUPER_ADMIN:
+    if current_user.role == UserRole.ADMIN and user.role == UserRole.ADMIN:
         raise HTTPException(status_code=403, detail=_("Super Admin cannot modify Super Admin information", request))
     
     if not user:
@@ -252,10 +249,13 @@ def update_user(
     if current_user.role == UserRole.USER and current_user.id != user.id:
         raise HTTPException(status_code=403, detail=_("You can only modify your own information", request))
 
-    # Nếu là admin -> cấm sửa thông tin SUPER_ADMIN
-    if current_user.role == UserRole.ADMIN and user.role == UserRole.SUPER_ADMIN:
-        raise HTTPException(status_code=403, detail=_("Admin cannot modify Super Admin information", request))
-
+    # MANAGER chỉ sửa chính mình
+    if current_user.role == UserRole.MANAGER:
+        if current_user.id != user.id:
+            raise HTTPException(
+                status_code=403,
+                detail=_("You can only modify your own information", request)
+            )
     # Update các trường cho phép
     if data.username is not None:
         user.username = data.username.strip()
@@ -281,16 +281,13 @@ def delete_user(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail=_("User not found", request))
 
-    if current_user.role == UserRole.ADMIN and (user.role == UserRole.SUPER_ADMIN or user.role == UserRole.ADMIN):
-        raise HTTPException(status_code=403, detail=_("Admin cannot delete Super Admin information", request))
-
-    if current_user.role == UserRole.SUPER_ADMIN and user.role == UserRole.SUPER_ADMIN:
+    if current_user.role == UserRole.ADMIN and user.role == UserRole.ADMIN:
         raise HTTPException(status_code=403, detail=_("Super Admin cannot delete Super Admin information", request))
     db.delete(user)
     db.commit() 

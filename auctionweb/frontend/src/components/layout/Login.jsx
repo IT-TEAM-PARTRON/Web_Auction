@@ -67,7 +67,7 @@ function Login() {
         navigate("/");
       } else if (
         response.ok &&
-        (data.role === "admin" || data.role === "super_admin")
+        (data.role === "admin" || data.role === "manager")
       ) {
         login(data, remember);
         navigate("/admin");

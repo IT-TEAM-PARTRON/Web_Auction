@@ -2,8 +2,8 @@ import enum
 
 class UserRole(enum.Enum):
     USER = "USER"
+    MANAGER = "MANAGER"
     ADMIN = "ADMIN"
-    SUPER_ADMIN = "SUPER_ADMIN"
 
 # chưa dùng đến
 class OrderStatus(enum.Enum):

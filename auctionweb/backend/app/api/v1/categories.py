@@ -101,7 +101,7 @@ def create_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail=_("You don't have permission to create category!", request)
@@ -127,7 +127,7 @@ def update_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     category = db.query(Category).filter(Category.category_id == category_id).first()
     if not category:
@@ -149,7 +149,7 @@ def delete_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(status_code=403, detail=_("Permission denied", request))
     category = db.query(Category).filter(Category.category_id == category_id).first()
     if not category:

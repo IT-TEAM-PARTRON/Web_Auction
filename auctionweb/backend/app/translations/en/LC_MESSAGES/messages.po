@@ -158,25 +158,25 @@ msgid "Your new price must be at least one price step away from your old price."
 msgstr "Your new price must be at least one price step away from your old price."
 
 msgid "Admin cannot modify Super Admin information"
-msgstr "Admin cannot modify Super Admin and Admin information"
+msgstr "Manager cannot modify Admin and Admin information"
 
 msgid "Admin cannot delete Super Admin information"
-msgstr "Admin cannot delete account Super Admin, Admin"
+msgstr "Manager cannot delete account Admin, Admin"
 
 msgid "Super Admin cannot delete Super Admin information"
-msgstr "Super Admin cannot delete Super Admin"
+msgstr "Admin cannot delete Admin"
 
 msgid "Admin cannot modify Super Admin, Admin information"
-msgstr "Admin cannot modify Super Admin, Admin information"
+msgstr "Manager cannot modify Admin, Admin information"
 
 msgid "Phone number must be 10 digits"
 msgstr "Phone number must be 10 digits"
 
 msgid "Admin or Super Admin not allowed to bid"
-msgstr "Admin or Super Admin not allowed to bid"
+msgstr "Admin or Manager not allowed to bid"
 
 msgid "Super Admin cannot modify Super Admin information"
-msgstr "Super Admin cannot modify Super Admin information"
+msgstr "Admin cannot modify Admin information"
 
 msgid "You don't have permission to create category!"
 msgstr "You don't have permission to create category!"
@@ -250,8 +250,8 @@ msgstr "Invalid token"
 msgid "Not Found"
 msgstr "Not Found"
 
-msgid "Only Admin or Super Admin can void bids"
-msgstr "Only Admin or Super Admin can void bids"
+msgid "Only Admin or Manager can void bids"
+msgstr "Only Admin or Manager can void bids"
 
 msgid "Password has been reset successfully"
 msgstr "Password has been reset successfully"
@@ -306,5 +306,7 @@ msgstr "Update success"
 
 msgid "Error while updating translations: {error}"
 msgstr "Error while updating translations: {error}"
+
+
 
 

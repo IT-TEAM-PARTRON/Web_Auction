@@ -288,7 +288,7 @@ function NavBar() {
           >
             {t("rule", "Quy định")}
           </NavLink>
-          {(user?.role === "admin" || user?.role === "super_admin") && (
+          {(user?.role === "admin" || user?.role === "manager") && (
             <NavLink
               to="/admin"
               className="mobile-nav-link"
@@ -298,7 +298,7 @@ function NavBar() {
             </NavLink>
 
           )}
-          {user?.role === "super_admin" && (
+          {user?.role === "admin" && (
             <NavLink
               to="/translate"
               className="mobile-nav-link"
@@ -454,7 +454,7 @@ function NavBar() {
           >
             {t("rule", "Rule")}
           </NavLink>
-          {(user?.role === "admin" || user?.role === "super_admin") && (
+          {(user?.role === "admin" || user?.role === "manager") && (
             <NavLink
               to="/admin"
               className={`nav-link ${tetMode ? "!text-white hover:!text-yellow-300" : ""}`}
@@ -462,7 +462,7 @@ function NavBar() {
               {t("dashboard", "Dashboard")}
             </NavLink>
           )}
-          {user?.role === "super_admin" && (
+          {(user?.role === "admin" || user?.role === "manager") && (
             <NavLink
               to="/translate"
               className={`nav-link ${tetMode ? "!text-white hover:!text-yellow-300" : ""}`}

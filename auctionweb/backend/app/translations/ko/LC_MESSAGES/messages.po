@@ -251,7 +251,7 @@ msgid "Not Found"
 msgstr "찾을 수 없습니다"
 
 msgid "Only Admin or Super Admin can void bids"
-msgstr "Admin 또는 Super Admin만 입찰을 무효 처리할 수 있습니다"
+msgstr "Admin 또는 Manager 만 입찰을 무효 처리할 수 있습니다"
 
 msgid "Password has been reset successfully"
 msgstr "비밀번호가 재설정되었습니다"
@@ -306,3 +306,6 @@ msgstr "수정 성공"
 
 msgid "Error while updating translations: {error}"
 msgstr "다언어 업데이트 시 오류가 발생했습니다: {error}"
+
+msgid "You can only modify your own information"
+msgstr "본인 정보만 수정할 수 있습니다"

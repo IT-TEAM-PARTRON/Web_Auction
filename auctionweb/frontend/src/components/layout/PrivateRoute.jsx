@@ -9,7 +9,7 @@ const PrivateRoute = () => {
   const [redirectPath, setRedirectPath] = useState(null);
 
   useEffect(() => {
-    if (!user || (user.role !== "admin" && user.role !== "super_admin")) {
+    if (!user || (user.role !== "admin" && user.role !== "manager")) {
       if (!isLoggingOut) {
         const message = !user
           ? "You need login to continue!"
@@ -27,7 +27,7 @@ const PrivateRoute = () => {
     return <Navigate to={redirectPath} replace state={{ from: location }} />;
   }
 
-  if (user && (user.role === "admin" || user.role === "super_admin")) {
+  if (user && (user.role === "admin" || user.role === "manager")) {
     return <Outlet />;
   }
 

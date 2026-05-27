@@ -28,7 +28,7 @@ axiosWithToken.interceptors.request.use(
 
 const axiosDefault = axios.create({
   baseURL: '/api/v1',
-  timeout: 5000,
+  timeout: 10000,
 });
 
 axiosDefault.interceptors.request.use(

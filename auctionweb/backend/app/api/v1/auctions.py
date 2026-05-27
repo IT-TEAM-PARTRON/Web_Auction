@@ -368,8 +368,8 @@ def create_auction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Chỉ admin hoặc super admin mới được tạo đấu giá
-    if current_user.role not in [UserRole.ADMIN, UserRole.SUPER_ADMIN]:
+    # Chỉ admin hoặc manager mới được tạo đấu giá
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN,
             detail=_("You don't have permission to create auction!", request)
@@ -468,9 +468,9 @@ def update_auction(
         raise HTTPException(status_code=404, detail=_("Auction not found", request))
 
     # Kiểm tra quyền
-    if current_user.role == UserRole.SUPER_ADMIN:
+    if current_user.role == UserRole.ADMIN:
         pass  # Được phép sửa tất cả
-    elif current_user.role == UserRole.ADMIN:
+    elif current_user.role == UserRole.MANAGER:
         if auction.created_by != current_user.id:
             raise HTTPException(status_code=403, detail=_("You are not allowed to edit this auction", request))
     else:

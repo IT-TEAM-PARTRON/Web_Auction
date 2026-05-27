@@ -155,13 +155,13 @@ msgid "Your new price must be at least one price step away from your old price."
 msgstr "Giá mới của bạn phải cách giá cũ ít nhất một bước giá."
 
 msgid "Admin cannot modify Super Admin information"
-msgstr "Admin không có quyền chỉnh sửa thông tin của supper Admin và Admin"
+msgstr "Quản lý không có quyền chỉnh sửa thông tin của Admin và Quản lý"
 
 msgid "Admin cannot delete Super Admin information"
-msgstr "Admin không có quyền xóa tài khoản Supper Admin và Admin"
+msgstr "Quản lý không có quyền xóa tài khoản Admin và Quản lý"
 
 msgid "Super Admin cannot delete Super Admin information"
-msgstr "Super Admin không thể xóa được tài khoản Super Admin"
+msgstr "Admin không thể xóa được tài khoản Super Admin"
 
 msgid "Admin cannot modify Super Admin, Admin information"
 msgstr "Admin không có quyền thay đổi thông tin của tài khoản Super Admin và Admin"
@@ -173,7 +173,7 @@ msgid "Admin or Super Admin not allowed to bid"
 msgstr "Admin và Super admin không được phép tham gia đấu giá"
 
 msgid "Super Admin cannot modify Super Admin information"
-msgstr "Super admin không thể chỉnh sửa thông tin của Supper admin"
+msgstr "Admin không thể chỉnh sửa thông tin của Admin"
 
 msgid "You don't have permission to create category!"
 msgstr "Bạn không có quyền tạo danh mục!"
@@ -303,3 +303,6 @@ msgstr "Cập nhật thành công"
 
 msgid "Error while updating translations: {error}"
 msgstr "Lỗi khi cập nhật đa ngôn ngữ: {error}"
+
+msgid "You can only modify your own information"
+msgstr "Bạn chỉ có thể chỉnh sửa thông tin của chính mình"

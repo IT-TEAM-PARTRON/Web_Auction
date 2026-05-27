@@ -31,7 +31,8 @@ import clsx from "clsx";
 const OverViewAdmin = () => {
   const navigate = useNavigate();
   const { tetMode } = useTetMode();
-  const { openAuthModal } = useAuth();
+  const { openAuthModal, user: authUser } = useAuth();
+  const isAdmin = authUser?.role === "admin";
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
   const [currentIndexPageCategory, setCurrentIndexPageCategory] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
@@ -798,7 +799,7 @@ const OverViewAdmin = () => {
                   <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("bid_count")}</th>
                   <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("company")}</th>
                   <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("status")}</th>
-                  <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("action")}</th>
+                  {isAdmin && <th className={`sticky top-0 z-10 border-b border-r px-2 py-1 uppercase ${tetMode ? 'bg-[#3a3b3c] border-[#4a4b4c] text-gray-200' : 'bg-gray-200 border-gray-300 text-gray-700'}`}>{t("action")}</th>}
                 </tr>
               </thead>
               <tbody>
@@ -843,7 +844,7 @@ const OverViewAdmin = () => {
                       className={`border-b border-r px-2 py-1 text-center ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'} ${
                         user.role === "ADMIN"
                           ? " text-red-500"
-                          : user.role === "SUPER_ADMIN"
+                          : user.role === "MANAGER"
                           ? " text-green-500"
                           : ""
                       }`}
@@ -871,22 +872,25 @@ const OverViewAdmin = () => {
                       <div className="flex justify-center">
                         {user.status ? (
                           <button
-                            onClick={() => handleDeactiveUser(user)}
-                            className={`text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 hover:scale-105 ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
+                            onClick={isAdmin ? () => handleDeactiveUser(user) : undefined}
+                            disabled={!isAdmin}
+                            className={`text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 ${isAdmin ? 'cursor-pointer hover:scale-105' : 'cursor-default opacity-70'} ${tetMode ? 'bg-gradient-to-r from-[#CB0502] to-[#ff4444]' : 'bg-gradient-to-r from-blue-500 to-indigo-500'}`}
                           >
                             {t("active")}
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleDeactiveUser(user)}
-                            className="bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 hover:scale-105"
+                            onClick={isAdmin ? () => handleDeactiveUser(user) : undefined}
+                            disabled={!isAdmin}
+                            className={`bg-red-500 text-white text-xs px-3 py-2 min-w-[70%] text-center rounded transform transition-transform duration-300 ${isAdmin ? 'cursor-pointer hover:scale-105' : 'cursor-default opacity-70'}`}
                           >
                             {t("disactive")}
                           </button>
                         )}
                       </div>
                     </td>
-                    {/* Action */}
+                    {/* Action for admin only */}
+                    {isAdmin && (
                     <td className={`border-b border-r px-2 py-1 space-x-1 text-center max-sm:flex whitespace-nowrap ${tetMode ? 'border-[#4a4b4c]' : 'border-gray-200'}`}>
                       {currentEditing === idx ? (
                         <>
@@ -920,6 +924,7 @@ const OverViewAdmin = () => {
                         </>
                       )}
                     </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -1079,11 +1084,11 @@ const OverViewAdmin = () => {
                         "transition",
                         tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white',
                         {
-                          "cursor-pointer": auction.status === 1 || auction.status === 0,
+                          "cursor-pointer": isAdmin && (auction.status === 1 || auction.status === 0),
                         }
                       )}
                       onClick={
-                        auction.status === 1 || auction.status === 0
+                        isAdmin && (auction.status === 1 || auction.status === 0)
                           ? () => setModeEdit(auction)
                           : undefined
                       }
