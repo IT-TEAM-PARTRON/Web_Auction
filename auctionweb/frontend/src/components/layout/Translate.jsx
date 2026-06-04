@@ -33,8 +33,8 @@ export default function MultiLanguageDef() {
       const mappedData = response.data.map((item) => ({
         id: item.id,
         messageId: item.description,
-        en: item.en || "",
         vi: item.vi || "",
+        en: item.en || "",        
         ko: item.kr || "",
       }));
       setRows(mappedData);
@@ -82,8 +82,8 @@ export default function MultiLanguageDef() {
     try {
       const payload = {
         description: form.messageId,
-        en: form.en,
         vi: form.vi,
+        en: form.en,
         kr: form.ko,
         event_user: user?.username || "admin",
       };
@@ -390,6 +390,15 @@ export default function MultiLanguageDef() {
                       }`}
                     >
                       {t("description_col", "Description")}
+                    </th>                    
+                    <th
+                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
+                        tetMode
+                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
+                          : "bg-gray-200 text-gray-700 border-gray-300"
+                      }`}
+                    >
+                      {t("vi_col", "VI")}
                     </th>
                     <th
                       className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
@@ -399,15 +408,6 @@ export default function MultiLanguageDef() {
                       }`}
                     >
                       {t("en_col", "EN")}
-                    </th>
-                    <th
-                      className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
-                        tetMode
-                          ? "bg-[#3a3b3c] text-gray-200 border-[#4a4b4c]"
-                          : "bg-gray-200 text-gray-700 border-gray-300"
-                      }`}
-                    >
-                      {t("vi_col", "VI")}
                     </th>
                     <th
                       className={`sticky top-0 z-10 px-4 py-3 text-center font-bold uppercase tracking-wide border-r border-t border-b ${
@@ -511,14 +511,6 @@ export default function MultiLanguageDef() {
                   tetMode={tetMode}
                 />
                 <FormField
-                  label={t("en_col", "EN")}
-                  value={form?.en || ""}
-                  onChange={(v) => handleFormChange("en", v)}
-                  error={errors.en}
-                  required
-                  tetMode={tetMode}
-                />
-                <FormField
                   label={t("vi_col", "VI")}
                   value={form?.vi || ""}
                   onChange={(v) => handleFormChange("vi", v)}
@@ -526,6 +518,14 @@ export default function MultiLanguageDef() {
                   required
                   tetMode={tetMode}
                 />
+                <FormField
+                  label={t("en_col", "EN")}
+                  value={form?.en || ""}
+                  onChange={(v) => handleFormChange("en", v)}
+                  error={errors.en}
+                  required
+                  tetMode={tetMode}
+                />                
                 <FormField
                   label={t("ko_col", "KO")}
                   value={form?.ko || ""}

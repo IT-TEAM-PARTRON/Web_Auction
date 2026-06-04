@@ -440,7 +440,8 @@ def create_auction(
             auction_title=auction.title,
             auction_id=auction.id,
             auction_start_time=auction.start_time,
-            auction_end_time=auction.end_time
+            auction_end_time=auction.end_time,
+            lang=request.state.locale if hasattr(request.state, 'locale') else "en"
         )
     except Exception as e:
         db.rollback()
@@ -573,6 +574,7 @@ def update_auction(
                     auction_id=auction.id,
                     auction_start_time=auction.start_time,
                     auction_end_time=auction.end_time,
+                    lang=request.state.locale if hasattr(request.state, 'locale') else "en"
                 )
             db.bulk_save_objects(
                 [AuctionParticipant(auction_id=auction_id, user_id=uid) for uid in to_add]

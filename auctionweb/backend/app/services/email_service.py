@@ -79,7 +79,7 @@ class EmailService:
             return False
 
     #Gửi lần lượt cho all user tham gia
-    def send_auction_invitation_email(self, emails: list[str], auction_title: str, auction_id: str, auction_start_time: str, auction_end_time: str) -> bool:
+    def send_auction_invitation_email(self, emails: list[str], auction_title: str, auction_id: str, auction_start_time: str, auction_end_time: str, lang: str = "en") -> bool:
         """
         Gửi email mời tham gia đấu giá cho từng user riêng biệt (không gửi chung 1 mail).
         """
@@ -106,39 +106,116 @@ class EmailService:
                     msg = MIMEMultipart('alternative')
                     msg['From'] = self.sender_email
                     msg['To'] = email
-                    msg['Subject'] = "Auction System | Partron Vina - Invitation to Join Auction"
+                    subject_en = "Auction System | Partron Vina - Invitation to Join Auction"
+                    subject_vi = "Auction System | Partron Vina - Thư Mời Tham Gia Đấu Giá"
+                    msg['Subject'] = subject_vi if lang == "vi" else subject_en
 
-                    # Nội dung email dạng Plain Text
-                    text_body = f"""
-                    Dear Participant,
+                    if lang == "vi":
+                        text_body = f"""
+                      Kính gửi Quý Nhà Cung Cấp/Khách Hàng,
 
-                    You have been invited to participate in the auction:
+                      Chúng tôi là CÔNG TY TNHH PARTRON VINA.
+                      
+                      Địa chỉ: Lô 11, KCN Khai Quang, Phường Khai Quang, TP. Vĩnh Yên, Tỉnh Vĩnh Phúc, Việt Nam
 
-                    Auction Name: {auction_title}
-                    Start Time: {auction_start_time}
-                    End Time: {auction_end_time}
+                      Chúng tôi hiện đang tổ chức một phiên đấu giá và trân trọng kính mời Quý vị tham gia dự thầu.
 
-                    Click the link below to view the auction and place your bids:
-                    {auction_link}
+                      Thông tin gói thầu: {auction_title}
+                      Thời gian bắt đầu: {auction_start_time}
+                      Thời gian kết thúc: {auction_end_time}
 
-                    If you have any questions, please contact our support team.
-                    IT Team
+                      Thông tin chi tiết về gói thầu có thể xem tại website sau:
+                      {auction_link}
 
-                    -----------------------------------------------
-                    This is an automated email, please do not reply.
-                    """
-                    html_body = f"""
+                      Chúng tôi rất mong nhận được sự tham gia của Quý vị.
+                      Xin trân trọng cảm ơn!
+                      -----------------------------------------------
+                      Đây là email tự động, vui lòng không phản hồi.
+                      """
+                        html_body = f"""
                     <html>
                       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
                         <div style="text-align: center; margin-bottom: 20px;">
-                          <h2 style="color: #ef4444; margin: 0;">Auction Invitation</h2>
+                          <h2 style="color: #ef4444; margin: 0;">Thư Mời Dự Thầu</h2>
                         </div>
-                        <p>Dear Participant,</p>
-                        <p>You have been invited to participate in the following auction:</p>
+                        
+                        <p>Kính gửi Quý Nhà Cung Cấp/Khách Hàng,</p>
+                        <p>Chúng tôi là <strong>CÔNG TY TNHH PARTRON VINA.</strong><br/>
+                        Địa chỉ: Lô 11, KCN Khai Quang, Phường Khai Quang, TP. Vĩnh Yên, Tỉnh Vĩnh Phúc, Việt Nam</p>
+                        
+                        <p>Chúng tôi hiện đang tổ chức một phiên đấu giá và trân trọng kính mời Quý vị tham gia dự thầu.</p>
+                        
                         <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #f3f4f6;">
                           <table style="width: 100%; border-collapse: collapse;">
                             <tr>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Auction Name:</strong></td>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Thông tin gói thầu:</strong></td>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; color: #111;">{auction_title}</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Thời gian bắt đầu:</strong></td>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; color: #111;">{auction_start_time}</td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px 0;"><strong>Thời gian kết thúc:</strong></td>
+                              <td style="padding: 8px 0; color: #111;">{auction_end_time}</td>
+                            </tr>
+                          </table>
+                        </div>
+                        
+                        <p style="text-align: center; margin-top: 10px;">Thông tin chi tiết về gói thầu có thể xem bằng cách nhấn vào nút bên dưới:</p>
+                        
+                        <div style="text-align: center; margin: 10px 0;">
+                          <a href="{auction_link}" style="background-color: #ef4444; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">XEM CHI TIẾT GÓI THẦU</a>
+                        </div>
+                        
+                        <p style="font-size: 14px; margin-top: 20px;">Chúng tôi rất mong nhận được sự tham gia của Quý vị.</p>
+                        <p style="font-size: 14px;">Xin trân trọng cảm ơn!</p>
+                        
+                        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
+                        <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">Đây là email tự động, vui lòng không phản hồi.</p>
+                      </body>
+                    </html>
+                    """
+                    else:
+                        # Nội dung email dạng Plain Text
+                        text_body = f"""
+                      Dear Suppliers/Customers,
+
+                      We are PARTRON VINA CO., LTD.
+                      
+                      Address: Lot 11, Khai Quang Industrial Zone, Vinh Phuc Ward, Phu Tho Province, Vietnam
+
+                      We are currently holding a tender and respectfully invite you to participate in the bidding.
+
+                      Tender Package Information: {auction_title}
+                      Start Time: {auction_start_time}
+                      End Time: {auction_end_time}
+
+                      Detailed information about the tender package can be found at the following website:
+                      {auction_link}
+
+                      We look forward to your participation.
+                      Thank you!
+                      -----------------------------------------------
+                      This is an automated email, please do not reply.
+                      """
+                        html_body = f"""
+                    <html>
+                      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                          <h2 style="color: #ef4444; margin: 0;">Tender Invitation</h2>
+                        </div>
+                        
+                        <p>Dear Suppliers/Customers,</p>
+                        <p>We are <strong>PARTRON VINA CO., LTD.</strong><br/>
+                        Address: Lot 11, Khai Quang Industrial Zone, Vinh Phuc Ward, Phu Tho Province, Vietnam</p>
+                        
+                        <p>We are currently holding a tender and respectfully invite you to participate in the bidding.</p>
+                        
+                        <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #f3f4f6;">
+                          <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Tender Package Information:</strong></td>
                               <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; color: #111;">{auction_title}</td>
                             </tr>
                             <tr>
@@ -151,12 +228,16 @@ class EmailService:
                             </tr>
                           </table>
                         </div>
-                        <p style="text-align: center; margin-top: 10px;">Click the button below to view the auction details and place your bids:</p>
+                        
+                        <p style="text-align: center; margin-top: 10px;">Detailed information about the tender package can be found by clicking the button below:</p>
+                        
                         <div style="text-align: center; margin: 10px 0;">
-                          <a href="{auction_link}" style="background-color: #ef4444; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">JOIN AUCTION</a>
+                          <a href="{auction_link}" style="background-color: #ef4444; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);">VIEW TENDER DETAILS</a>
                         </div>
-                        <p style="font-size: 14px; color: #666; margin-top: 10px;">If you have any questions, please contact our support team.</p>
-                        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>IT Team</strong></p>
+                        
+                        <p style="font-size: 14px; margin-top: 20px;">We look forward to your participation.</p>
+                        <p style="font-size: 14px;">Thank you!</p>
+                        
                         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
                         <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">This is an automated email, please do not reply.</p>
                       </body>
