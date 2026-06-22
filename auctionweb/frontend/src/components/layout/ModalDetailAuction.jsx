@@ -40,10 +40,14 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
       } else {
         if (contentType === "application/pdf") {
           filename += ".pdf";
-        } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
+        } else if (contentType && contentType.includes("spreadsheetml")) {
           filename += ".xlsx";
-        } else if (contentType && (contentType.includes("word") || contentType.includes("document"))) {
+        } else if (contentType && contentType.includes("excel")) {
+          filename += ".xls";
+        } else if (contentType && contentType.includes("wordprocessingml")) {
           filename += ".docx";
+        } else if (contentType && contentType.includes("word")) {
+          filename += ".doc";
         } else {
           filename += ".bin";
         }
@@ -82,10 +86,14 @@ const ModalDetailAuction = ({ idAuction, isOpen, clickClose }) => {
       } else {
         if (contentType === "application/pdf") {
           filename += ".pdf";
-        } else if (contentType && (contentType.includes("excel") || contentType.includes("spreadsheetml"))) {
+        } else if (contentType && contentType.includes("spreadsheetml")) {
           filename += ".xlsx";
-        } else if (contentType && (contentType.includes("word") || contentType.includes("document"))) {
+        } else if (contentType && contentType.includes("excel")) {
+          filename += ".xls";
+        } else if (contentType && contentType.includes("wordprocessingml")) {
           filename += ".docx";
+        } else if (contentType && contentType.includes("word")) {
+          filename += ".doc";
         } else {
           filename += ".bin";
         }

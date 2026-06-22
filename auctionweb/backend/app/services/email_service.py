@@ -116,9 +116,9 @@ class EmailService:
 
                       Chúng tôi là CÔNG TY TNHH PARTRON VINA.
                       
-                      Địa chỉ: Lô 11, KCN Khai Quang, Phường Khai Quang, TP. Vĩnh Yên, Tỉnh Vĩnh Phúc, Việt Nam
+                      Địa chỉ: Lô 11, Khu Công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam
 
-                      Chúng tôi hiện đang tổ chức một phiên đấu giá và trân trọng kính mời Quý vị tham gia dự thầu.
+                      Hiện tại chúng tôi đang mở phiên đấu thầu và trân trọng mời quý nhà cung cấp/khách hàng tham gia đấu giá.
 
                       Thông tin gói thầu: {auction_title}
                       Thời gian bắt đầu: {auction_start_time}
@@ -141,9 +141,9 @@ class EmailService:
                         
                         <p>Kính gửi Quý Nhà Cung Cấp/Khách Hàng,</p>
                         <p>Chúng tôi là <strong>CÔNG TY TNHH PARTRON VINA.</strong><br/>
-                        Địa chỉ: Lô 11, KCN Khai Quang, Phường Khai Quang, TP. Vĩnh Yên, Tỉnh Vĩnh Phúc, Việt Nam</p>
+                        Địa chỉ: Lô 11, Khu Công nghiệp Khai Quang, Phường Vĩnh Phúc, Tỉnh Phú Thọ, Việt Nam</p>
                         
-                        <p>Chúng tôi hiện đang tổ chức một phiên đấu giá và trân trọng kính mời Quý vị tham gia dự thầu.</p>
+                        <p>Hiện tại chúng tôi đang mở phiên đấu thầu và trân trọng mời quý nhà cung cấp/khách hàng tham gia đấu giá.</p>
                         
                         <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #f3f4f6;">
                           <table style="width: 100%; border-collapse: collapse;">
