@@ -33,6 +33,7 @@ const OverViewAdmin = () => {
   const { tetMode } = useTetMode();
   const { openAuthModal, user: authUser } = useAuth();
   const isAdmin = authUser?.role === "admin";
+  const isManager = authUser?.role === "manager";
   const [currentIndexPageUser, setCurrentIndexPageUser] = useState(0);
   const [currentIndexPageCategory, setCurrentIndexPageCategory] = useState(0);
   const [currentIndexPageAuction, setCurrentIndexPageAuction] = useState(0);
@@ -1084,11 +1085,11 @@ const OverViewAdmin = () => {
                         "transition",
                         tetMode ? 'text-gray-300 hover:bg-[#CB0502] hover:text-white' : 'hover:bg-blue-400 hover:text-white',
                         {
-                          "cursor-pointer": isAdmin && (auction.status === 1 || auction.status === 0),
+                          "cursor-pointer": (isAdmin || isManager) && (auction.status === 1 || auction.status === 0),
                         }
                       )}
                       onClick={
-                        isAdmin && (auction.status === 1 || auction.status === 0)
+                        (isAdmin || isManager) && (auction.status === 1 || auction.status === 0)
                           ? () => setModeEdit(auction)
                           : undefined
                       }

@@ -6,7 +6,7 @@ import {
   faEyeSlash,
   faGlobe,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTetMode } from "../../contexts/TetModeContext";
@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import CustomSelect from "../ui/CustomSelect";
 
 function LoginModal() {
-  const { login, closeAuthModal, switchAuthModal } = useAuth();
+  const { login, closeAuthModal, switchAuthModal, authModal } = useAuth();
   const { tetMode } = useTetMode();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -24,6 +24,20 @@ function LoginModal() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    if (authModal?.isOpen) {
+      const savedEmail = localStorage.getItem("savedEmail");
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRemember(true);
+      } else {
+        setEmail("");
+        setRemember(false);
+      }
+      setPassword("");
+    }
+  }, [authModal?.isOpen]);
 
   const languageOptions = [
     { value: "en", label: "English" },
@@ -57,34 +71,17 @@ function LoginModal() {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      if (response.ok && data.role === "user") {
-        login(data, remember);
-        toast.success(t("login_success", "Login successfully!"), {
-          style: {
-            border: "1px solid #4ade80",
-            padding: "12px 16px",
-            color: "#16a34a",
-            fontWeight: "500",
-            fontFamily: "Inter, sans-serif",
-            fontSize: "15px",
-            borderRadius: "12px",
-            background: "#f0fdf4",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-          },
-          iconTheme: {
-            primary: "#16a34a",
-            secondary: "#ecfdf5",
-          },
-        });
-        closeAuthModal();
-        navigate("/");
-      } else if (
+      if (
         response.ok &&
-        (data.role === "admin" || data.role === "manager")
+        (data.role === "user" || data.role === "admin" || data.role === "manager")
       ) {
+        if (remember) {
+          localStorage.setItem("savedEmail", email);
+        } else {
+          localStorage.removeItem("savedEmail");
+        }
+
         login(data, remember);
-        closeAuthModal();
-        navigate("/admin");
         toast.success(t("login_success", "Login successfully!"), {
           style: {
             border: "1px solid #4ade80",
@@ -102,6 +99,13 @@ function LoginModal() {
             secondary: "#ecfdf5",
           },
         });
+        setPassword("");
+        closeAuthModal();
+        if (data.role === "user") {
+          navigate("/");
+        } else {
+          navigate("/admin");
+        }
       } else {
         toast.error(
           data.detail || t("login_failed", "Login failed. Please try again.")
@@ -155,7 +159,7 @@ function LoginModal() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
+            autoComplete="off"
             className={inputPasswordClass}
           />
           <span
