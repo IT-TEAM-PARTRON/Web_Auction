@@ -64,9 +64,13 @@ class BidWithAuctionOut(BaseModel):
     class Config:
         from_attributes = True
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
-UPLOAD_IMAGE_DIR = os.path.join(BASE_DIR, 'uploads', 'images')
-UPLOAD_EXCEL_DIR = os.path.join(BASE_DIR, 'uploads', 'excels')
+from app.core.config import (
+    BASE_DIR,
+    UPLOAD_ROOT_DIR,
+    UPLOAD_IMAGE_DIR,
+    UPLOAD_EXCEL_DIR,
+    find_uploaded_file,
+)
 
 @router.post("/bids", response_model=BidOut)
 def create_bid(
@@ -353,8 +357,8 @@ def download_excel_by_auction(request: Request, id: str, db: Session = Depends(g
     if not bid or not bid.file:
         raise HTTPException(status_code=404, detail=_("Bid or file not found", request))
     filename = os.path.basename(bid.file)
-    file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
-    if not os.path.isfile(file_path):
+    file_path = find_uploaded_file("excels", filename)
+    if not file_path or not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
     
     file_size = os.path.getsize(file_path)

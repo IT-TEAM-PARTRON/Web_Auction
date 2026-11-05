@@ -170,9 +170,14 @@ class AuctionUpdate(BaseModel):
 
 router = APIRouter()
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
-UPLOAD_IMAGE_DIR = os.path.join(BASE_DIR, 'uploads', 'images')
-UPLOAD_EXCEL_DIR = os.path.join(BASE_DIR, 'uploads', 'excels')
+from app.core.config import (
+    BASE_DIR,
+    UPLOAD_ROOT_DIR,
+    UPLOAD_IMAGE_DIR,
+    UPLOAD_EXCEL_DIR,
+    find_uploaded_file,
+    connect_smb_share_if_needed,
+)
 
 def _safe_filename(filename: str) -> str:
     """
@@ -594,8 +599,23 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
         if not files:
             return JSONResponse(status_code=400, content={"detail": _("No files provided", request)})
 
-        if not os.path.exists(UPLOAD_IMAGE_DIR):
-            os.makedirs(UPLOAD_IMAGE_DIR)
+        try:
+            os.makedirs(UPLOAD_IMAGE_DIR, exist_ok=True)
+        except OSError as e:
+            if getattr(e, "winerror", None) == 1326:
+                connect_smb_share_if_needed()
+                try:
+                    os.makedirs(UPLOAD_IMAGE_DIR, exist_ok=True)
+                except OSError as e2:
+                    return JSONResponse(
+                        status_code=500,
+                        content={"detail": _("Storage directory not accessible: {error}", request).format(error=str(e2))}
+                    )
+            else:
+                return JSONResponse(
+                    status_code=500,
+                    content={"detail": _("Storage directory not accessible: {error}", request).format(error=str(e))}
+                )
 
         for file in files:
             if not file.filename or not isinstance(file.filename, str):
@@ -612,17 +632,16 @@ def upload_image(request: Request, files: List[UploadFile] = File(...)):
                     }
                 )
 
-            # Xử lý trùng tên file
+            # Xử lý trùng tên file trong UPLOAD_IMAGE_DIR
             base_name, ext = os.path.splitext(safe_name)
-            file_location = os.path.join(UPLOAD_IMAGE_DIR, f"{base_name}{ext}")
+            candidate_name = f"{base_name}{ext}"
+            file_location = os.path.join(UPLOAD_IMAGE_DIR, candidate_name)
             counter = 1
             while os.path.exists(file_location):
-                new_filename = f"{base_name}_{counter}{ext}"
-                file_location = os.path.join(UPLOAD_IMAGE_DIR, new_filename)
+                candidate_name = f"{base_name}_{counter}{ext}"
+                file_location = os.path.join(UPLOAD_IMAGE_DIR, candidate_name)
                 counter += 1
 
-            with open(file_location, "wb") as f_out:
-                pass
             try:
                 _write_upload_to_path(file, file_location, max_size=max_size)
             except ValueError as ve:
@@ -667,16 +686,33 @@ def upload_excel(request: Request, file: UploadFile = File(...)):
     ext = os.path.splitext(safe_name)[1].lower()
     if ext not in allowed_exts:
         return JSONResponse(status_code=400, content={"detail": _("Invalid file type. Only Excel, PDF and Word are allowed.", request)})
-    if not os.path.exists(UPLOAD_EXCEL_DIR):
-        os.makedirs(UPLOAD_EXCEL_DIR)
+
+    try:
+        os.makedirs(UPLOAD_EXCEL_DIR, exist_ok=True)
+    except OSError as e:
+        if getattr(e, "winerror", None) == 1326:
+            connect_smb_share_if_needed()
+            try:
+                os.makedirs(UPLOAD_EXCEL_DIR, exist_ok=True)
+            except OSError as e2:
+                return JSONResponse(
+                    status_code=500,
+                    content={"detail": _("Storage directory not accessible: {error}", request).format(error=str(e2))}
+                )
+        else:
+            return JSONResponse(
+                status_code=500,
+                content={"detail": _("Storage directory not accessible: {error}", request).format(error=str(e))}
+            )
     
-    # Xử lý trùng tên file
+    # Xử lý trùng tên file trong UPLOAD_EXCEL_DIR
     base_name, ext = os.path.splitext(safe_name)
-    file_location = os.path.join(UPLOAD_EXCEL_DIR, safe_name)
+    candidate_name = f"{base_name}{ext}"
+    file_location = os.path.join(UPLOAD_EXCEL_DIR, candidate_name)
     counter = 1
     while os.path.exists(file_location):
-        new_filename = f"{base_name}_{counter}{ext}"
-        file_location = os.path.join(UPLOAD_EXCEL_DIR, new_filename)
+        candidate_name = f"{base_name}_{counter}{ext}"
+        file_location = os.path.join(UPLOAD_EXCEL_DIR, candidate_name)
         counter += 1
 
     try:
@@ -704,8 +740,8 @@ def download_excel_by_auction(request: Request, auction_id: str, db: Session = D
     if not auction or not auction.file_exel:
         raise HTTPException(status_code=404, detail=_("Auction or file not found", request))
     filename = os.path.basename(auction.file_exel)
-    file_path = os.path.join(BASE_DIR, 'uploads', 'excels', filename)
-    if not os.path.isfile(file_path):
+    file_path = find_uploaded_file("excels", filename)
+    if not file_path or not os.path.isfile(file_path):
         raise HTTPException(status_code=404, detail=_("File not found on server", request))
 
     file_size = os.path.getsize(file_path)
